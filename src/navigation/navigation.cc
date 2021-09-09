@@ -156,9 +156,14 @@ void Navigation::Run() {
 
   std::cout << "velocity history: " << vel_history_ << '\n';
   std::cout << "steering history: " << steer_history_ << '\n';
+  std::cout << "odom position x: " << odom_loc_.x() << '\n';
+  std::cout << "odom position y: " << odom_loc_.y() << '\n';
+  std::cout << "odom angle: " << odom_angle_ << '\n';
   std::cout << "projected position x: " << projected_loc.x() << '\n';
   std::cout << "projected position y: " << projected_loc.y() << '\n';
   std::cout << "projected angle: " << projected_angle << '\n';
+
+  visualization::DrawLine(odom_loc_, projected_loc, 0xff0000, local_viz_msg_);
 
   // Add timestamps to all messages.
   local_viz_msg_.header.stamp = ros::Time::now();

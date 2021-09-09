@@ -32,8 +32,9 @@
 #define NAVIGATION_H
 
 #define CONTROL_FREQUENCY 20
-#define DT 1/CONTROL_FREQUENCY
+#define DT 1.0/CONTROL_FREQUENCY
 #define WHEELBASE 0.32385
+#define SYSTEM_LATENCY 0.25
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 

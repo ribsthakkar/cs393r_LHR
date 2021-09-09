@@ -54,7 +54,7 @@ const float kEpsilon = 1e-5;
 
 namespace navigation {
 
-Navigation::Navigation(const string& map_file, ros::NodeHandle* n) :
+Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_latency, float ac_to_obs) :
     odom_initialized_(false),
     localization_initialized_(false),
     robot_loc_(0, 0),
@@ -63,7 +63,15 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n) :
     robot_omega_(0),
     nav_complete_(true),
     nav_goal_loc_(0, 0),
-    nav_goal_angle_(0) {
+    nav_goal_angle_(0),
+    system_latency_(system_latency),
+    act_latency_((ac_to_obs/(ac_to_obs+1.0))*system_latency),
+    obs_latency_((1.0/(ac_to_obs+1.0))*system_latency) {
+  
+  uint history_length = static_cast<uint>(CONTROL_FREQUENCY * system_latency);
+  vel_history_ = std::deque<float>(history_length, 0.0);
+  steer_history_ = std::deque<float>(history_length, 0.0);
+  
   drive_pub_ = n->advertise<AckermannCurvatureDriveMsg>(
       "ackermann_curvature_drive", 1);
   viz_pub_ = n->advertise<VisualizationMsg>("visualization", 1);
@@ -106,6 +114,14 @@ void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
   point_cloud_ = cloud;                                     
 }
 
+void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, 
+                                                        float* projected_angle) {
+  for(uint i = 0; i<vel_history_.size(); ++i) {
+      *projected_loc += DT*Vector2f(cos(steer_history_[i]), sin(steer_history_[i]))*vel_history_[i];
+      *projected_angle += DT*(vel_history_[i]/WHEELBASE)*tan(steer_history_[i]);
+  }
+}
+
 void Navigation::Run() {
   // This function gets called 20 times a second to form the control loop.
   
@@ -119,11 +135,30 @@ void Navigation::Run() {
   // The control iteration goes here. 
   // Feel free to make helper functions to structure the control appropriately.
   
+  // Project our position to estimated position actuation latency from now. Using 
+  // history of actuations 1 system latency ago
+  Eigen::Vector2f projected_loc = odom_loc_;
+  float projected_angle = odom_angle_;
+  estimate_latency_compensated_odometry(&projected_loc, &projected_angle);
+
   // The latest observed point cloud is accessible via "point_cloud_"
 
   // Eventually, you will have to set the control values to issue drive commands:
-  // drive_msg_.curvature = ...;
-  // drive_msg_.velocity = ...;
+  drive_msg_.curvature = 0.0;
+  drive_msg_.velocity = 1.0;
+
+
+  vel_history_.pop_front();
+  steer_history_.pop_front();
+
+  vel_history_.push_back(1.0);
+  steer_history_.push_back(0.0);
+
+  std::cout << "velocity history: " << vel_history_ << '\n';
+  std::cout << "steering history: " << steer_history_ << '\n';
+  std::cout << "projected position x: " << projected_loc.x() << '\n';
+  std::cout << "projected position y: " << projected_loc.y() << '\n';
+  std::cout << "projected angle: " << projected_angle << '\n';
 
   // Add timestamps to all messages.
   local_viz_msg_.header.stamp = ros::Time::now();

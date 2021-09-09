@@ -20,11 +20,32 @@
 //========================================================================
 
 #include <vector>
+#include <deque>
+#include <string>
+#include <iostream>
+#include <cmath>
 
 #include "eigen3/Eigen/Dense"
+#include "eigen3/Eigen/Geometry"
 
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
+
+#define CONTROL_FREQUENCY 20
+#define DT 1/CONTROL_FREQUENCY
+#define WHEELBASE 0.32385
+
+template<typename T>
+std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 
+{
+    s.put('[');
+    char comma[3] = {'\0', ' ', '\0'};
+    for (const auto& e : v) {
+        s << comma << e;
+        comma[0] = ',';
+    }
+    return s << ']';
+}
 
 namespace ros {
   class NodeHandle;
@@ -45,7 +66,7 @@ class Navigation {
  public:
 
    // Constructor
-  explicit Navigation(const std::string& map_file, ros::NodeHandle* n);
+  explicit Navigation(const std::string& map_file, ros::NodeHandle* n, float system_latency, float ac_to_obs);
 
   // Used in callback from localization to update position.
   void UpdateLocation(const Eigen::Vector2f& loc, float angle);
@@ -66,6 +87,8 @@ class Navigation {
   void SetNavGoal(const Eigen::Vector2f& loc, float angle);
 
  private:
+
+  void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle);
 
   // Whether odometry has been initialized.
   bool odom_initialized_;
@@ -96,6 +119,19 @@ class Navigation {
   Eigen::Vector2f nav_goal_loc_;
   // Navigation goal angle.
   float nav_goal_angle_;
+
+  // Estimated system latency
+  float system_latency_;
+  // Actuation Latency
+  float act_latency_;
+  // Observation Latency
+  float obs_latency_;
+
+
+  //Last Issued Velocity Commands
+  std::deque<float> vel_history_;
+  //Last Issued Steering Commands
+  std::deque<float> steer_history_;
 };
 
 }  // namespace navigation

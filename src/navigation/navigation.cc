@@ -87,24 +87,30 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
                                 float angle,
                                 const Vector2f& vel,
                                 float ang_vel) {
+using namespace std;
+
   robot_omega_ = ang_vel;
   robot_vel_ = vel;
+  odom_loc_ = loc;
+  odom_angle_ = angle;
   if (!odom_initialized_) {
     odom_start_angle_ = angle;
     odom_start_loc_ = loc;
     odom_initialized_ = true;
-    odom_loc_ = loc;
-    odom_angle_ = angle;
+    Eigen::Vector2f vec(15,0);
+    nav_goal_loc_ = odom_loc_ + vec - odom_start_loc_;
+    cout << "nav goal loc " << nav_goal_loc_ << endl;
     return;
   }
-  odom_loc_ = loc;
-  odom_angle_ = angle;
+
 }
 
 void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
                                    double time) {
   point_cloud_ = cloud;                                     
 }
+#define MAX_ACCELERATION 6
+#define UPDATE_RATE .05
 
 void Navigation::Run() {
   // This function gets called 20 times a second to form the control loop.
@@ -122,8 +128,38 @@ void Navigation::Run() {
   // The latest observed point cloud is accessible via "point_cloud_"
 
   // Eventually, you will have to set the control values to issue drive commands:
-  // drive_msg_.curvature = ...;
-  // drive_msg_.velocity = ...;
+
+
+  /*
+    1D TOC:
+      if not at max speed and there is distance remaining, accelerate
+      if at max speed, cruise
+      if not enough distance left, decelerate
+  */
+  // drive_msg_.curvature = 0;
+  // drive_msg_.velocity = 1.0;
+  // Eigen::Vector2f current_position(0,0);
+  visualization::DrawLine(odom_loc_- odom_start_loc_, nav_goal_loc_, 0xff0000, global_viz_msg_);
+  // assert(odom_loc_ == nav_goal_loc_);
+  
+  drive_msg_.curvature = 0;
+  using namespace std;
+  float distance_to_target = (nav_goal_loc_ - odom_loc_).norm(); 
+  float next_velocity = drive_msg_.velocity + (MAX_ACCELERATION * UPDATE_RATE);
+  float time_to_reach_target = distance_to_target/next_velocity;
+  float time_to_decelerate = next_velocity/6.0;
+    // cout << nav_goal_loc_ << endl;
+    cout << odom_loc_ - odom_start_loc_<< endl;
+  // std::cout << distance_to_target << std::endl;
+  if(time_to_reach_target < time_to_decelerate)
+  {
+    drive_msg_.velocity = 0;
+  }
+  else{
+    drive_msg_.velocity = 1;
+  }
+
+
 
   // Add timestamps to all messages.
   local_viz_msg_.header.stamp = ros::Time::now();
@@ -132,6 +168,7 @@ void Navigation::Run() {
   // Publish messages.
   viz_pub_.publish(local_viz_msg_);
   viz_pub_.publish(global_viz_msg_);
+  // viz_pub_.publish()
   drive_pub_.publish(drive_msg_);
 }
 

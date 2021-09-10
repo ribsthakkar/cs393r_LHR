@@ -38,6 +38,9 @@
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
 #define MAX_VELOCITY 1.0
+#define MIN_STEER -30.0
+#define MAX_STEER 30.0
+#define DSTEER 1.0
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 

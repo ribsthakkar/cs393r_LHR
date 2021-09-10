@@ -34,6 +34,7 @@
 #include "visualization/visualization.h"
 
 using Eigen::Vector2f;
+using Eigen::Rotation2Df;
 using amrl_msgs::AckermannCurvatureDriveMsg;
 using amrl_msgs::VisualizationMsg;
 using std::string;
@@ -114,7 +115,7 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
 
 void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
                                    double time) {
-  point_cloud_ = cloud;                                     
+  point_cloud_ = cloud;
 }
 
 void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, 
@@ -179,41 +180,61 @@ void Navigation::Run() {
   // STEP 1: Latency compensation-odometry  
   // Project our position to estimated position actuation latency from now.
   // Use history of actuations 1 system latency ago
-  Eigen::Vector2f projected_loc = odom_loc_;
+  Vector2f projected_loc = odom_loc_;
   float projected_angle = odom_angle_;
-  Eigen::Vector2f projected_velocity = robot_vel_;
+  Vector2f projected_velocity = robot_vel_;
   float projected_dist_traversed = odom_dist_traversed_;
   estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
 
   // STEP 2: Latency compensation-point_cloudd
   // The latest observed point cloud is accessible via "point_cloud_"
+  float dangle = odom_angle_ - projected_angle;
+  Vector2f dloc = odom_loc_ - projected_loc;
+  Rotation2Df rotation(dangle);
+  for(uint i = 0; i < point_cloud_.size(); ++i) {
+    point_cloud_[i] = (rotation*point_cloud_[i])+dloc;
+  }
 
-
-  // STEP 3,4: Do obstacle avoidance calculations
+  // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
+  // For every steering angle
+  for(float theta = MIN_STEER; theta < MAX_STEER; theta+=DSTEER) {
+    // For every particle
+    if (fabs(theta) < kEpsilon) {
+      // Handle special case for going straight
+      for(uint i = 0; i < point_cloud_.size(); ++i) {
+      }
+    } else {
+      float curvature = tan(theta)/WHEELBASE;
+      float radius = 1/curvature;
+      (void) radius; (void) curvature; // Placeholder to compile for now
+      for(uint i = 0; i < point_cloud_.size(); ++i) {
+      }
+    }
+  }
+  drive_msg_.curvature = 0;
 
   // STEP 5: Apply 1D TOC
-  drive_msg_.curvature = 0;
   float distance_to_target = 15-projected_dist_traversed; 
   drive_msg_.velocity = compute_toc(distance_to_target, projected_velocity.norm());
 
 
+  // STEP 6: Update History
   vel_history_.pop_front();
   steer_history_.pop_front();
-
   vel_history_.push_back(drive_msg_.velocity);
   steer_history_.push_back(drive_msg_.curvature);
 
-  std::cout << "velocity history: " << vel_history_ << '\n';
-  std::cout << "steering history: " << steer_history_ << '\n';
-  std::cout << "odom position x: " << odom_loc_.x() << '\n';
-  std::cout << "odom position y: " << odom_loc_.y() << '\n';
-  std::cout << "odom angle: " << odom_angle_ << '\n';
-  std::cout << "projected position x: " << projected_loc.x() << '\n';
-  std::cout << "projected position y: " << projected_loc.y() << '\n';
-  std::cout << "projected angle: " << projected_angle << '\n';
-  std::cout << "nav goal x: " << nav_goal_loc_.x() << '\n';
-  std::cout << "nav goal y: " << nav_goal_loc_.y() << '\n';
-  std::cout << "dist to target: " << distance_to_target << '\n';
+  // std::cout << "velocity history: " << vel_history_ << '\n';
+  // std::cout << "steering history: " << steer_history_ << '\n';
+  // std::cout << "odom position x: " << odom_loc_.x() << '\n';
+  // std::cout << "odom position y: " << odom_loc_.y() << '\n';
+  // std::cout << "odom angle: " << odom_angle_ << '\n';
+  // std::cout << "projected position x: " << projected_loc.x() << '\n';
+  // std::cout << "projected position y: " << projected_loc.y() << '\n';
+  // std::cout << "projected angle: " << projected_angle << '\n';
+  // std::cout << "nav goal x: " << nav_goal_loc_.x() << '\n';
+  // std::cout << "nav goal y: " << nav_goal_loc_.y() << '\n';
+  // std::cout << "dist to target: " << distance_to_target << '\n';
 
   visualization::DrawLine(Vector2f(0, 0), projected_loc-odom_loc_, 0xff0000, local_viz_msg_);
 

@@ -62,7 +62,7 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     robot_vel_(0, 0),
     robot_omega_(0),
     last_odom_loc_(0, 0),
-    dist_traversed(0),
+    odom_dist_traversed_(0),
     nav_complete_(true),
     nav_goal_loc_(0, 0),
     nav_goal_angle_(0),
@@ -102,7 +102,7 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
   last_odom_loc_ = odom_loc_;
   odom_loc_ = loc;
   odom_angle_ = angle;
-  dist_traversed += (odom_loc_-last_odom_loc_).norm();
+  odom_dist_traversed_ += (odom_loc_-last_odom_loc_).norm();
   if (!odom_initialized_) {
     odom_start_angle_ = angle;
     odom_start_loc_ = loc;
@@ -182,7 +182,7 @@ void Navigation::Run() {
   Eigen::Vector2f projected_loc = odom_loc_;
   float projected_angle = odom_angle_;
   Eigen::Vector2f projected_velocity = robot_vel_;
-  float projected_dist_traversed = dist_traversed;
+  float projected_dist_traversed = odom_dist_traversed_;
   estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
 
   // STEP 2: Latency compensation-point_cloudd
@@ -224,7 +224,6 @@ void Navigation::Run() {
   // Publish messages.
   viz_pub_.publish(local_viz_msg_);
   viz_pub_.publish(global_viz_msg_);
-  // viz_pub_.publish()
   drive_pub_.publish(drive_msg_);
 }
 

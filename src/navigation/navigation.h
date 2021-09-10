@@ -112,10 +112,10 @@ class Navigation {
   Eigen::Vector2f odom_loc_;
   // Last Odometry-reported robot location.
   Eigen::Vector2f last_odom_loc_;
-  // Total Distance traversed
-  float dist_traversed;
   // Odometry-reported robot angle.
   float odom_angle_;
+  // Total Distance traversed
+  float odom_dist_traversed_;
   // Odometry-reported robot starting location.
   Eigen::Vector2f odom_start_loc_;
   // Odometry-reported robot starting angle.

@@ -31,10 +31,13 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
-#define CONTROL_FREQUENCY 20
+#define CONTROL_FREQUENCY 20.0
 #define DT 1.0/CONTROL_FREQUENCY
 #define WHEELBASE 0.32385
 #define SYSTEM_LATENCY 0.25
+#define MAX_ACCELERATION 6.0
+#define MAX_DECELERATION 6.0
+#define MAX_VELOCITY 1.0
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 
@@ -89,7 +92,9 @@ class Navigation {
 
  private:
 
-  void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle);
+  void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle, Eigen::Vector2f* projected_vel, float* projected_dist_traversed);
+
+  float compute_toc(float distance_to_target, float init_v);
 
   // Whether odometry has been initialized.
   bool odom_initialized_;
@@ -105,6 +110,10 @@ class Navigation {
   float robot_omega_;
   // Odometry-reported robot location.
   Eigen::Vector2f odom_loc_;
+  // Last Odometry-reported robot location.
+  Eigen::Vector2f last_odom_loc_;
+  // Total Distance traversed
+  float dist_traversed;
   // Odometry-reported robot angle.
   float odom_angle_;
   // Odometry-reported robot starting location.

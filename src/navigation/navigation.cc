@@ -43,6 +43,13 @@ using std::vector;
 using namespace math_util;
 using namespace ros_helpers;
 
+DEFINE_double(safety_margin, 0.1, "Saftey margin around robot, in meters");
+
+constexpr double LENGTH = 0.4;
+constexpr double WHEEL_BASE = 0.3175;
+constexpr double WIDTH = 0.15;
+constexpr double TRACK_WIDTH = 0.1;
+
 namespace {
 ros::Publisher drive_pub_;
 ros::Publisher viz_pub_;
@@ -67,6 +74,12 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     nav_complete_(true),
     nav_goal_loc_(0, 0),
     nav_goal_angle_(0),
+    front_left_corner_(WHEEL_BASE+0.5*(LENGTH-WHEEL_BASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
+    front_right_corner_(front_left_corner_.x(), -1*front_left_corner_.y()),
+    back_right_corner_(-0.5*(LENGTH-WHEEL_BASE)-FLAGS_safety_margin, front_right_corner_.y()),
+    back_left_corner_(back_right_corner_.x(), front_left_corner_.y()),
+    left_wheel_outside_(0.0, front_left_corner_.y()),
+    right_wheel_outside_(0.0, front_right_corner_.y()),
     system_latency_(system_latency),
     act_latency_((ac_to_obs/(ac_to_obs+1.0))*system_latency),
     obs_latency_((1.0/(ac_to_obs+1.0))*system_latency) {
@@ -238,6 +251,8 @@ void Navigation::Run() {
 
   visualization::DrawLine(Vector2f(0, 0), projected_loc-odom_loc_, 0xff0000, local_viz_msg_);
 
+  DrawCar(0xff0000, local_viz_msg_);
+
   // Add timestamps to all messages.
   local_viz_msg_.header.stamp = ros::Time::now();
   global_viz_msg_.header.stamp = ros::Time::now();
@@ -246,6 +261,13 @@ void Navigation::Run() {
   viz_pub_.publish(local_viz_msg_);
   viz_pub_.publish(global_viz_msg_);
   drive_pub_.publish(drive_msg_);
+}
+
+void Navigation::DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg) {
+  visualization::DrawLine(front_right_corner_, front_left_corner_, color, msg);
+  visualization::DrawLine(front_right_corner_, back_right_corner_, color, msg);
+  visualization::DrawLine(back_left_corner_, back_right_corner_, color, msg);
+  visualization::DrawLine(front_left_corner_, back_left_corner_, color, msg);
 }
 
 }  // namespace navigation

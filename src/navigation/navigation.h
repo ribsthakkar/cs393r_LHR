@@ -28,6 +28,8 @@
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
 
+#include "visualization/visualization.h"
+
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
@@ -95,10 +97,15 @@ class Navigation {
 
  private:
 
+  // Estimate odometry values after latency compensation
   void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle, Eigen::Vector2f* projected_vel, float* projected_dist_traversed);
-
+  
+  // Compute target velocity for time-optimal controller
   float compute_toc(float distance_to_target, float init_v);
 
+  // Draws a box representing the car
+  void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
+  
   // Whether odometry has been initialized.
   bool odom_initialized_;
   // Whether localization has been initialized.
@@ -132,6 +139,14 @@ class Navigation {
   Eigen::Vector2f nav_goal_loc_;
   // Navigation goal angle.
   float nav_goal_angle_;
+
+  // Points of interest on the car
+  Eigen::Vector2f front_left_corner_;
+  Eigen::Vector2f front_right_corner_;
+  Eigen::Vector2f back_right_corner_;
+  Eigen::Vector2f back_left_corner_;
+  Eigen::Vector2f left_wheel_outside_;
+  Eigen::Vector2f right_wheel_outside_;
 
   // Estimated system latency
   float system_latency_;

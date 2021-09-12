@@ -113,17 +113,20 @@ void Navigation::UpdateOdometry(const Vector2f& loc,
                                 float ang_vel) {
   robot_omega_ = ang_vel;
   robot_vel_ = vel;
-  last_odom_loc_ = odom_loc_;
-  odom_loc_ = loc;
-  odom_angle_ = angle;
-  odom_dist_traversed_ += (odom_loc_-last_odom_loc_).norm();
   if (!odom_initialized_) {
     odom_start_angle_ = angle;
     odom_start_loc_ = loc;
+    last_odom_loc_ = loc;
+    odom_loc_ = loc;
+    odom_angle_ = angle;
+    odom_dist_traversed_ = 0;
     odom_initialized_ = true;
     return;
   }
-
+  odom_angle_ = angle;
+  last_odom_loc_ = odom_loc_;
+  odom_loc_ = loc;
+  odom_dist_traversed_ += (odom_loc_-last_odom_loc_).norm();
 }
 
 void Navigation::ObservePointCloud(const vector<Vector2f>& cloud,
@@ -147,34 +150,34 @@ void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projecte
 }
 
 float Navigation::compute_toc(float distance_to_target, float init_v) {
-  float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
-  float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
-  float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
-  float x2 = distance_to_target - x1 - x3;
-  float t2 = x2/MAX_VELOCITY;
-  if (t2 < DT) { // Not enough time to accelerate to cruising speed
-    float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
-    float new_x1 = distance_to_target - new_x3;
-    if (new_x1 < 0) { // Not enough distance to brake
-      return 0.0; 
-    }
-    float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
-    return target_v;
-  } else { // Enough time to accelerate to cruising speed
-    float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
-    return target_v;
-  }
+  // float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
+  // float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
+  // float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
+  // float x2 = distance_to_target - x1 - x3;
+  // float t2 = x2/MAX_VELOCITY;
+  // if (t2 < DT) { // Not enough time to accelerate to cruising speed
+  //   float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
+  //   float new_x1 = distance_to_target - new_x3;
+  //   if (new_x1 < 0) { // Not enough distance to brake
+  //     return 0.0; 
+  //   }
+  //   float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
+  //   return target_v;
+  // } else { // Enough time to accelerate to cruising speed
+  //   float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
+  //   return target_v;
+  // }
 
-  // float next_velocity = (init_v) + MAX_ACCELERATION*DT;
-  // float time_to_reach_target = distance_to_target/next_velocity;
-  // float time_to_decelerate = next_velocity/MAX_DECELERATION;
-  // if(time_to_reach_target < time_to_decelerate)
-  // {
-  //   return 0.0;
-  // }
-  // else{
-  //   return MAX_VELOCITY;
-  // }
+  float next_velocity = (init_v) + MAX_ACCELERATION*DT;
+  float time_to_reach_target = distance_to_target/next_velocity;
+  float time_to_decelerate = next_velocity/MAX_DECELERATION;
+  if(time_to_reach_target < time_to_decelerate)
+  {
+    return 0.0;
+  }
+  else{
+    return MAX_VELOCITY;
+  }
 
 }
 
@@ -237,17 +240,17 @@ void Navigation::Run() {
   vel_history_.push_back(drive_msg_.velocity);
   steer_history_.push_back(drive_msg_.curvature);
 
-  // std::cout << "velocity history: " << vel_history_ << '\n';
-  // std::cout << "steering history: " << steer_history_ << '\n';
-  // std::cout << "odom position x: " << odom_loc_.x() << '\n';
-  // std::cout << "odom position y: " << odom_loc_.y() << '\n';
-  // std::cout << "odom angle: " << odom_angle_ << '\n';
-  // std::cout << "projected position x: " << projected_loc.x() << '\n';
-  // std::cout << "projected position y: " << projected_loc.y() << '\n';
-  // std::cout << "projected angle: " << projected_angle << '\n';
-  // std::cout << "nav goal x: " << nav_goal_loc_.x() << '\n';
-  // std::cout << "nav goal y: " << nav_goal_loc_.y() << '\n';
-  // std::cout << "dist to target: " << distance_to_target << '\n';
+  std::cout << "velocity history: " << vel_history_ << '\n';
+  std::cout << "steering history: " << steer_history_ << '\n';
+  std::cout << "odom position x: " << odom_loc_.x() << '\n';
+  std::cout << "odom position y: " << odom_loc_.y() << '\n';
+  std::cout << "odom angle: " << odom_angle_ << '\n';
+  std::cout << "projected position x: " << projected_loc.x() << '\n';
+  std::cout << "projected position y: " << projected_loc.y() << '\n';
+  std::cout << "projected angle: " << projected_angle << '\n';
+  std::cout << "nav goal x: " << nav_goal_loc_.x() << '\n';
+  std::cout << "nav goal y: " << nav_goal_loc_.y() << '\n';
+  std::cout << "dist to target: " << distance_to_target << '\n';
 
   visualization::DrawLine(Vector2f(0, 0), projected_loc-odom_loc_, 0xff0000, local_viz_msg_);
 

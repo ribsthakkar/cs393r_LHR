@@ -20,13 +20,41 @@
 //========================================================================
 
 #include <vector>
+#include <deque>
+#include <string>
+#include <iostream>
+#include <cmath>
 
 #include "eigen3/Eigen/Dense"
+#include "eigen3/Eigen/Geometry"
 
 #include "visualization/visualization.h"
 
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
+
+#define CONTROL_FREQUENCY 20.0
+#define DT 1.0/CONTROL_FREQUENCY
+#define WHEELBASE 0.32385
+#define SYSTEM_LATENCY 0.25
+#define MAX_ACCELERATION 6.0
+#define MAX_DECELERATION 6.0
+#define MAX_VELOCITY 1.0
+#define MIN_STEER -30.0
+#define MAX_STEER 30.0
+#define DSTEER 1.0
+
+template<typename T>
+std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 
+{
+    s.put('[');
+    char comma[3] = {'\0', ' ', '\0'};
+    for (const auto& e : v) {
+        s << comma << e;
+        comma[0] = ',';
+    }
+    return s << ']';
+}
 
 namespace ros {
   class NodeHandle;
@@ -47,7 +75,7 @@ class Navigation {
  public:
 
    // Constructor
-  explicit Navigation(const std::string& map_file, ros::NodeHandle* n);
+  explicit Navigation(const std::string& map_file, ros::NodeHandle* n, float system_latency, float ac_to_obs);
 
   // Used in callback from localization to update position.
   void UpdateLocation(const Eigen::Vector2f& loc, float angle);
@@ -69,6 +97,15 @@ class Navigation {
 
  private:
 
+  // Estimate odometry values after latency compensation
+  void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle, Eigen::Vector2f* projected_vel, float* projected_dist_traversed);
+  
+  // Compute target velocity for time-optimal controller
+  float compute_toc(float distance_to_target, float init_v);
+
+  // Draws a box representing the car
+  void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
+  
   // Whether odometry has been initialized.
   bool odom_initialized_;
   // Whether localization has been initialized.
@@ -83,8 +120,12 @@ class Navigation {
   float robot_omega_;
   // Odometry-reported robot location.
   Eigen::Vector2f odom_loc_;
+  // Last Odometry-reported robot location.
+  Eigen::Vector2f last_odom_loc_;
   // Odometry-reported robot angle.
   float odom_angle_;
+  // Total Distance traversed
+  float odom_dist_traversed_;
   // Odometry-reported robot starting location.
   Eigen::Vector2f odom_start_loc_;
   // Odometry-reported robot starting angle.
@@ -107,8 +148,18 @@ class Navigation {
   Eigen::Vector2f left_wheel_outside_;
   Eigen::Vector2f right_wheel_outside_;
 
-  // Draws a box representing the car
-  void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
+  // Estimated system latency
+  float system_latency_;
+  // Actuation Latency
+  float act_latency_;
+  // Observation Latency
+  float obs_latency_;
+
+
+  //Last Issued Velocity Commands
+  std::deque<float> vel_history_;
+  //Last Issued Steering Commands
+  std::deque<float> steer_history_;
 };
 
 }  // namespace navigation

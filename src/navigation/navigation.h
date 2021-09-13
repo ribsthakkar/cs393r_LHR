@@ -71,6 +71,8 @@ struct PathOption {
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
+enum Collision { NONE, FRONT, INSIDE, OUTSIDE };
+
 class Navigation {
  public:
 
@@ -105,6 +107,9 @@ class Navigation {
 
   // Draws a box representing the car
   void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
+
+  // Returns the side of the car that will collide with point, or NONE
+  Collision CheckCollision(float radius, Eigen::Vector2f& point);
   
   // Whether odometry has been initialized.
   bool odom_initialized_;

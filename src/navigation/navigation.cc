@@ -58,6 +58,14 @@ VisualizationMsg global_viz_msg_;
 AckermannCurvatureDriveMsg drive_msg_;
 // Epsilon value for handling limited numerical precision.
 const float kEpsilon = 1e-5;
+
+inline float RadiusOfPoint(float radius, float x, float y) {
+  return sqrt(pow(radius - y, 2) + pow(x, 2));
+};
+inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
+  return RadiusOfPoint(radius, point.x(), point.y());
+};
+
 } //namespace
 
 namespace navigation {
@@ -214,16 +222,34 @@ void Navigation::Run() {
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
   for(float theta = MIN_STEER; theta < MAX_STEER; theta+=DSTEER) {
+    float free_path_length = 15; // Chosen based on value for target below
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
       for(uint i = 0; i < point_cloud_.size(); ++i) {
+        if (point_cloud_.at(i).y() >= front_right_corner_.y() && point_cloud_.at(i).y() <= front_left_corner_.y()) {
+          // Point will collide
+          free_path_length = std::min(free_path_length, point_cloud_.at(i).x() - front_left_corner_.x());
+        }
       }
     } else {
       float curvature = tan(theta)/WHEELBASE;
       float radius = 1/curvature;
-      (void) radius; (void) curvature; // Placeholder to compile for now
       for(uint i = 0; i < point_cloud_.size(); ++i) {
+        // Check for collision
+        Collision collision = CheckCollision(radius, point_cloud_.at(i));
+
+        // Skip if this point won't collide
+        if (collision == NONE) {
+          // Eventually calculate clearance here?
+          continue;
+        }
+
+        // Find point on car where it will collide
+        // Convert P and P' to radius frame
+        // Do theta_max = theta_P - theta_P'
+
+        // Fix the angle [0, 2*pi]
       }
     }
   }
@@ -272,5 +298,32 @@ void Navigation::DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg) {
   visualization::DrawLine(back_left_corner_, back_right_corner_, color, msg);
   visualization::DrawLine(front_left_corner_, back_left_corner_, color, msg);
 }
+
+Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
+  // Handle left and right turns by flipping sign on points of interest
+  float car_max_y_value = copysign(front_left_corner_.y(), radius);
+
+  // Get radii for transition points in collision, and pointcloud point
+  float radius_P = RadiusOfPoint(radius, point);
+  float radius_C = RadiusOfPoint(radius, left_wheel_outside_.x(), car_max_y_value);
+  float radius_B = RadiusOfPoint(radius, front_left_corner_.x(), car_max_y_value);
+  float radius_A = RadiusOfPoint(radius, front_left_corner_.x(), -1*car_max_y_value);
+  float radius_D = RadiusOfPoint(radius, left_wheel_outside_.x(), -1*car_max_y_value);
+  float radius_E = RadiusOfPoint(radius, back_right_corner_.x(), -1*car_max_y_value);
+
+  // Check collision criteria
+  if (radius_P >= radius_C && radius_P < radius_B) {
+    return INSIDE;
+  }
+  if (radius_P >= radius_B && radius_P <= radius_A) {
+    return FRONT;
+  }
+  if (radius_P >= radius_D && radius_P <= radius_E && point.x() >= back_right_corner_.x() && point.x() <= right_wheel_outside_.x()) {
+    return OUTSIDE;
+  }
+
+  return NONE;
+}
+
 
 }  // namespace navigation

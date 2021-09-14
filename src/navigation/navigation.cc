@@ -232,9 +232,12 @@ void Navigation::Run() {
           free_path_length = std::min(free_path_length, point_cloud_.at(i).x() - front_left_corner_.x());
         }
       }
+      // Draw the path
+      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
       float curvature = tan(theta)/WHEELBASE;
       float radius = 1/curvature;
+      float max_arc_angle = 2*M_PI;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
@@ -246,11 +249,30 @@ void Navigation::Run() {
         }
 
         // Find point on car where it will collide
-        // Convert P and P' to radius frame
-        // Do theta_max = theta_P - theta_P'
+        Eigen::Vector2f collision_point = GetCollisionPoint(radius, RadiusOfPoint(radius, point_cloud_.at(i)), collision);
+
+        // Get arc-angle to point and collision point
+        // Convert to the frame at the turning point: Py' = Py - r
+        float angle_to_point = atan2(point_cloud_.at(i).y() - radius, point_cloud_.at(i).x());
+        float angle_to_collision = atan2(collision_point.y() - radius, collision_point.x());
+
+        // Do theta_max = angle_to_point - angle_to_collision
+        float arc_angle = angle_to_point - angle_to_collision;
 
         // Fix the angle [0, 2*pi]
+        if (arc_angle < 0) {
+          arc_angle += 2*M_PI;
+        }
+
+        // Track the min
+        if (arc_angle < max_arc_angle) {
+          max_arc_angle = arc_angle;
+          free_path_length = radius * arc_angle;
+        }
       }
+      // Draw the path
+      // visualization::DrawPathOption(curvature, free_path_length, 0.0, local_viz_msg_);
+      visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
   }
   drive_msg_.curvature = 0;
@@ -325,5 +347,24 @@ Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
   return NONE;
 }
 
+Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type) {
+  Eigen::Vector2f output;
+  switch(collision_type) {
+    case FRONT:
+      output.x() = front_left_corner_.x();
+      output.y() = turn_radius - sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+      return output;
+    case INSIDE:
+      output.y() = copysign(front_left_corner_.y(), turn_radius);
+      output.x() = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+      return output;
+    case OUTSIDE:
+      output.y() = copysign(front_left_corner_.y(), -1*turn_radius);
+      output.x() = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+      return output;
+    default:
+      throw std::invalid_argument("Invalid collision type");
+  }
+}
 
 }  // namespace navigation

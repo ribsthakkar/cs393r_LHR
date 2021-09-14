@@ -257,6 +257,30 @@ unsigned int SolveCubic(const T& a, const T& b, const T& c, const T& d, T* r0,
   }
 }
 
+// Referenced from StackOverflow: https://stackoverflow.com/questions/17333/what-is-the-most-effective-way-for-float-and-double-comparison
+// The code shared in StackOverflow is referenced from The Art of Computer Programming by Don Knuth.
+template <typename T>
+bool approximatelyEqual(T a, T b, T epsilon)
+{
+    return fabs(a - b) <= ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+template <typename T>
+bool essentiallyEqual(T a, T b, T epsilon)
+{
+    return fabs(a - b) <= ( (fabs(a) > fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+template <typename T>
+bool definitelyGreaterThan(T a, T b, T epsilon)
+{
+    return (a - b) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+
+template <typename T>
+bool definitelyLessThan(T a, T b, T epsilon)
+{
+    return (b - a) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+
 }  // namespace math_util
 
 #endif  // SRC_MATH_MATH_UTIL_H_

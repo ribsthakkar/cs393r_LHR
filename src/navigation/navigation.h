@@ -43,7 +43,7 @@
 #define SYSTEM_LATENCY 0.35
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
-#define MAX_VELOCITY 1.0
+#define MAX_VELOCITY 2.0
 #define MIN_STEER -30.0
 #define MAX_STEER 30.0
 #define DSTEER 1.0

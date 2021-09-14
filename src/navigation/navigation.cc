@@ -43,7 +43,7 @@ using std::vector;
 using namespace math_util;
 using namespace ros_helpers;
 
-DEFINE_double(safety_margin, 0.05, "Saftey margin around robot, in meters");
+DEFINE_double(safety_margin, 0.1, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.02, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
 
@@ -64,13 +64,13 @@ inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
 };
 
 inline bool IsBetween(float lower, float val, float upper, bool eq_lower=true, bool eq_upper=true) {
-  if (val > lower && val < upper) {
+  if (definitelyLessThan(val, upper, kEpsilon) && definitelyGreaterThan(val, lower, kEpsilon)) {
     return true;
   }
-  if (eq_lower && val == lower) {
+  if (eq_lower && approximatelyEqual(val, lower, kEpsilon)) {
     return true;
   }
-  if (eq_upper && val == upper) {
+  if (eq_upper && approximatelyEqual(val, upper, kEpsilon)) {
     return true;
   }
   return false;
@@ -458,6 +458,7 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
     } else {
       std::cout << "Could not find collision point for front between " << -front_left_corner_.y() << " and " << front_left_corner_.y() << std::endl;
       std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
+      return output;
     }
   }
 
@@ -480,6 +481,7 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
   } else {
       std::cout << "Could not find collision point for front between " << back_left_corner_.x() << " and " << front_left_corner_.x() << std::endl;
       std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
+      return output;
   }
 
   return output;

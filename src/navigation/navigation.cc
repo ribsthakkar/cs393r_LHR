@@ -227,10 +227,16 @@ void Navigation::Run() {
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
   drive_msg_.curvature = 0.0;
-  float free_path_length = 0.0; // Chosen based on value for target below
+  float chosen_free_path_length = 0.0; // Chosen based on value for target below
+  float max_weighted_score = 0.0;
+  // int number_of_angles = (int) ((MAX_STEER - MIN_STEER) / DSTEER);
+  // float min_distance_to_goal[number_of_angles];
+  // float free_path_lengths[number_of_angles];
+  // float curvatures[number_of_angles]; //save some calculations
   for(float theta = MIN_STEER; theta < MAX_STEER; theta+=DSTEER) {
     float new_free_path_length = 1000.0;
     float curvature = tan(theta)/WHEELBASE;
+    float radius = curvature < kEpsilon ? 0 : 1/curvature;
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
@@ -241,9 +247,8 @@ void Navigation::Run() {
         }
       }
       // Draw the path
-      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + free_path_length, 0.0), 0x0000ff, local_viz_msg_);
+      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
-      float radius = 1/curvature;
       float max_arc_angle = M_PI;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
@@ -279,18 +284,21 @@ void Navigation::Run() {
         }
       }
       // Draw the path
-      visualization::DrawPathOption(curvature, free_path_length, 0.0, local_viz_msg_);
+      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
       // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
-    if (new_free_path_length > free_path_length) {
-      free_path_length = new_free_path_length;
+    float min_distance_to_goal = sqrtf32(15*15 + radius*radius) - radius;
+    float weighted_score = -1*min_distance_to_goal + new_free_path_length;
+    if (weighted_score > max_weighted_score) {
+      chosen_free_path_length = new_free_path_length;
+      max_weighted_score  = weighted_score;
       drive_msg_.curvature = curvature;
-      std::cout << "fpl: " << free_path_length << '\n';
+      // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
 
   // STEP 5: Apply 1D TOC 
-  drive_msg_.velocity = compute_toc(free_path_length, projected_velocity.norm());
+  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
 
 
   // STEP 6: Update History
@@ -301,7 +309,8 @@ void Navigation::Run() {
 
   std::cout << "velocity history: " << vel_history_ << '\n';
   std::cout << "steering history: " << steer_history_ << '\n';
-  std::cout << "fpl: " << free_path_length << '\n';
+  std::cout << "fpl: " << chosen_free_path_length << '\n';
+  std::cout << "Max weighted score: " << max_weighted_score << std::endl;
   // std::cout << "odom position x: " << odom_loc_.x() << '\n';
   // std::cout << "odom position y: " << odom_loc_.y() << '\n';
   // std::cout << "odom angle: " << odom_angle_ << '\n';

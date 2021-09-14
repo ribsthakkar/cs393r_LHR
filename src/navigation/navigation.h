@@ -1,4 +1,5 @@
 //========================================================================
+//
 //  This software is free: you can redistribute it and/or modify
 //  it under the terms of the GNU Lesser General Public License Version 3,
 //  as published by the Free Software Foundation.
@@ -39,7 +40,7 @@
 #define LENGTH 0.4
 #define TRACK_WIDTH 0.1
 #define WIDTH 0.15
-#define SYSTEM_LATENCY 0.3
+#define SYSTEM_LATENCY 0.5
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
 #define MAX_VELOCITY 1.0

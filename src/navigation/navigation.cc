@@ -44,6 +44,8 @@ using namespace math_util;
 using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.1, "Saftey margin around robot, in meters");
+DEFINE_double(d2g_weight, 0.1, "Distance to goal weight");
+DEFINE_double(fpl_weight, 1, "Free path length weight");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -167,34 +169,34 @@ void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projecte
 }
 
 float Navigation::compute_toc(float distance_to_target, float init_v) {
-  // float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
-  // float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
-  // float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
-  // float x2 = distance_to_target - x1 - x3;
-  // float t2 = x2/MAX_VELOCITY;
-  // if (t2 < DT) { // Not enough time to accelerate to cruising speed
-  //   float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
-  //   float new_x1 = distance_to_target - new_x3;
-  //   if (new_x1 < 0) { // Not enough distance to brake
-  //     return 0.0; 
-  //   }
-  //   float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
-  //   return target_v;
-  // } else { // Enough time to accelerate to cruising speed
-  //   float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
-  //   return target_v;
-  // }
+  float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
+  float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
+  float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
+  float x2 = distance_to_target - x1 - x3;
+  float t2 = x2/MAX_VELOCITY;
+  if (t2 < DT) { // Not enough time to accelerate to cruising speed
+    float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
+    float new_x1 = distance_to_target - new_x3;
+    if (new_x1 < 0) { // Not enough distance to brake
+      return 0.0; 
+    }
+    float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
+    return target_v;
+  } else { // Enough time to accelerate to cruising speed
+    float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
+    return target_v;
+  }
 
-  float next_velocity = (init_v) + MAX_ACCELERATION*DT;
-  float time_to_reach_target = distance_to_target/next_velocity;
-  float time_to_decelerate = next_velocity/MAX_DECELERATION;
-  if(time_to_reach_target < time_to_decelerate)
-  {
-    return 0.0;
-  }
-  else{
-    return MAX_VELOCITY;
-  }
+  // float next_velocity = (init_v) + MAX_ACCELERATION*DT;
+  // float time_to_reach_target = distance_to_target/next_velocity;
+  // float time_to_decelerate = next_velocity/MAX_DECELERATION;
+  // if(time_to_reach_target < time_to_decelerate)
+  // {
+  //   return 0.0;
+  // }
+  // else{
+  //   return MAX_VELOCITY;
+  // }
 
 }
 
@@ -240,7 +242,7 @@ void Navigation::Run() {
   float chosen_curvature = 0.0;
   float max_weighted_score = 0.0;
   std::map<float, PathOption> path_options;
-  std::cout << "\n\n\n\n";
+  // std::cout << "\n\n\n\n";
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 1000.0;
     float curvature = tan(theta)/WHEELBASE;
@@ -279,7 +281,6 @@ void Navigation::Run() {
           new_free_path_length = fabs(radius * max_arc_angle);
           continue;
         }
-
         // Find point on car where it will collide
         Eigen::Vector2f collision_point = GetCollisionPoint(radius, RadiusOfPoint(radius, point_cloud_.at(i)), collision);
 
@@ -307,27 +308,27 @@ void Navigation::Run() {
         }
       }
       // Draw the path
-      // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
-      std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
-      std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
-      std::cout << "collision point = [" <<  path_options.at(theta).closest_point.x() << ", " << path_options.at(theta).closest_point.y() << "]\n";
-      std::cout << "new_free_path_length = " << new_free_path_length << ". max_arc_angle = " << math_util::RadToDeg(max_arc_angle) << "\n";
+      // std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
+      // std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
+      // std::cout << "collision point = [" <<  path_options.at(theta).closest_point.x() << ", " << path_options.at(theta).closest_point.y() << "]\n";
+      // std::cout << "new_free_path_length = " << new_free_path_length << ". max_arc_angle = " << math_util::RadToDeg(max_arc_angle) << "\n";
       visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
       visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
       // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
     float min_distance_to_goal = sqrtf32(15*15 + radius*radius) - radius;
-    float weighted_score = -1*min_distance_to_goal + new_free_path_length;
+    float weighted_score = -FLAGS_d2g_weight*min_distance_to_goal + FLAGS_fpl_weight*new_free_path_length;
     if (weighted_score > max_weighted_score) {
       chosen_free_path_length = new_free_path_length;
       max_weighted_score  = weighted_score;
-      drive_msg_.curvature = curvature;
+      chosen_curvature = curvature;
       // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
     visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
 
+    drive_msg_.curvature = chosen_curvature;
   // STEP 5: Apply 1D TOC 
   drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
 
@@ -342,6 +343,7 @@ void Navigation::Run() {
   std::cout << "steering history: " << steer_history_ << '\n';
   std::cout << "fpl: " << chosen_free_path_length << '\n';
   std::cout << "Max weighted score: " << max_weighted_score << std::endl;
+  std::cout << "chosen distance to target: " << max_weighted_score - chosen_free_path_length << std::endl;
   // std::cout << "odom position x: " << odom_loc_.x() << '\n';
   // std::cout << "odom position y: " << odom_loc_.y() << '\n';
   // std::cout << "odom angle: " << odom_angle_ << '\n';

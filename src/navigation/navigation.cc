@@ -471,12 +471,12 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
   }
 
   float point_option1 = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+  float point_option2 = -point_option1;
   if (IsBetween(back_left_corner_.x(), point_option1, front_left_corner_.x())) {
     output.x() = point_option1;
   }
-  float point_option2 = -point_option1;
   else if (IsBetween(back_left_corner_.x(), point_option2, front_left_corner_.x())) {
-    output.x() = -1*point_option;
+    output.x() = point_option2;
   } else {
       std::cout << "Could not find collision point for front between " << back_left_corner_.x() << " and " << front_left_corner_.x() << std::endl;
       std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;

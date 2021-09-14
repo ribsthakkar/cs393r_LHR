@@ -117,7 +117,6 @@ class Navigation {
 
   // Returns the side of the car that will collide with point, or NONE
   Collision CheckCollision(float radius, Eigen::Vector2f& point);
-  Collision DebugCheckCollision(float radius, Eigen::Vector2f& point);
 
   // Returns the point (in base_link frame) where the point will collide with the robot
   Eigen::Vector2f GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type);

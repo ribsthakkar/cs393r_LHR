@@ -393,42 +393,6 @@ Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
   return NONE;
 }
 
-Collision Navigation::DebugCheckCollision(float radius, Eigen::Vector2f& point) {
-  // Handle left and right turns by flipping sign on points of interest
-  float car_max_y_value = copysign(front_left_corner_.y(), radius);
-
-  // Get radii for transition points in collision, and pointcloud point
-  float radius_P = RadiusOfPoint(radius, point);
-  float radius_C = RadiusOfPoint(radius, left_wheel_outside_.x(), car_max_y_value);
-  float radius_B = RadiusOfPoint(radius, front_left_corner_.x(), car_max_y_value);
-  float radius_A = RadiusOfPoint(radius, front_left_corner_.x(), -1*car_max_y_value);
-  float radius_D = RadiusOfPoint(radius, left_wheel_outside_.x(), -1*car_max_y_value);
-  float radius_E = RadiusOfPoint(radius, back_right_corner_.x(), -1*car_max_y_value);
-
-  if (radius_P < 2.064) {
-    std::cout << "point = [" <<  point.x() << ", " << point.y() << "]\n";
-    std::cout << "radius_A = " << radius_A << "\n";
-    std::cout << "radius_B = " << radius_B << "\n";
-    std::cout << "condition is = " << (radius_P >= radius_B && radius_P <= radius_A) << "\n";
-    std::cout << "radius_P = " << radius_P << "\n";
-  }
-
-  // Check collision criteria
-  if (radius_P >= radius_C && radius_P < radius_B) {
-    std::cout << "Inside\n\n\n";
-    return INSIDE;
-  }
-  if (radius_P >= radius_B && radius_P <= radius_A) {
-    std::cout << "Front\n\n\n";
-    return FRONT;
-  }
-  if (radius_P >= radius_D && radius_P <= radius_E && point.x() >= back_right_corner_.x() && point.x() <= right_wheel_outside_.x()) {
-    return OUTSIDE;
-  }
-
-  return NONE;
-}
-
 Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type) {
   Eigen::Vector2f output;
 

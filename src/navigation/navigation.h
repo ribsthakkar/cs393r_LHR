@@ -36,13 +36,16 @@
 #define CONTROL_FREQUENCY 20.0
 #define DT 1.0/CONTROL_FREQUENCY
 #define WHEELBASE 0.32385
+#define LENGTH 0.4
+#define TRACK_WIDTH 0.1
+#define WIDTH 0.15
 #define SYSTEM_LATENCY 0.3
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
 #define MAX_VELOCITY 1.0
-#define MIN_STEER -30.0
+#define MIN_STEER -10.0
 #define MAX_STEER 30.0
-#define DSTEER 0.2
+#define DSTEER 500.0
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 
@@ -62,16 +65,17 @@ namespace ros {
 
 namespace navigation {
 
+enum Collision { NONE, FRONT, INSIDE, OUTSIDE };
+
 struct PathOption {
   float curvature;
   float clearance;
   float free_path_length;
+  Collision collision_type;
   Eigen::Vector2f obstruction;
   Eigen::Vector2f closest_point;
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
-
-enum Collision { NONE, FRONT, INSIDE, OUTSIDE };
 
 class Navigation {
  public:
@@ -113,6 +117,7 @@ class Navigation {
 
   // Returns the side of the car that will collide with point, or NONE
   Collision CheckCollision(float radius, Eigen::Vector2f& point);
+  Collision DebugCheckCollision(float radius, Eigen::Vector2f& point);
 
   // Returns the point (in base_link frame) where the point will collide with the robot
   Eigen::Vector2f GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type);

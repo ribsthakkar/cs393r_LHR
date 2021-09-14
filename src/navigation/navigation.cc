@@ -45,11 +45,6 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.1, "Saftey margin around robot, in meters");
 
-constexpr double LENGTH = 0.4;
-constexpr double WHEEL_BASE = 0.3175;
-constexpr double WIDTH = 0.15;
-constexpr double TRACK_WIDTH = 0.1;
-
 namespace {
 ros::Publisher drive_pub_;
 ros::Publisher viz_pub_;
@@ -66,6 +61,20 @@ inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
   return RadiusOfPoint(radius, point.x(), point.y());
 };
 
+inline bool IsBetween(float lower, float val, float upper, bool eq_lower=true, bool eq_upper=true) {
+  if (val > lower && val < upper) {
+    return true;
+  }
+  if (eq_lower && val == lower) {
+    return true;
+  }
+  if (eq_upper && val == upper) {
+    return true;
+  }
+  return false;
+}
+
+std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
 
 namespace navigation {
@@ -82,9 +91,9 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     nav_complete_(true),
     nav_goal_loc_(0, 0),
     nav_goal_angle_(0),
-    front_left_corner_(WHEEL_BASE+0.5*(LENGTH-WHEEL_BASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
+    front_left_corner_(WHEELBASE+0.5*(LENGTH-WHEELBASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
     front_right_corner_(front_left_corner_.x(), -1*front_left_corner_.y()),
-    back_right_corner_(-0.5*(LENGTH-WHEEL_BASE)-FLAGS_safety_margin, front_right_corner_.y()),
+    back_right_corner_(-0.5*(LENGTH-WHEELBASE)-FLAGS_safety_margin, front_right_corner_.y()),
     back_left_corner_(back_right_corner_.x(), front_left_corner_.y()),
     left_wheel_outside_(0.0, front_left_corner_.y()),
     right_wheel_outside_(0.0, front_right_corner_.y()),
@@ -228,28 +237,38 @@ void Navigation::Run() {
   // For every steering angle
   drive_msg_.curvature = 0.0;
   float chosen_free_path_length = 0.0; // Chosen based on value for target below
+  float chosen_curvature = 0.0;
   float max_weighted_score = 0.0;
-  // int number_of_angles = (int) ((MAX_STEER - MIN_STEER) / DSTEER);
-  // float min_distance_to_goal[number_of_angles];
-  // float free_path_lengths[number_of_angles];
-  // float curvatures[number_of_angles]; //save some calculations
-  for(float theta = MIN_STEER; theta < MAX_STEER; theta+=DSTEER) {
+  std::map<float, PathOption> path_options;
+  std::cout << "\n\n\n\n";
+  for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 1000.0;
     float curvature = tan(theta)/WHEELBASE;
-    float radius = curvature < kEpsilon ? 0 : 1/curvature;
+    float radius = fabs(curvature) < kEpsilon ? 0: 1/curvature;
+    path_options[theta] = PathOption();
+    // std::cout << "Theta = " << theta << ". Curavture = " << curvature << ". Radius = " << 1/curvature <<  "\n";
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
+      path_options.at(theta).curvature = 0;
+      path_options.at(theta).collision_type = NONE;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         if (point_cloud_.at(i).y() >= front_right_corner_.y() && point_cloud_.at(i).y() <= front_left_corner_.y()) {
           // Point will collide
-          new_free_path_length = std::min(new_free_path_length, point_cloud_.at(i).x() - front_left_corner_.x());
+          if (new_free_path_length > point_cloud_.at(i).x() - front_left_corner_.x()) {
+            new_free_path_length = point_cloud_.at(i).x() - front_left_corner_.x();
+            path_options.at(theta).collision_type = FRONT;
+            path_options.at(theta).obstruction = point_cloud_.at(i);
+            path_options.at(theta).closest_point = Eigen::Vector2f(front_left_corner_.x(), point_cloud_.at(i).y());
+          }
         }
       }
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
       float max_arc_angle = M_PI;
+      path_options.at(theta).curvature = curvature;
+      path_options.at(theta).collision_type = NONE;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
@@ -257,7 +276,7 @@ void Navigation::Run() {
         // Skip if this point won't collide
         if (collision == NONE) {
           // Eventually calculate clearance here?
-          new_free_path_length = radius * max_arc_angle;
+          new_free_path_length = fabs(radius * max_arc_angle);
           continue;
         }
 
@@ -270,21 +289,32 @@ void Navigation::Run() {
         float angle_to_collision = atan2(collision_point.y() - radius, collision_point.x());
 
         // Do theta_max = angle_to_point - angle_to_collision
-        float arc_angle = angle_to_point - angle_to_collision;
+        float arc_angle = copysign(angle_to_point - angle_to_collision, radius);
 
         // Fix the angle [0, 2*pi]
         if (arc_angle < 0) {
           arc_angle += 2*M_PI;
         }
 
-        // Track the min
+        // Check if this particle causes the shortest travel distance
         if (arc_angle < max_arc_angle) {
           max_arc_angle = arc_angle;
-          new_free_path_length = radius * arc_angle;
+          new_free_path_length = fabs(radius * arc_angle);
+          path_options.at(theta).collision_type = collision;
+          path_options.at(theta).free_path_length = new_free_path_length;
+          path_options.at(theta).obstruction = point_cloud_.at(i);
+          path_options.at(theta).closest_point = collision_point;
         }
       }
       // Draw the path
       // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
+      std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
+      std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
+      std::cout << "collision point = [" <<  path_options.at(theta).closest_point.x() << ", " << path_options.at(theta).closest_point.y() << "]\n";
+      std::cout << "new_free_path_length = " << new_free_path_length << ". max_arc_angle = " << math_util::RadToDeg(max_arc_angle) << "\n";
+      visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
+      visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);
+      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
       // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
     float min_distance_to_goal = sqrtf32(15*15 + radius*radius) - radius;
@@ -306,7 +336,7 @@ void Navigation::Run() {
   vel_history_.pop_front();
   steer_history_.pop_front();
   vel_history_.push_back(drive_msg_.velocity);
-  steer_history_.push_back(atan(drive_msg_.curvature*WHEEL_BASE));
+  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
 
   std::cout << "velocity history: " << vel_history_ << '\n';
   std::cout << "steering history: " << steer_history_ << '\n';
@@ -366,24 +396,83 @@ Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
   return NONE;
 }
 
+Collision Navigation::DebugCheckCollision(float radius, Eigen::Vector2f& point) {
+  // Handle left and right turns by flipping sign on points of interest
+  float car_max_y_value = copysign(front_left_corner_.y(), radius);
+
+  // Get radii for transition points in collision, and pointcloud point
+  float radius_P = RadiusOfPoint(radius, point);
+  float radius_C = RadiusOfPoint(radius, left_wheel_outside_.x(), car_max_y_value);
+  float radius_B = RadiusOfPoint(radius, front_left_corner_.x(), car_max_y_value);
+  float radius_A = RadiusOfPoint(radius, front_left_corner_.x(), -1*car_max_y_value);
+  float radius_D = RadiusOfPoint(radius, left_wheel_outside_.x(), -1*car_max_y_value);
+  float radius_E = RadiusOfPoint(radius, back_right_corner_.x(), -1*car_max_y_value);
+
+  if (radius_P < 2.064) {
+    std::cout << "point = [" <<  point.x() << ", " << point.y() << "]\n";
+    std::cout << "radius_A = " << radius_A << "\n";
+    std::cout << "radius_B = " << radius_B << "\n";
+    std::cout << "condition is = " << (radius_P >= radius_B && radius_P <= radius_A) << "\n";
+    std::cout << "radius_P = " << radius_P << "\n";
+  }
+
+  // Check collision criteria
+  if (radius_P >= radius_C && radius_P < radius_B) {
+    std::cout << "Inside\n\n\n";
+    return INSIDE;
+  }
+  if (radius_P >= radius_B && radius_P <= radius_A) {
+    std::cout << "Front\n\n\n";
+    return FRONT;
+  }
+  if (radius_P >= radius_D && radius_P <= radius_E && point.x() >= back_right_corner_.x() && point.x() <= right_wheel_outside_.x()) {
+    return OUTSIDE;
+  }
+
+  return NONE;
+}
+
 Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type) {
   Eigen::Vector2f output;
-  switch(collision_type) {
-    case FRONT:
-      output.x() = front_left_corner_.x();
-      output.y() = turn_radius - sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+
+  if (collision_type == FRONT) {
+    output.x() = front_left_corner_.x();
+    
+    // We must check both +- on the square root
+    float point_option = turn_radius - sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+    if (IsBetween(-front_left_corner_.y(), point_option, front_left_corner_.y())) {
+      output.y() = point_option;
       return output;
-    case INSIDE:
-      output.y() = copysign(front_left_corner_.y(), turn_radius);
-      output.x() = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+    }
+    point_option = turn_radius + sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+    if (IsBetween(-front_left_corner_.y(), point_option, front_left_corner_.y())) {
+      output.y() = point_option;
       return output;
-    case OUTSIDE:
-      output.y() = copysign(front_left_corner_.y(), -1*turn_radius);
-      output.x() = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
-      return output;
-    default:
-      throw std::invalid_argument("Invalid collision type");
+    } else {
+      throw std::runtime_error("Could not find collision point");
+    }
   }
+
+  if (collision_type == INSIDE) {
+    output.y() = copysign(front_left_corner_.y(), turn_radius);
+  }
+  else if (collision_type == OUTSIDE) {
+    output.y() = copysign(front_left_corner_.y(), -1*turn_radius);
+  } else {
+    throw std::invalid_argument("Invalid collision type");
+  }
+
+  float point_option = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+  if (IsBetween(back_left_corner_.x(), point_option, front_left_corner_.x())) {
+    output.x() = point_option;
+  }
+  else if (IsBetween(back_left_corner_.x(), -1*point_option, front_left_corner_.x())) {
+    output.x() = -1*point_option;
+  } else {
+    throw std::runtime_error("Could not find collision point");
+  }
+
+  return output;
 }
 
 }  // namespace navigation

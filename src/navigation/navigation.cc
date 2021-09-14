@@ -290,12 +290,17 @@ void Navigation::Run() {
         float angle_to_collision = atan2(collision_point.y() - radius, collision_point.x());
 
         // Do theta_max = angle_to_point - angle_to_collision
-        float arc_angle = copysign(angle_to_point - angle_to_collision, radius);
+        float arc_angle;
+        if (radius > 0) {
+          arc_angle = angle_to_point - angle_to_collision;
+        } else {
+          arc_angle = angle_to_collision - angle_to_point;
+        }
 
         // Fix the angle [0, 2*pi]
         if (arc_angle < 0) {
           arc_angle += 2*M_PI;
-        }
+        }        
 
         // Check if this particle causes the shortest travel distance
         if (arc_angle < max_arc_angle) {

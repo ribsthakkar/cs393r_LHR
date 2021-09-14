@@ -189,6 +189,14 @@ float Navigation::compute_toc(float distance_to_target, float init_v) {
 
 }
 
+void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle) {
+  Rotation2Df rotation(dangle);
+  for(uint i = 0; i < point_cloud_.size(); ++i) {
+    point_cloud_[i] = (rotation*point_cloud_[i])+dloc;
+    visualization::DrawPoint(point_cloud_[i], 0xFF0000, local_viz_msg_);
+  }
+}
+
 void Navigation::Run() {
   // This function gets called 20 times a second to form the control loop.
   
@@ -210,34 +218,33 @@ void Navigation::Run() {
   float projected_dist_traversed = odom_dist_traversed_;
   estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
 
-  // STEP 2: Latency compensation-point_cloudd
+  // STEP 2: Latency compensation-point_cloud/vehicle landmarks
   // The latest observed point cloud is accessible via "point_cloud_"
   float dangle = odom_angle_ - projected_angle;
   Vector2f dloc = odom_loc_ - projected_loc;
-  Rotation2Df rotation(dangle);
-  for(uint i = 0; i < point_cloud_.size(); ++i) {
-    point_cloud_[i] = (rotation*point_cloud_[i])+dloc;
-  }
+  apply_latency_compensated_odometry(dloc, dangle);
 
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
+  drive_msg_.curvature = 0.0;
+  float free_path_length = 0.0; // Chosen based on value for target below
   for(float theta = MIN_STEER; theta < MAX_STEER; theta+=DSTEER) {
-    float free_path_length = 15; // Chosen based on value for target below
+    float new_free_path_length = 1000.0;
+    float curvature = tan(theta)/WHEELBASE;
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         if (point_cloud_.at(i).y() >= front_right_corner_.y() && point_cloud_.at(i).y() <= front_left_corner_.y()) {
           // Point will collide
-          free_path_length = std::min(free_path_length, point_cloud_.at(i).x() - front_left_corner_.x());
+          new_free_path_length = std::min(new_free_path_length, point_cloud_.at(i).x() - front_left_corner_.x());
         }
       }
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
-      float curvature = tan(theta)/WHEELBASE;
       float radius = 1/curvature;
-      float max_arc_angle = 2*M_PI;
+      float max_arc_angle = M_PI;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
@@ -245,6 +252,7 @@ void Navigation::Run() {
         // Skip if this point won't collide
         if (collision == NONE) {
           // Eventually calculate clearance here?
+          new_free_path_length = radius * max_arc_angle;
           continue;
         }
 
@@ -267,38 +275,39 @@ void Navigation::Run() {
         // Track the min
         if (arc_angle < max_arc_angle) {
           max_arc_angle = arc_angle;
-          free_path_length = radius * arc_angle;
+          new_free_path_length = radius * arc_angle;
         }
       }
       // Draw the path
-      // visualization::DrawPathOption(curvature, free_path_length, 0.0, local_viz_msg_);
-      visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
+      visualization::DrawPathOption(curvature, free_path_length, 0.0, local_viz_msg_);
+      // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
-  }
-  drive_msg_.curvature = 0;
+    if (new_free_path_length > free_path_length) {
+      free_path_length = new_free_path_length;
+      drive_msg_.curvature = curvature;
+      std::cout << "fpl: " << free_path_length << '\n';
+      }
+    }
 
-  // STEP 5: Apply 1D TOC
-  float distance_to_target = 15-projected_dist_traversed; 
-  drive_msg_.velocity = compute_toc(distance_to_target, projected_velocity.norm());
+  // STEP 5: Apply 1D TOC 
+  drive_msg_.velocity = compute_toc(free_path_length, projected_velocity.norm());
 
 
   // STEP 6: Update History
   vel_history_.pop_front();
   steer_history_.pop_front();
   vel_history_.push_back(drive_msg_.velocity);
-  steer_history_.push_back(drive_msg_.curvature);
+  steer_history_.push_back(atan(drive_msg_.curvature*WHEEL_BASE));
 
   std::cout << "velocity history: " << vel_history_ << '\n';
   std::cout << "steering history: " << steer_history_ << '\n';
-  std::cout << "odom position x: " << odom_loc_.x() << '\n';
-  std::cout << "odom position y: " << odom_loc_.y() << '\n';
-  std::cout << "odom angle: " << odom_angle_ << '\n';
-  std::cout << "projected position x: " << projected_loc.x() << '\n';
-  std::cout << "projected position y: " << projected_loc.y() << '\n';
-  std::cout << "projected angle: " << projected_angle << '\n';
-  std::cout << "nav goal x: " << nav_goal_loc_.x() << '\n';
-  std::cout << "nav goal y: " << nav_goal_loc_.y() << '\n';
-  std::cout << "dist to target: " << distance_to_target << '\n';
+  std::cout << "fpl: " << free_path_length << '\n';
+  // std::cout << "odom position x: " << odom_loc_.x() << '\n';
+  // std::cout << "odom position y: " << odom_loc_.y() << '\n';
+  // std::cout << "odom angle: " << odom_angle_ << '\n';
+  // std::cout << "projected position x: " << projected_loc.x() << '\n';
+  // std::cout << "projected position y: " << projected_loc.y() << '\n';
+  // std::cout << "projected angle: " << projected_angle << '\n';
 
   visualization::DrawLine(Vector2f(0, 0), projected_loc-odom_loc_, 0xff0000, local_viz_msg_);
 

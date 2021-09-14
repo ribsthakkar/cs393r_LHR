@@ -36,13 +36,13 @@
 #define CONTROL_FREQUENCY 20.0
 #define DT 1.0/CONTROL_FREQUENCY
 #define WHEELBASE 0.32385
-#define SYSTEM_LATENCY 0.25
+#define SYSTEM_LATENCY 0.3
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
 #define MAX_VELOCITY 1.0
 #define MIN_STEER -30.0
 #define MAX_STEER 30.0
-#define DSTEER 1.0
+#define DSTEER 0.2
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 
@@ -102,6 +102,9 @@ class Navigation {
   // Estimate odometry values after latency compensation
   void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle, Eigen::Vector2f* projected_vel, float* projected_dist_traversed);
   
+  // Apply latency compensated odometry transformations
+  void apply_latency_compensated_odometry(Eigen::Vector2f dloc, float dangle);
+
   // Compute target velocity for time-optimal controller
   float compute_toc(float distance_to_target, float init_v);
 

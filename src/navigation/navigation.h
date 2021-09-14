@@ -37,16 +37,16 @@
 #define CONTROL_FREQUENCY 20.0
 #define DT 1.0/CONTROL_FREQUENCY
 #define WHEELBASE 0.32385
-#define LENGTH 0.4
-#define TRACK_WIDTH 0.1
-#define WIDTH 0.15
-#define SYSTEM_LATENCY 0.5
+#define LENGTH 0.508
+#define TRACK_WIDTH 0.2225
+#define WIDTH 0.2667
+#define SYSTEM_LATENCY 0.35
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
 #define MAX_VELOCITY 1.0
 #define MIN_STEER -30.0
 #define MAX_STEER 30.0
-#define DSTEER 5.0
+#define DSTEER 1.0
 
 template<typename T>
 std::ostream& operator<<(std::ostream& s, const std::deque<T>& v) 

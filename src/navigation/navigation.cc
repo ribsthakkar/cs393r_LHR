@@ -43,8 +43,8 @@ using std::vector;
 using namespace math_util;
 using namespace ros_helpers;
 
-DEFINE_double(safety_margin, 0.1, "Saftey margin around robot, in meters");
-DEFINE_double(d2g_weight, 0.1, "Distance to goal weight");
+DEFINE_double(safety_margin, 0.05, "Saftey margin around robot, in meters");
+DEFINE_double(d2g_weight, 0.02, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
 
 namespace {
@@ -446,17 +446,18 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
     output.x() = front_left_corner_.x();
     
     // We must check both +- on the square root
-    float point_option = turn_radius - sqrt(pow(point_radius, 2) - pow(output.x(), 2));
-    if (IsBetween(-front_left_corner_.y(), point_option, front_left_corner_.y())) {
-      output.y() = point_option;
+    float point_option1 = turn_radius - sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+    if (IsBetween(-front_left_corner_.y(), point_option1, front_left_corner_.y())) {
+      output.y() = point_option1;
       return output;
     }
-    point_option = turn_radius + sqrt(pow(point_radius, 2) - pow(output.x(), 2));
-    if (IsBetween(-front_left_corner_.y(), point_option, front_left_corner_.y())) {
-      output.y() = point_option;
+    float point_option2 = turn_radius + sqrt(pow(point_radius, 2) - pow(output.x(), 2));
+    if (IsBetween(-front_left_corner_.y(), point_option2, front_left_corner_.y())) {
+      output.y() = point_option2;
       return output;
     } else {
-      throw std::runtime_error("Could not find collision point");
+      std::cout << "Could not find collision point for front between " << -front_left_corner_.y() << " and " << front_left_corner_.y() << std::endl;
+      std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
     }
   }
 
@@ -469,14 +470,16 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
     throw std::invalid_argument("Invalid collision type");
   }
 
-  float point_option = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
-  if (IsBetween(back_left_corner_.x(), point_option, front_left_corner_.x())) {
-    output.x() = point_option;
+  float point_option1 = sqrt(pow(point_radius, 2) - pow(turn_radius - output.y(), 2));
+  if (IsBetween(back_left_corner_.x(), point_option1, front_left_corner_.x())) {
+    output.x() = point_option1;
   }
-  else if (IsBetween(back_left_corner_.x(), -1*point_option, front_left_corner_.x())) {
+  float point_option2 = -point_option1;
+  else if (IsBetween(back_left_corner_.x(), point_option2, front_left_corner_.x())) {
     output.x() = -1*point_option;
   } else {
-    throw std::runtime_error("Could not find collision point");
+      std::cout << "Could not find collision point for front between " << back_left_corner_.x() << " and " << front_left_corner_.x() << std::endl;
+      std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
   }
 
   return output;

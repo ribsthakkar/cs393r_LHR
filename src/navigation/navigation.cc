@@ -45,11 +45,6 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.1, "Saftey margin around robot, in meters");
 
-constexpr double LENGTH = 0.4;
-constexpr double WHEEL_BASE = 0.3175;
-constexpr double WIDTH = 0.15;
-constexpr double TRACK_WIDTH = 0.1;
-
 namespace {
 ros::Publisher drive_pub_;
 ros::Publisher viz_pub_;
@@ -82,9 +77,9 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     nav_complete_(true),
     nav_goal_loc_(0, 0),
     nav_goal_angle_(0),
-    front_left_corner_(WHEEL_BASE+0.5*(LENGTH-WHEEL_BASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
+    front_left_corner_(WHEELBASE+0.5*(LENGTH-WHEELBASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
     front_right_corner_(front_left_corner_.x(), -1*front_left_corner_.y()),
-    back_right_corner_(-0.5*(LENGTH-WHEEL_BASE)-FLAGS_safety_margin, front_right_corner_.y()),
+    back_right_corner_(-0.5*(LENGTH-WHEELBASE)-FLAGS_safety_margin, front_right_corner_.y()),
     back_left_corner_(back_right_corner_.x(), front_left_corner_.y()),
     left_wheel_outside_(0.0, front_left_corner_.y()),
     right_wheel_outside_(0.0, front_right_corner_.y()),
@@ -297,7 +292,7 @@ void Navigation::Run() {
   vel_history_.pop_front();
   steer_history_.pop_front();
   vel_history_.push_back(drive_msg_.velocity);
-  steer_history_.push_back(atan(drive_msg_.curvature*WHEEL_BASE));
+  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
 
   std::cout << "velocity history: " << vel_history_ << '\n';
   std::cout << "steering history: " << steer_history_ << '\n';

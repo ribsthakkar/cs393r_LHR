@@ -284,7 +284,7 @@ void Navigation::Run() {
         }
       }
       // Draw the path
-      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
+      // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
       // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
     float min_distance_to_goal = sqrtf32(15*15 + radius*radius) - radius;
@@ -296,6 +296,7 @@ void Navigation::Run() {
       // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
+    visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
 
   // STEP 5: Apply 1D TOC 
   drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());

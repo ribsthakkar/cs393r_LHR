@@ -257,7 +257,7 @@ unsigned int SolveCubic(const T& a, const T& b, const T& c, const T& d, T* r0,
   }
 }
 
-// Referenced from StackOverflow: https://stackoverflow.com/questions/17333/what-is-the-most-effective-way-for-float-and-double-comparison
+// Comparison checks referenced from StackOverflow: https://stackoverflow.com/questions/17333/what-is-the-most-effective-way-for-float-and-double-comparison
 // The code shared in StackOverflow is referenced from The Art of Computer Programming by Don Knuth.
 template <typename T>
 bool approximatelyEqual(T a, T b, T epsilon)
@@ -279,6 +279,20 @@ template <typename T>
 bool definitelyLessThan(T a, T b, T epsilon)
 {
     return (b - a) > ( (fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+
+template <typename T>
+inline bool IsBetween(T lower, T val, T upper, bool eq_lower=true, bool eq_upper=true, float epsilon=1e-5) {
+  if (definitelyLessThan(val, upper, epsilon) && definitelyGreaterThan(val, lower, epsilon)) {
+    return true;
+  }
+  if (eq_lower && approximatelyEqual(val, lower, epsilon)) {
+    return true;
+  }
+  if (eq_upper && approximatelyEqual(val, upper, epsilon)) {
+    return true;
+  }
+  return false;
 }
 
 }  // namespace math_util

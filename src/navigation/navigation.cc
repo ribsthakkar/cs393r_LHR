@@ -43,8 +43,8 @@ using std::vector;
 using namespace math_util;
 using namespace ros_helpers;
 
-DEFINE_double(safety_margin, 0.1, "Safety margin around robot, in meters");
-DEFINE_double(d2g_weight, 0.02, "Distance to goal weight");
+DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
+DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
 
 namespace {
@@ -62,19 +62,6 @@ inline float RadiusOfPoint(float radius, float x, float y) {
 inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
   return RadiusOfPoint(radius, point.x(), point.y());
 };
-
-inline bool IsBetween(float lower, float val, float upper, bool eq_lower=true, bool eq_upper=true) {
-  if (definitelyLessThan(val, upper, kEpsilon) && definitelyGreaterThan(val, lower, kEpsilon)) {
-    return true;
-  }
-  if (eq_lower && approximatelyEqual(val, lower, kEpsilon)) {
-    return true;
-  }
-  if (eq_upper && approximatelyEqual(val, upper, kEpsilon)) {
-    return true;
-  }
-  return false;
-}
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
@@ -208,6 +195,17 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
   }
 }
 
+float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false)
+{
+  if (!straight) {
+    float y_distance = goal.y() - arc_radius; 
+    float min_distance_to_goal = fabs(sqrtf32(goal.x()*goal.x() + y_distance*y_distance) - fabs(arc_radius));
+    return min_distance_to_goal;
+  } else {
+    return goal.x() < 0 ? goal.norm() : goal.y();
+  }
+}
+
 void Navigation::Run() {
   // This function gets called 20 times a second to form the control loop.
   
@@ -242,10 +240,11 @@ void Navigation::Run() {
   float chosen_curvature = 0.0;
   float max_weighted_score = 0.0;
   float chosen_distance_to_goal = 0.0; // for debugging
+  Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
   std::map<float, PathOption> path_options;
   // std::cout << "\n\n\n\n";
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
-    float new_free_path_length = 1000.0;
+    float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
     float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
     path_options[theta] = PathOption();
@@ -266,6 +265,7 @@ void Navigation::Run() {
           }
         }
       }
+      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
@@ -313,6 +313,7 @@ void Navigation::Run() {
           path_options.at(theta).closest_point = collision_point;
         }
       }
+      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal); 
       // Draw the path
       // std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
       // std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
@@ -321,29 +322,27 @@ void Navigation::Run() {
       visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
       visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
-      // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
     //something that is unfair is the fpl of the straight line is only ~1/3 of the fpl of an arc?
-    float min_distance_to_goal = compute_arc_distance_to_goal(radius, Eigen::Vector2f(5,0)); 
-    float weighted_score = -FLAGS_d2g_weight*min_distance_to_goal + FLAGS_fpl_weight*new_free_path_length;
+    path_options.at(theta).score = -FLAGS_d2g_weight*path_options.at(theta).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(theta).free_path_length;
     if(fabs(theta) < kEpsilon)
     {
-      std::cout << min_distance_to_goal << std::endl;
-      std::cout << weighted_score << std::endl;
+      std::cout << path_options.at(theta).min_distance_to_goal << std::endl;
+      std::cout << path_options.at(theta).score << std::endl;
 
     }
-    if (weighted_score > max_weighted_score) {
-      chosen_free_path_length = new_free_path_length;
-      max_weighted_score  = weighted_score;
-      chosen_curvature = curvature;
-      chosen_distance_to_goal = min_distance_to_goal;
+    if (path_options.at(theta).score > max_weighted_score) {
+      chosen_free_path_length = path_options.at(theta).free_path_length;
+      max_weighted_score  = path_options.at(theta).score;
+      chosen_curvature = path_options.at(theta).curvature;
+      chosen_distance_to_goal = path_options.at(theta).min_distance_to_goal;
       // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
-    visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
 
-    drive_msg_.curvature = chosen_curvature;
-  // STEP 5: Apply 1D TOC 
+  visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
+  drive_msg_.curvature = chosen_curvature;
+  // STEP 5: Apply 1D TOC to determine velocity 
   drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
 
 
@@ -364,8 +363,6 @@ void Navigation::Run() {
   // std::cout << "projected position x: " << projected_loc.x() << '\n';
   // std::cout << "projected position y: " << projected_loc.y() << '\n';
   // std::cout << "projected angle: " << projected_angle << '\n';
-
-  visualization::DrawLine(Vector2f(0, 0), projected_loc-odom_loc_, 0xff0000, local_viz_msg_);
 
   DrawCar(0xff0000, local_viz_msg_);
 

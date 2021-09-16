@@ -113,6 +113,14 @@ class Navigation {
   // Compute target velocity for time-optimal controller
   float compute_toc(float distance_to_target, float init_v);
 
+  // Computes the minimum distance between the given arc and the goal point, always positive
+  float compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal)
+  {
+    float y_distance = goal.y() - arc_radius; 
+    float min_distance_to_goal = std::fmax(0.0, sqrtf32(goal.x()*goal.x() + y_distance*y_distance) - fabs(arc_radius)); //subtract by the absolute value of the radius NOTE:
+    return min_distance_to_goal;
+  }
+
   // Draws a box representing the car
   void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
 

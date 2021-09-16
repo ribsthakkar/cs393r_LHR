@@ -241,12 +241,13 @@ void Navigation::Run() {
   float chosen_free_path_length = 0.0; // Chosen based on value for target below
   float chosen_curvature = 0.0;
   float max_weighted_score = 0.0;
+  float chosen_distance_to_goal = 0.0; // for debugging
   std::map<float, PathOption> path_options;
   // std::cout << "\n\n\n\n";
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 1000.0;
     float curvature = tan(theta)/WHEELBASE;
-    float radius = fabs(curvature) < kEpsilon ? 0: 1/curvature;
+    float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
     path_options[theta] = PathOption();
     // std::cout << "Theta = " << theta << ". Curavture = " << curvature << ". Radius = " << 1/curvature <<  "\n";
     // For every particle
@@ -322,12 +323,20 @@ void Navigation::Run() {
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
       // visualization::DrawArc(Eigen::Vector2f(0.0, radius), radius, -M_PI_2, max_arc_angle - M_PI_2, 0x0000ff, local_viz_msg_);
     }
-    float min_distance_to_goal = sqrtf32(15*15 + radius*radius) - radius;
+    //something that is unfair is the fpl of the straight line is only ~1/3 of the fpl of an arc?
+    float min_distance_to_goal = compute_arc_distance_to_goal(radius, Eigen::Vector2f(5,0)); 
     float weighted_score = -FLAGS_d2g_weight*min_distance_to_goal + FLAGS_fpl_weight*new_free_path_length;
+    if(fabs(theta) < kEpsilon)
+    {
+      std::cout << min_distance_to_goal << std::endl;
+      std::cout << weighted_score << std::endl;
+
+    }
     if (weighted_score > max_weighted_score) {
       chosen_free_path_length = new_free_path_length;
       max_weighted_score  = weighted_score;
       chosen_curvature = curvature;
+      chosen_distance_to_goal = min_distance_to_goal;
       // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
@@ -348,7 +357,7 @@ void Navigation::Run() {
   std::cout << "steering history: " << steer_history_ << '\n';
   std::cout << "fpl: " << chosen_free_path_length << '\n';
   std::cout << "Max weighted score: " << max_weighted_score << std::endl;
-  std::cout << "chosen distance to target: " << max_weighted_score - chosen_free_path_length << std::endl;
+  std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   // std::cout << "odom position x: " << odom_loc_.x() << '\n';
   // std::cout << "odom position y: " << odom_loc_.y() << '\n';
   // std::cout << "odom angle: " << odom_angle_ << '\n';

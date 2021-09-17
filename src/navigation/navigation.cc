@@ -186,12 +186,13 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
   }
 }
 
-float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false)
+float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false, float max_angle=M_PI)
 {
   if (!straight) {
-    float y_distance = goal.y() - arc_radius; 
-    float min_distance_to_goal = fabs(sqrtf32(goal.x()*goal.x() + y_distance*y_distance) - fabs(arc_radius));
-    return min_distance_to_goal;
+    float angle_to_goal = min(atan2(goal.y() - arc_radius, goal.x()), max_angle);
+    float delta_x = arc_radius*cos(angle_to_goal) - goal.x();
+    float delta_y = arc_radius + arc_radius*sin(angle_to_goal) - goal.y();
+    return sqrt(delta_x*delta_x + delta_y*delta_y);
   } else {
     return goal.x() < 0 ? goal.norm() : goal.y();
   }
@@ -299,9 +300,10 @@ void Navigation::Run() {
           path_options.at(theta).free_path_length = new_free_path_length;
           path_options.at(theta).obstruction = point_cloud_.at(i);
           path_options.at(theta).closest_point = collision_point;
+          path_options.at(theta).max_arc_angle = max_arc_angle;
         }
       }
-      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal); 
+      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, false, path_options.at(theta).max_arc_angle);
       // Draw the path
       visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
       visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);

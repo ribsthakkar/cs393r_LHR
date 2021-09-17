@@ -46,6 +46,8 @@ using namespace ros_helpers;
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
+DEFINE_double(clearance_weight, .1, "Free path length weight");
+
 
 namespace {
 ros::Publisher drive_pub_;
@@ -241,37 +243,38 @@ void Navigation::Run() {
   float max_weighted_score = 0.0;
   float chosen_distance_to_goal = 0.0; // for debugging
   Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
-  std::map<float, PathOption> path_options;
+  std::map<int, PathOption> path_options;
   // std::cout << "\n\n\n\n";
+  int loop_counter = 0;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
     float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
-    path_options[theta] = PathOption();
+    path_options[loop_counter] = PathOption();
     // std::cout << "Theta = " << theta << ". Curavture = " << curvature << ". Radius = " << 1/curvature <<  "\n";
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
-      path_options.at(theta).curvature = 0;
-      path_options.at(theta).collision_type = NONE;
+      path_options.at(loop_counter).curvature = 0;
+      path_options.at(loop_counter).collision_type = NONE;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         if (point_cloud_.at(i).y() >= front_right_corner_.y() && point_cloud_.at(i).y() <= front_left_corner_.y()) {
           // Point will collide
           if (new_free_path_length > point_cloud_.at(i).x() - front_left_corner_.x()) {
             new_free_path_length = point_cloud_.at(i).x() - front_left_corner_.x();
-            path_options.at(theta).collision_type = FRONT;
-            path_options.at(theta).obstruction = point_cloud_.at(i);
-            path_options.at(theta).closest_point = Eigen::Vector2f(front_left_corner_.x(), point_cloud_.at(i).y());
+            path_options.at(loop_counter).collision_type = FRONT;
+            path_options.at(loop_counter).obstruction = point_cloud_.at(i);
+            path_options.at(loop_counter).closest_point = Eigen::Vector2f(front_left_corner_.x(), point_cloud_.at(i).y());
           }
         }
       }
-      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
       float max_arc_angle = M_PI;
-      path_options.at(theta).curvature = curvature;
-      path_options.at(theta).collision_type = NONE;
+      path_options.at(loop_counter).curvature = curvature;
+      path_options.at(loop_counter).collision_type = NONE;
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
@@ -307,38 +310,72 @@ void Navigation::Run() {
         if (arc_angle < max_arc_angle) {
           max_arc_angle = arc_angle;
           new_free_path_length = fabs(radius * arc_angle);
-          path_options.at(theta).collision_type = collision;
-          path_options.at(theta).free_path_length = new_free_path_length;
-          path_options.at(theta).obstruction = point_cloud_.at(i);
-          path_options.at(theta).closest_point = collision_point;
+          path_options.at(loop_counter).collision_type = collision;
+          path_options.at(loop_counter).free_path_length = new_free_path_length;
+          path_options.at(loop_counter).obstruction = point_cloud_.at(i);
+          path_options.at(loop_counter).closest_point = collision_point;
         }
       }
-      path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal); 
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal); 
       // Draw the path
       // std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
       // std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
       // std::cout << "collision point = [" <<  path_options.at(theta).closest_point.x() << ", " << path_options.at(theta).closest_point.y() << "]\n";
       // std::cout << "new_free_path_length = " << new_free_path_length << ". max_arc_angle = " << math_util::RadToDeg(max_arc_angle) << "\n";
-      visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
-      visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
+    // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
+    // std::cout << theta<< std::endl;
+
+    // std::cout << theta-math_util::DegToRad(DSTEER) << std::endl;
+    // std::cout << loop_counter << std::endl;
+
+    if(loop_counter > 0)
+    {
+      float previous_path_clearance = path_options.at(loop_counter).free_path_length + path_options.at(loop_counter - 1).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(0,1), 1's clearance = avg(0,1,2), and 2's clearance = avg(1,2)
+      float included_paths = 2;
+      // are at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
+      if(loop_counter > 1)
+      {
+        previous_path_clearance += path_options.at(loop_counter - 2).free_path_length;
+        included_paths += 1;
+      }
+      path_options.at(loop_counter - 1).clearance = previous_path_clearance/included_paths; //set the clearance of the previous path as the average itself and its neighboring paths
+      path_options.at(loop_counter - 1).score += FLAGS_clearance_weight*path_options.at(loop_counter - 1).clearance; //also adjust their score
+    }
     //something that is unfair is the fpl of the straight line is only ~1/3 of the fpl of an arc?
-    path_options.at(theta).score = -FLAGS_d2g_weight*path_options.at(theta).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(theta).free_path_length;
+    path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;
     if(fabs(theta) < kEpsilon)
     {
-      std::cout << path_options.at(theta).min_distance_to_goal << std::endl;
-      std::cout << path_options.at(theta).score << std::endl;
+      std::cout << path_options.at(loop_counter).min_distance_to_goal << std::endl;
+      std::cout << path_options.at(loop_counter).score << std::endl;
 
     }
-    if (path_options.at(theta).score > max_weighted_score) {
-      chosen_free_path_length = path_options.at(theta).free_path_length;
-      max_weighted_score  = path_options.at(theta).score;
-      chosen_curvature = path_options.at(theta).curvature;
-      chosen_distance_to_goal = path_options.at(theta).min_distance_to_goal;
+    float current_score = path_options.at(loop_counter).score;
+    int max_index = loop_counter;
+    if(loop_counter > 0)
+    {
+      if(current_score < path_options.at(loop_counter-1).score)
+      {
+        //compare with the previous score as well
+        current_score = path_options.at(loop_counter-1).score;
+        max_index = loop_counter -1;
+      }
+
+    }
+    if (current_score > max_weighted_score) {
+
+      chosen_free_path_length = path_options.at(max_index).free_path_length;
+      max_weighted_score  = path_options.at(max_index).score;
+      chosen_curvature = path_options.at(max_index).curvature;
+      chosen_distance_to_goal = path_options.at(max_index).min_distance_to_goal;
       // std::cout << "weighted_score : " << weighted_score << '\n';
       }
+     ++loop_counter;
     }
+
 
   visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
   drive_msg_.curvature = chosen_curvature;

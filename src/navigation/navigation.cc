@@ -46,6 +46,7 @@ using namespace ros_helpers;
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
+DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -145,8 +146,10 @@ void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projecte
                                                         Eigen::Vector2f* projected_vel,
                                                         float* projected_dist_traversed) {
   for(uint i = 1; i<vel_history_.size(); ++i) {
-      if (((vel_history_[i]-vel_history_[i-1])/DT) > MAX_ACCELERATION || ((vel_history_[i]-vel_history_[i-1])/DT) < -MAX_DECELERATION) {
+      if (((vel_history_[i]-vel_history_[i-1])/DT) > MAX_ACCELERATION) {
         vel_history_[i] = std::min(MAX_VELOCITY, vel_history_[i-1] + MAX_ACCELERATION*DT);
+      } else if (((vel_history_[i]-vel_history_[i-1])/DT) < -MAX_DECELERATION) {
+        vel_history_[i] = std::max(0.0, vel_history_[i-1] -MAX_DECELERATION*DT);
       }
       *projected_dist_traversed += (vel_history_[i-1] + vel_history_[i])*(DT/2);
       *projected_vel = Vector2f(cos(steer_history_[i]), sin(steer_history_[i]))*vel_history_[i];
@@ -173,18 +176,6 @@ float Navigation::compute_toc(float distance_to_target, float init_v) {
     float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
     return target_v;
   }
-
-  // float next_velocity = (init_v) + MAX_ACCELERATION*DT;
-  // float time_to_reach_target = distance_to_target/next_velocity;
-  // float time_to_decelerate = next_velocity/MAX_DECELERATION;
-  // if(time_to_reach_target < time_to_decelerate)
-  // {
-  //   return 0.0;
-  // }
-  // else{
-  //   return MAX_VELOCITY;
-  // }
-
 }
 
 void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle) {
@@ -236,19 +227,17 @@ void Navigation::Run() {
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
   drive_msg_.curvature = 0.0;
-  float chosen_free_path_length = 0.0; // Chosen based on value for target below
+  float chosen_free_path_length = 0.0;
   float chosen_curvature = 0.0;
   float max_weighted_score = 0.0;
-  float chosen_distance_to_goal = 0.0; // for debugging
+  float chosen_distance_to_goal = 0.0;
   Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
   std::map<float, PathOption> path_options;
-  // std::cout << "\n\n\n\n";
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
     float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
     path_options[theta] = PathOption();
-    // std::cout << "Theta = " << theta << ". Curavture = " << curvature << ". Radius = " << 1/curvature <<  "\n";
     // For every particle
     if (fabs(theta) < kEpsilon) {
       // Handle special case for going straight
@@ -278,7 +267,6 @@ void Navigation::Run() {
 
         // Skip if this point won't collide
         if (collision == NONE) {
-          // Eventually calculate clearance here?
           new_free_path_length = fabs(radius * max_arc_angle);
           continue;
         }
@@ -315,28 +303,17 @@ void Navigation::Run() {
       }
       path_options.at(theta).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal); 
       // Draw the path
-      // std::cout << "collision type = " <<  collision_string_.at(path_options.at(theta).collision_type) << "\n";
-      // std::cout << "obstruction point = [" <<  path_options.at(theta).obstruction.x() << ", " << path_options.at(theta).obstruction.y() << "]\n";
-      // std::cout << "collision point = [" <<  path_options.at(theta).closest_point.x() << ", " << path_options.at(theta).closest_point.y() << "]\n";
-      // std::cout << "new_free_path_length = " << new_free_path_length << ". max_arc_angle = " << math_util::RadToDeg(max_arc_angle) << "\n";
       visualization::DrawCross(path_options.at(theta).obstruction, 0.1, 0xff0000, local_viz_msg_);
       visualization::DrawCross(path_options.at(theta).closest_point, 0.1, 0x0000ff, local_viz_msg_);
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
     //something that is unfair is the fpl of the straight line is only ~1/3 of the fpl of an arc?
     path_options.at(theta).score = -FLAGS_d2g_weight*path_options.at(theta).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(theta).free_path_length;
-    if(fabs(theta) < kEpsilon)
-    {
-      std::cout << path_options.at(theta).min_distance_to_goal << std::endl;
-      std::cout << path_options.at(theta).score << std::endl;
-
-    }
     if (path_options.at(theta).score > max_weighted_score) {
       chosen_free_path_length = path_options.at(theta).free_path_length;
       max_weighted_score  = path_options.at(theta).score;
       chosen_curvature = path_options.at(theta).curvature;
       chosen_distance_to_goal = path_options.at(theta).min_distance_to_goal;
-      // std::cout << "weighted_score : " << weighted_score << '\n';
       }
     }
 
@@ -352,18 +329,13 @@ void Navigation::Run() {
   vel_history_.push_back(drive_msg_.velocity);
   steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
 
-  std::cout << "velocity history: " << vel_history_ << '\n';
-  std::cout << "steering history: " << steer_history_ << '\n';
-  std::cout << "fpl: " << chosen_free_path_length << '\n';
-  std::cout << "Max weighted score: " << max_weighted_score << std::endl;
-  std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
-  // std::cout << "odom position x: " << odom_loc_.x() << '\n';
-  // std::cout << "odom position y: " << odom_loc_.y() << '\n';
-  // std::cout << "odom angle: " << odom_angle_ << '\n';
-  // std::cout << "projected position x: " << projected_loc.x() << '\n';
-  // std::cout << "projected position y: " << projected_loc.y() << '\n';
-  // std::cout << "projected angle: " << projected_angle << '\n';
-
+  if (FLAGS_verbose) {
+    std::cout << "velocity history: " << vel_history_ << '\n';
+    std::cout << "steering history: " << steer_history_ << '\n';
+    std::cout << "fpl: " << chosen_free_path_length << '\n';
+    std::cout << "Max weighted score: " << max_weighted_score << std::endl;
+    std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
+  }
   DrawCar(0xff0000, local_viz_msg_);
 
   // Add timestamps to all messages.
@@ -400,42 +372,6 @@ Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
     return INSIDE;
   }
   if (radius_P >= radius_B && radius_P <= radius_A) {
-    return FRONT;
-  }
-  if (radius_P >= radius_D && radius_P <= radius_E && point.x() >= back_right_corner_.x() && point.x() <= right_wheel_outside_.x()) {
-    return OUTSIDE;
-  }
-
-  return NONE;
-}
-
-Collision Navigation::DebugCheckCollision(float radius, Eigen::Vector2f& point) {
-  // Handle left and right turns by flipping sign on points of interest
-  float car_max_y_value = copysign(front_left_corner_.y(), radius);
-
-  // Get radii for transition points in collision, and pointcloud point
-  float radius_P = RadiusOfPoint(radius, point);
-  float radius_C = RadiusOfPoint(radius, left_wheel_outside_.x(), car_max_y_value);
-  float radius_B = RadiusOfPoint(radius, front_left_corner_.x(), car_max_y_value);
-  float radius_A = RadiusOfPoint(radius, front_left_corner_.x(), -1*car_max_y_value);
-  float radius_D = RadiusOfPoint(radius, left_wheel_outside_.x(), -1*car_max_y_value);
-  float radius_E = RadiusOfPoint(radius, back_right_corner_.x(), -1*car_max_y_value);
-
-  if (radius_P < 2.064) {
-    std::cout << "point = [" <<  point.x() << ", " << point.y() << "]\n";
-    std::cout << "radius_A = " << radius_A << "\n";
-    std::cout << "radius_B = " << radius_B << "\n";
-    std::cout << "condition is = " << (radius_P >= radius_B && radius_P <= radius_A) << "\n";
-    std::cout << "radius_P = " << radius_P << "\n";
-  }
-
-  // Check collision criteria
-  if (radius_P >= radius_C && radius_P < radius_B) {
-    std::cout << "Inside\n\n\n";
-    return INSIDE;
-  }
-  if (radius_P >= radius_B && radius_P <= radius_A) {
-    std::cout << "Front\n\n\n";
     return FRONT;
   }
   if (radius_P >= radius_D && radius_P <= radius_E && point.x() >= back_right_corner_.x() && point.x() <= right_wheel_outside_.x()) {

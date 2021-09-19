@@ -75,6 +75,7 @@ struct PathOption {
   float free_path_length;
   float min_distance_to_goal;
   float score;
+  float max_arc_angle;
   Collision collision_type;
   Eigen::Vector2f obstruction;
   Eigen::Vector2f closest_point;
@@ -117,14 +118,13 @@ class Navigation {
   float compute_toc(float distance_to_target, float init_v);
 
   // Computes the minimum distance between the given arc and the goal point, always positive
-  float compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight);
+  float compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight, float max_angle);
 
   // Draws a box representing the car
   void DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg);
 
   // Returns the side of the car that will collide with point, or NONE
   Collision CheckCollision(float radius, Eigen::Vector2f& point);
-  Collision DebugCheckCollision(float radius, Eigen::Vector2f& point);
 
   // Returns the point (in base_link frame) where the point will collide with the robot
   Eigen::Vector2f GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type);

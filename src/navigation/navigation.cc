@@ -189,12 +189,17 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
 float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false, float max_angle=M_PI)
 {
   if (!straight) {
-    float angle_to_goal = min(atan2(goal.y() - arc_radius, goal.x()), max_angle);
+    float angle_to_goal = std::min(atan2(goal.y() - arc_radius, goal.x()), max_angle);
     float delta_x = arc_radius*cos(angle_to_goal) - goal.x();
     float delta_y = arc_radius + arc_radius*sin(angle_to_goal) - goal.y();
     return sqrt(delta_x*delta_x + delta_y*delta_y);
   } else {
-    return goal.x() < 0 ? goal.norm() : goal.y();
+    if (goal.x() < 0) {
+      return goal.norm();
+    } else {
+      Eigen::Vector2f distance(std::max(0.0F, goal.x() - max_angle), goal.y());
+      return distance.norm();
+    }
   }
 }
 

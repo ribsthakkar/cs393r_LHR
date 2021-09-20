@@ -46,7 +46,7 @@ using namespace ros_helpers;
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
-DEFINE_double(clearance_weight, .1, "Clearance weight");
+DEFINE_double(clearance_weight, .25, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 
 namespace {
@@ -241,7 +241,6 @@ void Navigation::Run() {
   Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
-  std::map<float, PathOption> path_options;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
@@ -319,8 +318,8 @@ void Navigation::Run() {
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
     if(loop_counter >= 1)
     {
-      float previous_path_clearance = path_options.at(loop_counter).free_path_length + path_options.at(loop_counter - 1).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(0,1), 1's clearance = avg(0,1,2), and 2's clearance = avg(1,2)
-      float included_paths = 2;
+      float previous_path_clearance = path_options.at(loop_counter).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(0,1), 1's clearance = avg(0,1,2), and 2's clearance = avg(1,2)
+      float included_paths = 1;
       // are we at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
       if(loop_counter >= 2)
       {

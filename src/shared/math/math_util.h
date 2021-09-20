@@ -282,7 +282,7 @@ bool definitelyLessThan(T a, T b, T epsilon)
 }
 
 template <typename T>
-inline bool IsBetween(T lower, T val, T upper, bool eq_lower=true, bool eq_upper=true, float epsilon=1e-5) {
+inline bool IsBetween(T lower, T val, T upper, bool eq_lower=true, bool eq_upper=true, float epsilon=1e-3) {
   if (definitelyLessThan(val, upper, epsilon) && definitelyGreaterThan(val, lower, epsilon)) {
     return true;
   }

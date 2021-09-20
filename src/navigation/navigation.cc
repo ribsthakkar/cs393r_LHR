@@ -317,12 +317,12 @@ void Navigation::Run() {
       visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
-    if(loop_counter > 0)
+    if(loop_counter >= 1)
     {
       float previous_path_clearance = path_options.at(loop_counter).free_path_length + path_options.at(loop_counter - 1).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(0,1), 1's clearance = avg(0,1,2), and 2's clearance = avg(1,2)
       float included_paths = 2;
-      // are at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
-      if(loop_counter > 1)
+      // are we at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
+      if(loop_counter >= 2)
       {
         previous_path_clearance += path_options.at(loop_counter - 2).free_path_length;
         included_paths += 1;
@@ -334,7 +334,7 @@ void Navigation::Run() {
     path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;
     float current_score = path_options.at(loop_counter).score;
     int max_index = loop_counter;
-    if(loop_counter > 0)
+    if(loop_counter >= 1)
     {
       if(current_score < path_options.at(loop_counter-1).score)
       {
@@ -352,7 +352,15 @@ void Navigation::Run() {
       }
      ++loop_counter;
   }
-
+// Since clearance for a radius r is set in the r+1 iteration, the final radius will not have its clearance set in this loop. The following logic remedies this issue
+path_options.at(loop_counter-1).clearance = (path_options.at(loop_counter-2).free_path_length+ path_options.at(loop_counter-1).free_path_length)/2;
+path_options.at(loop_counter-1).score += -FLAGS_d2g_weight*path_options.at(loop_counter-1).clearance;
+if (path_options.at(loop_counter-1).score > max_weighted_score) {
+      chosen_free_path_length = path_options.at(loop_counter-1).free_path_length;
+      max_weighted_score  = path_options.at(loop_counter-1).score;
+      chosen_curvature = path_options.at(loop_counter-1).curvature;
+      chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
+}
 
   visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
   drive_msg_.curvature = chosen_curvature;

@@ -92,6 +92,15 @@ void LaserCallback(const sensor_msgs::LaserScan& msg) {
   // msg.range_max // Maximum observable range
   // msg.range_min // Minimum observable range
   // msg.ranges[i] // The range of the i'th ray
+  point_cloud_.clear();
+  // Convert the LaserScan to a point cloud
+  for (uint i = 0; i < msg.ranges.size(); ++i) {
+    float theta = msg.angle_min + i*msg.angle_increment;
+    // Transform to base link of robot by adding the laser location position
+    if (msg.ranges[i]>msg.range_max || msg.ranges[i]<msg.range_min) continue;
+    point_cloud_.push_back(Vector2f(cos(theta)*msg.ranges[i], sin(theta)*msg.ranges[i]) + kLaserLoc);
+  }
+
   navigation_->ObservePointCloud(point_cloud_, msg.header.stamp.toSec());
   last_laser_msg_ = msg;
 }
@@ -137,7 +146,7 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "navigation", ros::init_options::NoSigintHandler);
   ros::NodeHandle n;
-  navigation_ = new Navigation(FLAGS_map, &n);
+  navigation_ = new Navigation(FLAGS_map, &n, SYSTEM_LATENCY, 3);
 
   ros::Subscriber velocity_sub =
       n.subscribe(FLAGS_odom_topic, 1, &OdometryCallback);

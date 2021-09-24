@@ -75,10 +75,6 @@ DEFINE_string(init_topic,
 DECLARE_int32(v);
 
 // Create config reader entries
-CONFIG_STRING(map_name_, "map");
-CONFIG_FLOAT(init_x_, "init_x");
-CONFIG_FLOAT(init_y_, "init_y");
-CONFIG_FLOAT(init_r_, "init_r");
 config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 bool run_ = true;

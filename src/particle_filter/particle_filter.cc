@@ -46,6 +46,8 @@ using Eigen::Vector2f;
 using Eigen::Vector2i;
 using vector_map::VectorMap;
 
+#define LIDAR_RANGE 30.0
+
 DEFINE_double(num_particles, 50, "Number of particles");
 
 namespace particle_filter {
@@ -86,37 +88,26 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
 
   // Note: The returned values must be set using the `scan` variable:
   scan.resize(num_ranges);
-  // Fill in the entries of scan using array writes, e.g. scan[i] = ...
   for (size_t i = 0; i < scan.size(); ++i) {
-    scan[i] = Vector2f(0, 0);
-  }
-
-  // The line segments in the map are stored in the `map_.lines` variable. You
-  // can iterate through them as:
-  for (size_t i = 0; i < map_.lines.size(); ++i) {
-    const line2f map_line = map_.lines[i];
-    // The line2f class has helper functions that will be useful.
-    // You can create a new line segment instance as follows, for :
-    line2f my_line(1, 2, 3, 4); // Line segment from (1,2) to (3.4).
-    // Access the end points using `.p0` and `.p1` members:
-    printf("P0: %f, %f P1: %f,%f\n", 
-           my_line.p0.x(),
-           my_line.p0.y(),
-           my_line.p1.x(),
-           my_line.p1.y());
-
-    // Check for intersections:
-    bool intersects = map_line.Intersects(my_line);
-    // You can also simultaneously check for intersection, and return the point
-    // of intersection:
-    Vector2f intersection_point; // Return variable
-    intersects = map_line.Intersection(my_line, &intersection_point);
-    if (intersects) {
-      printf("Intersects at %f,%f\n", 
-             intersection_point.x(),
-             intersection_point.y());
-    } else {
-      printf("No intersection\n");
+    float dangle = std::min(angle_max, angle_min + i * (angle_max-angle_min)/num_ranges);
+    scan[i] = Vector2f(loc.x()+30*std::cos(angle+dangle), loc.y()+30*std::sin(angle+dangle)); // Set default ray to be maximum range of laser
+    float min_distance = LIDAR_RANGE;
+    // Line segment from location to LIDAR Range.
+    const line2f my_line(loc.x(), loc.y(), loc.x()+30*std::cos(angle), loc.y()+30*std::sin(angle)); 
+    // Iterate through map lines
+    for (size_t i = 0; i < map_.lines.size(); ++i) {
+      const line2f map_line = map_.lines[i];
+      // Check for intersections
+      bool intersects = map_line.Intersects(my_line);
+      Vector2f intersection_point; // Return variable
+      intersects = map_line.Intersection(my_line, &intersection_point);
+      if (intersects && (loc-intersection_point).norm() < min_distance) {
+        // printf("Intersects at %f,%f\n", 
+        //       intersection_point.x(),
+        //       intersection_point.y());
+        scan[i] = intersection_point;
+        min_distance = (loc-intersection_point).norm();
+      } 
     }
   }
 }
@@ -202,6 +193,7 @@ void ParticleFilter::Predict(const Vector2f& odom_loc,
   // standard deviation 2:
 }
 
+// Rishabh
 void ParticleFilter::Initialize(const string& map_file,
                                 const Vector2f& loc,
                                 const float angle) {

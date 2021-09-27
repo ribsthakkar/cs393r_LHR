@@ -99,11 +99,11 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
     // You can create a new line segment instance as follows, for :
     line2f my_line(1, 2, 3, 4); // Line segment from (1,2) to (3.4).
     // Access the end points using `.p0` and `.p1` members:
-    printf("P0: %f, %f P1: %f,%f\n", 
-           my_line.p0.x(),
-           my_line.p0.y(),
-           my_line.p1.x(),
-           my_line.p1.y());
+    // printf("P0: %f, %f P1: %f,%f\n", 
+    //        my_line.p0.x(),
+    //        my_line.p0.y(),
+    //        my_line.p1.x(),
+    //        my_line.p1.y());
 
     // Check for intersections:
     bool intersects = map_line.Intersects(my_line);
@@ -112,11 +112,11 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
     Vector2f intersection_point; // Return variable
     intersects = map_line.Intersection(my_line, &intersection_point);
     if (intersects) {
-      printf("Intersects at %f,%f\n", 
-             intersection_point.x(),
-             intersection_point.y());
+      // printf("Intersects at %f,%f\n", 
+      //        intersection_point.x(),
+      //        intersection_point.y());
     } else {
-      printf("No intersection\n");
+      // printf("No intersection\n");
     }
   }
 }
@@ -136,10 +136,12 @@ void ParticleFilter::Update(const vector<float>& ranges,
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
   for (Particle& p: particles_) {
+    (void)p; // Temp to compile
     // Compute our predicted point_cloud
-    GetPredictedPointCloud(p.loc, p.angle, /* */, range_min, range_max, angle_min, angle_max, &predicted_cloud);
-    for (int i = 0; i < ranges.size(); i++) {
+    // GetPredictedPointCloud(p.loc, p.angle, /* */, range_min, range_max, angle_min, angle_max, &predicted_cloud);
+    for (size_t i = 0; i < ranges.size(); i++) {
       // Compute "difference" between the predicted point and real point
+      (void)i; // Temp to compile
     }
     // Update particle weight accordingly
   }
@@ -156,6 +158,7 @@ void ParticleFilter::Resample() {
   // Create the buckets
 
   float x = rng_.UniformRandom(0, 1);
+  (void)x; // Temp to compile
   
   // Determine which bucket the random float falls into
 
@@ -172,11 +175,11 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   // A new laser scan observation is available (in the laser frame)
   // Call the Update and Resample steps as necessary.
   if(!odom_initialized_) return;
-  if(move_flag_) {
-    // Update
-    // Resample
-  }
-  move_flag_ = false;
+  // if(move_flag_) {
+  //   // Update
+  //   // Resample
+  // }
+  // move_flag_ = false;
 }
 
 // Adam
@@ -190,6 +193,7 @@ void ParticleFilter::Predict(const Vector2f& odom_loc,
 
 
   for (Particle p: particles_) {
+    (void)p; // Temp to compile
     // Update the position/angle of the particles based on Motion Model
 
     // determine the distance being traveled based on prev_odom_loc_ and prev_odom_angle_
@@ -209,19 +213,15 @@ void ParticleFilter::Initialize(const string& map_file,
   // was received from the log. Initialize the particles accordingly, e.g. with
   // some distribution around the provided location and angle.
   map_.Load(map_file);
-  prev_odom_loc_ = loc;
-  prev_odom_angle_ = angle;
+  float uniform_weight = 1.0/FLAGS_num_particles;
   particles_.clear();
   for(int i = 0; i < FLAGS_num_particles; i++) {
-    particles_.push_back({
-      // Draw samples for location noise
-      loc + Eigen::Vector2f(rng_.Gaussian(0.0, CONFIG_init_loc_noise_), rng_.Gaussian(0.0, CONFIG_init_loc_noise_)),
-      // Draw samples for angle noise
-      angle + rng_.Gaussian(0.0, CONFIG_init_angle_noise_),
-      1.0/num_particles,
-    })
+    Particle particle;
+    particle.loc = loc + Eigen::Vector2f(rng_.Gaussian(0.0, CONFIG_init_loc_noise_), rng_.Gaussian(0.0, CONFIG_init_loc_noise_));
+    particle.angle = angle + rng_.Gaussian(0.0, CONFIG_init_angle_noise_);
+    particle.weight = uniform_weight;
+    particles_.push_back(particle);
   }
-  odom_initialized_ = true;
 }
 
 // Adam
@@ -235,9 +235,21 @@ void ParticleFilter::GetLocation(Eigen::Vector2f* loc_ptr,
   // variables to return them. Modify the following assignments:
   loc = Vector2f(0, 0);
   angle = 0;
-  for (Particle p: particles_) {
+  float sum_of_weights = 0.0;
+  for (const Particle particle: particles_) {
     // compute weighted sum of location and angle
+    loc += particle.weight * particle.loc;
+    angle += particle.weight * particle.angle;
+    sum_of_weights += particle.weight;
   }
+
+  // Normalize
+  loc.x() /= sum_of_weights;
+  loc.y() /= sum_of_weights;
+  angle /= sum_of_weights;
+  
+  // Fix angle to [0, 2*Pi]
+  angle = math_util::AngleMod(angle);
 }
 
 

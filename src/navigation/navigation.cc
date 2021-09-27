@@ -183,7 +183,7 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
   Rotation2Df rotation(dangle);
   for(uint i = 0; i < point_cloud_.size(); ++i) {
     point_cloud_[i] = (rotation*point_cloud_[i])+dloc;
-    visualization::DrawPoint(point_cloud_[i], 0xFF0000, local_viz_msg_);
+    // visualization::DrawPoint(point_cloud_[i], 0xFF0000, local_viz_msg_);
   }
 }
 
@@ -264,7 +264,7 @@ void Navigation::Run() {
       }
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
       // Draw the path
-      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
+      // visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
       float max_arc_angle = M_PI;
       path_options.at(loop_counter).curvature = curvature;
@@ -311,9 +311,9 @@ void Navigation::Run() {
       }
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal);
       // Draw the path
-      visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
-      visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
-      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
+      // visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
+      // visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
+      // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
     if(loop_counter >= 1)
@@ -361,10 +361,11 @@ if (path_options.at(loop_counter-1).score > max_weighted_score) {
       chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
 }
 
-  visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-  drive_msg_.curvature = chosen_curvature;
+  // visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
+  (void)chosen_curvature;
+  drive_msg_.curvature = 0.0;
   // STEP 5: Apply 1D TOC to determine velocity 
-  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
+  drive_msg_.velocity = 0.3;
 
 
   // STEP 6: Update History

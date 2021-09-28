@@ -1,10 +1,14 @@
 loc_noise = 0.5
 angle_noise = 0.1
-motion_model = {
+naive_motion_model = {
     k1 = 0.1,
     k2 = 0.05,
     k3 = 0.1,
     k4 = 0.05
+}
+motion_model = {
+    k1 = 0.1,
+    k2 = 0.05,
 }
 gamma = 0.2
 lidar_stddev = 0.1

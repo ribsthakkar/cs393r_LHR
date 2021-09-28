@@ -50,15 +50,18 @@ using vector_map::VectorMap;
 const Vector2f kLaserLoc(0.2, 0);
 
 DEFINE_double(num_particles, 50, "Number of particles");
+DEFINE_bool(use_naive_motion_model, false, "Use naive (differential) motion model");
 
 namespace particle_filter {
 
 CONFIG_FLOAT(init_loc_noise_, "loc_noise");
 CONFIG_FLOAT(init_angle_noise_, "angle_noise");
-CONFIG_FLOAT(k1, "motion_model.k1");
-CONFIG_FLOAT(k2, "motion_model.k2");
-CONFIG_FLOAT(k3, "motion_model.k3");
-CONFIG_FLOAT(k4, "motion_model.k4");
+CONFIG_FLOAT(naive_k1, "naive_motion_model.k1");
+CONFIG_FLOAT(naive_k2, "naive_motion_model.k2");
+CONFIG_FLOAT(naive_k3, "naive_motion_model.k3");
+CONFIG_FLOAT(naive_k4, "naive_motion_model.k4");
+CONFIG_FLOAT(motion_k1, "motion_model.k1");
+CONFIG_FLOAT(motion_k2, "motion_model.k2");
 CONFIG_FLOAT(gamma, "gamma");
 CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
 CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
@@ -266,7 +269,11 @@ void ParticleFilter::Predict(const Vector2f& odom_loc,
   distance_traveled += delta_pos.norm();
   angle_traveled += abs(delta_angle); //NOTE: potentially change this later to just be the raw value of delta angle
 
-  UpdateParticlesNaive(delta_pos, delta_angle);
+  if (FLAGS_use_naive_motion_model) {
+    UpdateParticlesNaive(delta_pos, delta_angle);
+  } else {
+    UpdateParticles(delta_pos, delta_angle);
+  }
 
   prev_odom_loc_ = odom_loc;
   prev_odom_angle_ = odom_angle;
@@ -326,8 +333,8 @@ void ParticleFilter::GetLocation(Eigen::Vector2f* loc_ptr,
 
 void ParticleFilter::UpdateParticlesNaive(Vector2f& delta_pos, float delta_angle){
   // Calculate the variances of the normal distributions
-  float linear_variance = CONFIG_k1*delta_pos.norm() + CONFIG_k2 * fabs(delta_angle);
-  float angle_variance = CONFIG_k3*delta_pos.norm() + CONFIG_k4 * fabs(delta_angle);
+  float linear_variance = CONFIG_naive_k1*delta_pos.norm() + CONFIG_naive_k2 * fabs(delta_angle);
+  float angle_variance = CONFIG_naive_k3*delta_pos.norm() + CONFIG_naive_k4 * fabs(delta_angle);
 
   for (Particle& particle: particles_) {
     // Get the delta position vector in the map frame
@@ -337,6 +344,33 @@ void ParticleFilter::UpdateParticlesNaive(Vector2f& delta_pos, float delta_angle
     particle.angle += delta_angle + rng_.Gaussian(0.0, angle_variance);
     particle.loc.x() += map_delta.x() + rng_.Gaussian(0.0, linear_variance);
     particle.loc.y() += map_delta.y() + rng_.Gaussian(0.0, linear_variance);
+  }
+}
+
+void ParticleFilter::UpdateParticles(Eigen::Vector2f& delta_pos, float delta_angle) {
+  // Check for linear (c = 0) case
+  if (fabs(delta_angle) < 1e-5) {
+    UpdateParticlesNaive(delta_pos, delta_angle);
+    return;
+  }
+
+  // Find the arc angle and radius
+  float arc_angle = delta_angle;
+  float radius = sqrt((pow(delta_pos.norm(),2))/(2 - 2*cos(fabs(arc_angle))));
+
+  // Get the variances for each direction
+  float tangential_variance = CONFIG_motion_k1 * fabs(arc_angle*radius);
+  float radial_variance = CONFIG_motion_k2 * fabs(1/radius);
+
+  // TODO think about how to handle this angle variance
+  float angle_variance = CONFIG_naive_k3*delta_pos.norm() + CONFIG_naive_k4 * fabs(delta_angle);
+
+  for (Particle& particle: particles_) {
+    // Update the position/angle of the particles based on Motion Model
+    Vector2f noise(rng_.Gaussian(0.0, tangential_variance), rng_.Gaussian(0.0, radial_variance));
+    particle.loc += Eigen::Rotation2Df(particle.angle)*(delta_pos + Eigen::Rotation2Df(arc_angle).inverse()*noise);
+
+    particle.angle += delta_angle + rng_.Gaussian(0.0, angle_variance);
   }
 }
 

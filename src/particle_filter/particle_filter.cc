@@ -60,6 +60,10 @@ CONFIG_FLOAT(k2, "motion_model.k2");
 CONFIG_FLOAT(k3, "motion_model.k3");
 CONFIG_FLOAT(k4, "motion_model.k4");
 CONFIG_FLOAT(gamma, "gamma");
+CONFIG_FLOAT(distance_resample_threshold, "distance_resample_threshold");
+CONFIG_FLOAT(angle_resample_threshold, "angle_resample_threshold");
+CONFIG_INT(ray_delta, "ray_delta");
+
 config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 ParticleFilter::ParticleFilter() :
@@ -135,9 +139,8 @@ void ParticleFilter::Update(const vector<float>& ranges,
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
   GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, ranges.size(), range_min, range_max, angle_min, angle_max, &predicted_cloud);
-  p_ptr->weight = 1; //reset weight
   // for each point in the predicted cloud, compute the difference relative to the corresponding point in the observed point cloud
-  for(unsigned i = 0; i < ranges.size(); ++i)
+  for(unsigned i = 0; i < ranges.size(); i+=CONFIG_ray_delta)
   {
     float pred_range = (predicted_cloud[i] - (Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc)).norm();
     float observed_range = ranges[i];
@@ -187,6 +190,10 @@ void ParticleFilter::Resample() {
     ++particle_index;
     particle_index%=particles_.size(); //don't index OOB
   }
+  for(Particle& p : new_particles)
+  {
+    p.weight = 1;
+  }
   particles_ = new_particles;
 
 }
@@ -201,9 +208,14 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   if(!odom_initialized_) return;
   for(Particle& p : particles_)
   {
-    Update(ranges, range_min, range_max, angle_min, angle_max, &p);
+      Update(ranges, range_min, range_max, angle_min, angle_max, &p);
   }
-  Resample();
+  if(distance_traveled > CONFIG_distance_resample_threshold || angle_traveled > CONFIG_angle_resample_threshold)
+  {
+
+    Resample();
+    distance_traveled = angle_traveled = 0;
+  }
   // if(move_flag_) {
   //   // Update
   //   // Resample
@@ -224,6 +236,9 @@ void ParticleFilter::Predict(const Vector2f& odom_loc,
   // Calculate the delta position and angles from this odometery message
   Vector2f delta_pos = Eigen::Rotation2Df(-1*prev_odom_angle_) * (odom_loc - prev_odom_loc_);
   float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
+
+  distance_traveled += delta_pos.norm();
+  angle_traveled += abs(delta_angle); //NOTE: potentially change this later to just be the raw value of delta angle
 
   UpdateParticlesNaive(delta_pos, delta_angle);
 

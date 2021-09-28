@@ -9,4 +9,4 @@ motion_model = {
 gamma = .5
 ray_delta = 25
 distance_resample_threshold = .1
-angle_resample_threshold = 4
+angle_resample_threshold = .2

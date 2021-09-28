@@ -47,6 +47,7 @@ using Eigen::Vector2i;
 using vector_map::VectorMap;
 
 #define LIDAR_RANGE 30.0
+const Vector2f kLaserLoc(0.2, 0);
 
 DEFINE_double(num_particles, 50, "Number of particles");
 
@@ -90,11 +91,13 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
   // Note: The returned values must be set using the `scan` variable:
   scan.resize(num_ranges);
   for (size_t i = 0; i < scan.size(); ++i) {
-    float dangle = std::min(angle_max, angle_min + i * (angle_max-angle_min)/num_ranges);
-    scan[i] = Vector2f(loc.x()+30*std::cos(angle+dangle), loc.y()+30*std::sin(angle+dangle)); // Set default ray to be maximum range of laser
+    float dangle = std::min(angle_max, angle_min + i * (angle_max-angle_min)/(num_ranges-1));
+    const Vector2f lidar_base =  Eigen::Rotation2Df(angle)*kLaserLoc + loc;
     float min_distance = LIDAR_RANGE;
+        
     // Line segment from location to LIDAR Range.
-    const line2f my_line(loc.x(), loc.y(), loc.x()+30*std::cos(angle), loc.y()+30*std::sin(angle)); 
+    scan[i] = Vector2f(lidar_base.x()+min_distance*std::cos(angle+dangle), lidar_base.y()+min_distance*std::sin(angle+dangle)); // Set default ray to be maximum range of laser
+    const line2f my_line(lidar_base.x(), lidar_base.y(), lidar_base.x()+min_distance*std::cos(angle+dangle), lidar_base.y()+min_distance*std::sin(angle+dangle)); 
     // Iterate through map lines
     for (size_t i = 0; i < map_.lines.size(); ++i) {
       const line2f map_line = map_.lines[i];
@@ -103,9 +106,9 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
       Vector2f intersection_point; // Return variable
       intersects = map_line.Intersection(my_line, &intersection_point);
       if (intersects && (loc-intersection_point).norm() < min_distance) {
-        // printf("Intersects at %f,%f\n", 
-        //       intersection_point.x(),
-        //       intersection_point.y());
+        printf("Intersects at %f,%f\n", 
+              intersection_point.x(),
+              intersection_point.y());
         scan[i] = intersection_point;
         min_distance = (loc-intersection_point).norm();
       } 

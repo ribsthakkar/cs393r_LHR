@@ -194,7 +194,7 @@ void ParticleFilter::Predict(const Vector2f& odom_loc,
 
   // Calculate the delta position and angles from this odometery message
   Vector2f delta_pos = Eigen::Rotation2Df(-1*prev_odom_angle_) * (odom_loc - prev_odom_loc_);
-  float delta_angle = odom_angle - prev_odom_angle_;
+  float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
 
   UpdateParticlesNaive(delta_pos, delta_angle);
 

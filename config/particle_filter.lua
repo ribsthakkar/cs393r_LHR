@@ -6,4 +6,4 @@ motion_model = {
     k3 = 0.1,
     k4 = 0.1
 }
-gamma = 1
+gamma = .5

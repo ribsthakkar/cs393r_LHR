@@ -132,20 +132,24 @@ void ParticleFilter::Update(const vector<float>& ranges,
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
   GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, ranges.size(), range_min, range_max, angle_min, angle_max, &predicted_cloud);
-  // float angle_increment = (angle_max - angle_min)/ranges.size(); 
-
+  p_ptr->weight = 1; //reset weight
   // for each point in the predicted cloud, compute the difference relative to the corresponding point in the observed point cloud
   for(unsigned i = 0; i < ranges.size(); ++i)
   {
     float pred_range = (predicted_cloud[i] - p_ptr->loc).norm();
     float observed_range = ranges[i];
+    //all predicted ranges are 30?
+    float likelihood = powf(powf(observed_range - pred_range, 2)/2, CONFIG_gamma); //need to tune this so that we don't keep overflowing
+    //also missing standard deviation term
 
-    float likelihood = powf(observed_range - pred_range, 2);
-
-    p_ptr->weight *= -1 * likelihood;
-
+    p_ptr->weight += logf(likelihood);  //log likelihood? made it sum bc numbers are very unstable right now
   }
-  p_ptr->weight = expf(p_ptr->weight);
+  float rand = rng_.UniformRandom(0, 10); //for testing
+  float weight = (p_ptr->weight) * rand;
+
+  p_ptr->weight = abs(weight);
+
+
 }
 
 // Joey
@@ -159,23 +163,23 @@ void ParticleFilter::Resample() {
   // Create the buckets
 
   float x = rng_.UniformRandom(0, 1);
-  (void)x; // Temp to compile
   
   // Determine which bucket the random float falls into
 
   // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
-  float particle_weights = 0;
+  float sum_particle_weights = 0;
   for(Particle p : particles_)
   {
-    particle_weights += p.weight;
+    sum_particle_weights += p.weight;
   }
-  float increment = particle_weights/particles_.size();
+  float increment = sum_particle_weights/particles_.size();
   int particle_index = static_cast<int>(x * (particles_.size()-1));
   float curr_increment = increment;
   unsigned particles_added = 0;
   while(particles_added < particles_.size())
   {
     Particle p = particles_[particle_index];
+    // cout << p.weight << endl;
     curr_increment -= p.weight;
     //if increment drops below 0, add the current particle to the new particle list
     if(curr_increment < 0)
@@ -187,8 +191,8 @@ void ParticleFilter::Resample() {
     ++particle_index;
     particle_index%=particles_.size(); //don't index OOB
   }
-
   particles_ = new_particles;
+
 }
 
 void ParticleFilter::ObserveLaser(const vector<float>& ranges,
@@ -199,7 +203,7 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   // A new laser scan observation is available (in the laser frame)
   // Call the Update and Resample steps as necessary.
   if(!odom_initialized_) return;
-  for(Particle p : particles_)
+  for(Particle& p : particles_)
   {
     Update(ranges, range_min, range_max, angle_min, angle_max, &p);
   }

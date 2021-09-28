@@ -185,25 +185,21 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
 // Adam
 void ParticleFilter::Predict(const Vector2f& odom_loc,
                              const float odom_angle) {
-  // Implement the predict step of the particle filter here.
-  // A new odometry value is available (in the odom frame)
-  // Implement the motion model predict step here, to propagate the particles
-  // forward based on odometry.
-  if(!odom_initialized_) return;
-
-
-  for (Particle p: particles_) {
-    (void)p; // Temp to compile
-    // Update the position/angle of the particles based on Motion Model
-
-    // determine the distance being traveled based on prev_odom_loc_ and prev_odom_angle_
-    // UpdatePosition(Particle* p, Vector2f dloc, float di)
+  if(!odom_initialized_) {
+    prev_odom_loc_ = odom_loc;
+    prev_odom_angle_ = odom_angle;
+    odom_initialized_ = true;
+    return;
   }
+
+  // Calculate the delta position and angles from this odometery message
+  Vector2f delta_pos = Eigen::Rotation2Df(-1*prev_odom_angle_) * (odom_loc - prev_odom_loc_);
+  float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
+
+  UpdateParticlesNaive(delta_pos, delta_angle);
+
   prev_odom_loc_ = odom_loc;
   prev_odom_angle_ = odom_angle;
-  // You will need to use the Gaussian random number generator provided. For
-  // example, to generate a random number from a Gaussian with mean 0, and
-  // standard deviation 2:
 }
 
 void ParticleFilter::Initialize(const string& map_file,
@@ -250,6 +246,22 @@ void ParticleFilter::GetLocation(Eigen::Vector2f* loc_ptr,
   
   // Fix angle to [0, 2*Pi]
   angle = math_util::AngleMod(angle);
+}
+
+void ParticleFilter::UpdateParticlesNaive(Vector2f& delta_pos, float delta_angle){
+  // Calculate the variances of the normal distributions
+  float linear_variance = CONFIG_k1*delta_pos.norm() + CONFIG_k2 * fabs(delta_angle);
+  float angle_variance = CONFIG_k3*delta_pos.norm() + CONFIG_k4 * fabs(delta_angle);
+
+  for (Particle& particle: particles_) {
+    // Get the delta position vector in the map frame
+    Vector2f map_delta = Eigen::Rotation2Df(particle.angle) * delta_pos;
+
+    // Update the position/angle of the particles based on Motion Model
+    particle.angle += delta_angle + rng_.Gaussian(0.0, angle_variance);
+    particle.loc.x() += map_delta.x() + rng_.Gaussian(0.0, linear_variance);
+    particle.loc.y() += map_delta.y() + rng_.Gaussian(0.0, linear_variance);
+  }
 }
 
 

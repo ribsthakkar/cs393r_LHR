@@ -254,10 +254,13 @@ void ParticleFilter::UpdateParticlesNaive(Vector2f& delta_pos, float delta_angle
   float angle_variance = CONFIG_k3*delta_pos.norm() + CONFIG_k4 * fabs(delta_angle);
 
   for (Particle& particle: particles_) {
+    // Get the delta position vector in the map frame
+    Vector2f map_delta = Eigen::Rotation2Df(particle.angle) * delta_pos;
+
     // Update the position/angle of the particles based on Motion Model
     particle.angle += delta_angle + rng_.Gaussian(0.0, angle_variance);
-    particle.loc.x() += delta_pos.x() + rng_.Gaussian(0.0, linear_variance);
-    particle.loc.y() += delta_pos.y() + rng_.Gaussian(0.0, linear_variance);
+    particle.loc.x() += map_delta.x() + rng_.Gaussian(0.0, linear_variance);
+    particle.loc.y() += map_delta.y() + rng_.Gaussian(0.0, linear_variance);
   }
 }
 

@@ -89,6 +89,7 @@ class ParticleFilter {
 
  private:
 
+  // Delta's here are in the base frame
   void UpdateParticlesNaive(Eigen::Vector2f& delta_pos, float delta_angle);
 
   // List of particles being tracked.

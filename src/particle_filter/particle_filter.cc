@@ -69,8 +69,7 @@ config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 ParticleFilter::ParticleFilter() :
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
-    odom_initialized_(false),
-    min_dists(1000, 0.0f) {}
+    odom_initialized_(false) {}
 
 void ParticleFilter::GetParticles(vector<Particle>* particles) const {
   *particles = particles_;
@@ -138,7 +137,7 @@ void ParticleFilter::Update(const vector<float>& ranges,
   */
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
-  GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, ranges.size(), range_min, range_max, angle_min, angle_max, &predicted_cloud);
+  GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, ranges.size()/CONFIG_ray_delta + 1, range_min, range_max, angle_min, angle_max, &predicted_cloud);
   // for each point in the predicted cloud, compute the difference relative to the corresponding point in the observed point cloud
   for(unsigned i = 0; i < ranges.size(); i+=CONFIG_ray_delta)
   {

@@ -65,7 +65,8 @@ config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 ParticleFilter::ParticleFilter() :
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
-    odom_initialized_(false) {}
+    odom_initialized_(false),
+    min_dists(1000, 0.0f) {}
 
 void ParticleFilter::GetParticles(vector<Particle>* particles) const {
   *particles = particles_;
@@ -74,7 +75,7 @@ void ParticleFilter::GetParticles(vector<Particle>* particles) const {
 //Rishabh
 void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
                                             const float angle,
-                                            int num_ranges,
+                                            unsigned int num_ranges,
                                             float range_min,
                                             float range_max,
                                             float angle_min,
@@ -90,7 +91,7 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
 
   // Note: The returned values must be set using the `scan` variable:
   scan.resize(num_ranges);
-  for (size_t i = 0; i < scan.size(); ++i) {
+  for (size_t i = 0; i < num_ranges; ++i) {
     float dangle = std::min(angle_max, angle_min + i * (angle_max-angle_min)/(num_ranges-1));
     const Vector2f lidar_base =  Eigen::Rotation2Df(angle)*kLaserLoc + loc;
     float min_distance = LIDAR_RANGE;
@@ -99,18 +100,17 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
     scan[i] = Vector2f(lidar_base.x()+min_distance*std::cos(angle+dangle), lidar_base.y()+min_distance*std::sin(angle+dangle)); // Set default ray to be maximum range of laser
     const line2f my_line(lidar_base.x(), lidar_base.y(), lidar_base.x()+min_distance*std::cos(angle+dangle), lidar_base.y()+min_distance*std::sin(angle+dangle)); 
     // Iterate through map lines
-    for (size_t i = 0; i < map_.lines.size(); ++i) {
-      const line2f map_line = map_.lines[i];
+    for (size_t j = 0; j < map_.lines.size(); ++j) {
+      const line2f map_line = map_.lines[j];
       // Check for intersections
-      bool intersects = map_line.Intersects(my_line);
       Vector2f intersection_point; // Return variable
-      intersects = map_line.Intersection(my_line, &intersection_point);
-      if (intersects && (loc-intersection_point).norm() < min_distance) {
-        printf("Intersects at %f,%f\n", 
-              intersection_point.x(),
-              intersection_point.y());
+      bool intersects = map_line.Intersection(my_line, &intersection_point);
+      if (intersects && (lidar_base-intersection_point).norm() < min_distance) {
+        // printf("Intersects at %f,%f\n", 
+        //       intersection_point.x(),
+        //       intersection_point.y());
         scan[i] = intersection_point;
-        min_distance = (loc-intersection_point).norm();
+        min_distance = (lidar_base-intersection_point).norm();
       } 
     }
   }
@@ -139,20 +139,13 @@ void ParticleFilter::Update(const vector<float>& ranges,
   // for each point in the predicted cloud, compute the difference relative to the corresponding point in the observed point cloud
   for(unsigned i = 0; i < ranges.size(); ++i)
   {
-    float pred_range = (predicted_cloud[i] - p_ptr->loc).norm();
+    float pred_range = (predicted_cloud[i] - (Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc)).norm();
     float observed_range = ranges[i];
-    //all predicted ranges are 30?
     float likelihood = powf(powf(observed_range - pred_range, 2)/2, CONFIG_gamma); //need to tune this so that we don't keep overflowing
     //also missing standard deviation term
 
     p_ptr->weight += logf(likelihood);  //log likelihood? made it sum bc numbers are very unstable right now
   }
-  float rand = rng_.UniformRandom(0, 10); //for testing
-  float weight = (p_ptr->weight) * rand;
-
-  p_ptr->weight = abs(weight);
-
-
 }
 
 // Joey

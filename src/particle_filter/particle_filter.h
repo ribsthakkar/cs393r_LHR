@@ -80,7 +80,7 @@ class ParticleFilter {
   // For debugging: get predicted point cloud from current location.
   void GetPredictedPointCloud(const Eigen::Vector2f& loc,
                               const float angle,
-                              int num_ranges,
+                              unsigned int num_ranges,
                               float range_min,
                               float range_max,
                               float angle_min,

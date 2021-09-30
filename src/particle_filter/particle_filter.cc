@@ -171,6 +171,7 @@ void ParticleFilter::Resample() {
   {
     sum_particle_weights += p.weight;
     buckets.push_back(sum_particle_weights);
+    // TODO: Avoid resizing buckets vector
   }
   float increment = sum_particle_weights/particles_.size();
   unsigned particle_index = static_cast<int>(x * (particles_.size()-1));

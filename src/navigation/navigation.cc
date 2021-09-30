@@ -236,6 +236,7 @@ void Navigation::Run() {
   drive_msg_.curvature = 0.0;
   float chosen_free_path_length = 0.0;
   float chosen_curvature = 0.0;
+  (void) chosen_curvature;
   float max_weighted_score = 0.0;
   float chosen_distance_to_goal = 0.0;
   Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now

@@ -166,28 +166,31 @@ void ParticleFilter::Resample() {
 
   // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
   float sum_particle_weights = 0;
+  vector<float> buckets;
   for(Particle p : particles_)
   {
     sum_particle_weights += p.weight;
+    buckets.push_back(sum_particle_weights);
   }
   float increment = sum_particle_weights/particles_.size();
-  int particle_index = static_cast<int>(x * (particles_.size()-1));
-  float curr_increment = increment;
-  unsigned particles_added = 0;
-  while(particles_added < particles_.size())
+  unsigned particle_index = static_cast<int>(x * (particles_.size()-1));
+  float curr_weight = buckets[particle_index];
+  while(new_particles.size() < particles_.size())
   {
-    Particle p = particles_[particle_index];
-    // cout << p.weight << endl;
-    curr_increment -= p.weight;
-    //if increment drops below 0, add the current particle to the new particle list
-    if(curr_increment < 0)
+    if(curr_weight > buckets[particle_index])
     {
-      curr_increment = curr_increment + increment;
-      new_particles.push_back(p); //NOTE: is this okay?
-      ++particles_added; 
+      ++particle_index;
+      if(particle_index >= particles_.size())
+      {
+        particle_index%=particles_.size(); //don't index OOB
+        curr_weight = curr_weight - sum_particle_weights;
+        // cout << curr_weight << endl;
+      }
+      continue;
     }
-    ++particle_index;
-    particle_index%=particles_.size(); //don't index OOB
+    curr_weight += increment;
+    new_particles.push_back(particles_[particle_index]);
+    
   }
   for(Particle& p : new_particles)
   {

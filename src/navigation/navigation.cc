@@ -363,11 +363,11 @@ if (path_options.at(loop_counter-1).score > max_weighted_score) {
 }
 
 // visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-// drive_msg_.curvature = chosen_curvature;
-drive_msg_.curvature = 1.0;
+drive_msg_.curvature = chosen_curvature;
+// drive_msg_.curvature = 1.0;
 // STEP 5: Apply 1D TOC to determine velocity 
-// drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
-drive_msg_.velocity = 0.3;
+drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
+// drive_msg_.velocity = 0.3;
 
 
   // STEP 6: Update History

@@ -101,6 +101,9 @@ class ParticleFilter {
   // Random number generator.
   util_random::Random rng_;
 
+  // Number of consecutive updates
+  int n_updates;
+
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;

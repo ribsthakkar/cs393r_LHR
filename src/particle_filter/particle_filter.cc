@@ -60,13 +60,16 @@ CONFIG_FLOAT(k2, "motion_model.k2");
 CONFIG_FLOAT(k3, "motion_model.k3");
 CONFIG_FLOAT(k4, "motion_model.k4");
 CONFIG_FLOAT(gamma, "gamma");
-CONFIG_FLOAT(distance_resample_threshold, "distance_resample_threshold");
-CONFIG_FLOAT(angle_resample_threshold, "angle_resample_threshold");
+CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
+CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
+CONFIG_FLOAT(angle_observe_threshold, "angle_observe_threshold");
+CONFIG_FLOAT(min_update_before_resample_count, "min_update_before_resample_count");
 CONFIG_INT(ray_delta, "ray_delta");
 
 config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 ParticleFilter::ParticleFilter() :
+    n_updates(0),
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
     odom_initialized_(false) {}
@@ -143,10 +146,7 @@ void ParticleFilter::Update(const vector<float>& ranges,
   {
     float pred_range = (predicted_cloud[i] - (Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc)).norm();
     float observed_range = ranges[i];
-    float likelihood = powf(powf(observed_range - pred_range, 2)/2, CONFIG_gamma); //need to tune this so that we don't keep overflowing
-    //also missing standard deviation term
-
-    p_ptr->weight += logf(likelihood);  //log likelihood? made it sum bc numbers are very unstable right now
+    p_ptr->weight += CONFIG_gamma * (-0.5 * ((observed_range-pred_range)*(observed_range-pred_range))/(CONFIG_lidar_stddev*CONFIG_lidar_stddev));  //log likelihood
   }
 }
 
@@ -159,23 +159,30 @@ void ParticleFilter::Resample() {
   vector<Particle> new_particles;
 
   // Create the buckets
-
-  float x = rng_.UniformRandom(0, 1);
-  
-  // Determine which bucket the random float falls into
-
-  // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
+  // Normalize weights and create buckets
   float sum_particle_weights = 0;
   vector<float> buckets;
+  float max_log_weight = particles_[0].weight;
+  for(unsigned int i = 1; i < particles_.size(); ++i)
+  {
+    if (particles_[i].weight > max_log_weight) {
+      max_log_weight = particles_[i].weight;
+    }
+  }
   for(Particle p : particles_)
   {
+    p.weight = expf(p.weight - max_log_weight);
     sum_particle_weights += p.weight;
     buckets.push_back(sum_particle_weights);
-    // TODO: Avoid resizing buckets vector
   }
+  printf("sum particle weights %f\n", sum_particle_weights);
+  // Determine which bucket the random float falls into
+  // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
+  float x = rng_.UniformRandom(0, 1);
   float increment = sum_particle_weights/particles_.size();
   unsigned particle_index = static_cast<int>(x * (particles_.size()-1));
   float curr_weight = buckets[particle_index];
+  printf("Initial weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
   while(new_particles.size() < particles_.size())
   {
     if(curr_weight > buckets[particle_index])
@@ -185,13 +192,12 @@ void ParticleFilter::Resample() {
       {
         particle_index%=particles_.size(); //don't index OOB
         curr_weight = curr_weight - sum_particle_weights;
-        // cout << curr_weight << endl;
       }
       continue;
     }
     curr_weight += increment;
     new_particles.push_back(particles_[particle_index]);
-    
+    // printf("Added weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
   }
   for(Particle& p : new_particles)
   {
@@ -209,21 +215,20 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   // A new laser scan observation is available (in the laser frame)
   // Call the Update and Resample steps as necessary.
   if(!odom_initialized_) return;
-  for(Particle& p : particles_)
+  if(distance_traveled > CONFIG_distance_observe_threshold || angle_traveled > CONFIG_angle_observe_threshold)
   {
-      Update(ranges, range_min, range_max, angle_min, angle_max, &p);
+    for(Particle& p : particles_)
+    {
+        Update(ranges, range_min, range_max, angle_min, angle_max, &p);
+        n_updates += 1;
+    }
+    if (n_updates > CONFIG_min_update_before_resample_count)
+    {
+      Resample();
+      n_updates = 0;
+    }
   }
-  if(distance_traveled > CONFIG_distance_resample_threshold || angle_traveled > CONFIG_angle_resample_threshold)
-  {
-
-    Resample();
     distance_traveled = angle_traveled = 0;
-  }
-  // if(move_flag_) {
-  //   // Update
-  //   // Resample
-  // }
-  // move_flag_ = false;
 }
 
 // Adam

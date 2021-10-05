@@ -236,6 +236,7 @@ void Navigation::Run() {
   drive_msg_.curvature = 0.0;
   float chosen_free_path_length = 0.0;
   float chosen_curvature = 0.0;
+  (void) chosen_curvature;
   float max_weighted_score = 0.0;
   float chosen_distance_to_goal = 0.0;
   Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
@@ -361,11 +362,13 @@ if (path_options.at(loop_counter-1).score > max_weighted_score) {
       chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
 }
 
-  // visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-  (void)chosen_curvature;
-  drive_msg_.curvature = 1.0;
-  // STEP 5: Apply 1D TOC to determine velocity 
-  drive_msg_.velocity = 0.3;
+// visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
+drive_msg_.curvature = chosen_curvature;
+// (void) chosen_curvature;
+// drive_msg_.curvature = 1.0;
+// STEP 5: Apply 1D TOC to determine velocity 
+drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
+// drive_msg_.velocity = 0.3;
 
 
   // STEP 6: Update History

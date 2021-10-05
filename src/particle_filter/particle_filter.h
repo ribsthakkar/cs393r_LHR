@@ -49,7 +49,8 @@ class ParticleFilter {
                     float range_min,
                     float range_max,
                     float angle_min,
-                    float angle_max);
+                    float angle_max,
+                    float angle_increment);
 
   // Predict particle motion based on odometry.
   void Predict(const Eigen::Vector2f& odom_loc,
@@ -72,6 +73,7 @@ class ParticleFilter {
               float range_max,
               float angle_min,
               float angle_max,
+              float angle_increment,
               Particle* p);
 
   // Resample particles.
@@ -80,11 +82,12 @@ class ParticleFilter {
   // For debugging: get predicted point cloud from current location.
   void GetPredictedPointCloud(const Eigen::Vector2f& loc,
                               const float angle,
-                              int num_ranges,
+                              unsigned int num_ranges,
                               float range_min,
                               float range_max,
                               float angle_min,
                               float angle_max,
+                              float angle_increment,
                               std::vector<Eigen::Vector2f>* scan);
 
  private:
@@ -101,10 +104,17 @@ class ParticleFilter {
   // Random number generator.
   util_random::Random rng_;
 
+  // Number of consecutive updates
+  int n_updates;
+
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
   bool odom_initialized_;
+
+  //for resample triggering
+  float distance_traveled;
+  float angle_traveled;
 };
 }  // namespace slam
 

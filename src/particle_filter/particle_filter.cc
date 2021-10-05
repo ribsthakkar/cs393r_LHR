@@ -231,21 +231,25 @@ void ParticleFilter::GetLocation(Eigen::Vector2f* loc_ptr,
   // variables to return them. Modify the following assignments:
   loc = Vector2f(0, 0);
   angle = 0;
+  Vector2f angle_vector(0, 0);
   float sum_of_weights = 0.0;
   for (const Particle particle: particles_) {
     // compute weighted sum of location and angle
     loc += particle.weight * particle.loc;
-    angle += particle.weight * particle.angle;
     sum_of_weights += particle.weight;
+
+    // Handle the angle by creating a unit vector in the direction
+    angle_vector += particle.weight * Vector2f(cos(particle.angle), sin(particle.angle));
   }
 
   // Normalize
   loc.x() /= sum_of_weights;
   loc.y() /= sum_of_weights;
-  angle /= sum_of_weights;
+  angle_vector.x() /= sum_of_weights;
+  angle_vector.y() /= sum_of_weights;
   
-  // Fix angle to [0, 2*Pi]
-  angle = math_util::AngleMod(angle);
+  // Convert unit vector back to angle
+  angle = math_util::AngleMod(atan2(angle_vector.y(), angle_vector.x()));
 }
 
 void ParticleFilter::UpdateParticlesNaive(Vector2f& delta_pos, float delta_angle){

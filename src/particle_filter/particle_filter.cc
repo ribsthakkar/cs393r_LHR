@@ -64,7 +64,7 @@ CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
 CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
 CONFIG_FLOAT(angle_observe_threshold, "angle_observe_threshold");
 CONFIG_FLOAT(min_update_before_resample_count, "min_update_before_resample_count");
-CONFIG_INT(ray_delta, "ray_delta");
+CONFIG_INT(rays, "rays");
 
 config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
@@ -86,21 +86,17 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
                                             float range_max,
                                             float angle_min,
                                             float angle_max,
+                                            float angle_increment,
                                             vector<Vector2f>* scan_ptr) {
   if(!odom_initialized_) return;
   vector<Vector2f>& scan = *scan_ptr;
-  // Compute what the predicted point cloud would be, if the car was at the pose
-  // loc, angle, with the sensor characteristics defined by the provided
-  // parameters.
-  // This is NOT the motion model predict step: it is the prediction of the
-  // expected observations, to be used for the update step.
-
-  // Note: The returned values must be set using the `scan` variable:
-  scan.resize(num_ranges);
-  for (size_t i = 0; i < num_ranges; ++i) {
-    float dangle = std::min(angle_max, angle_min + i * (angle_max-angle_min)/(num_ranges-1));
+  unsigned int max_ranges = (unsigned int) std::ceil((angle_max-angle_min)/angle_increment) + 1;
+  unsigned int range_delta = max_ranges/num_ranges;
+  scan.resize(max_ranges);
+  for (size_t i = 0; i < max_ranges; i+=range_delta) {
+    float dangle = std::min(angle_max, angle_min + i * angle_increment);
     const Vector2f lidar_base =  Eigen::Rotation2Df(angle)*kLaserLoc + loc;
-    float min_distance = LIDAR_RANGE;
+    float min_distance = range_max;
         
     // Line segment from location to LIDAR Range.
     scan[i] = Vector2f(lidar_base.x()+min_distance*std::cos(angle+dangle), lidar_base.y()+min_distance*std::sin(angle+dangle)); // Set default ray to be maximum range of laser
@@ -116,9 +112,10 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
         //       intersection_point.x(),
         //       intersection_point.y());
         scan[i] = intersection_point;
-        min_distance = (lidar_base-intersection_point).norm();
+        min_distance =  (lidar_base-intersection_point).norm();
       } 
     }
+    // printf("Min distance %f\n", min_distance);
   }
 }
 
@@ -128,26 +125,27 @@ void ParticleFilter::Update(const vector<float>& ranges,
                             float range_max,
                             float angle_min,
                             float angle_max,
+                            float angle_increment,
                             Particle* p_ptr) {
   // Implement the update step of the particle filter here.
   // You will have to use the `GetPredictedPointCloud` to predict the expected
   // observations for each particle, and assign weights to the particles based
   // on the observation likelihood computed by relating the observation to the
   // predicted point cloud.
-  /*
-    set the weight for the given particle 
-
-  */
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
-  GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, ranges.size()/CONFIG_ray_delta + 1, range_min, range_max, angle_min, angle_max, &predicted_cloud);
-  // for each point in the predicted cloud, compute the difference relative to the corresponding point in the observed point cloud
-  for(unsigned i = 0; i < ranges.size(); i+=CONFIG_ray_delta)
+  GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, CONFIG_rays, range_min, range_max, angle_min, angle_max, angle_increment, &predicted_cloud);
+  unsigned int range_delta = ranges.size()/CONFIG_rays;
+  Eigen::Vector2f lidar_loc = Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc;
+  for(unsigned i = 0; i < ranges.size(); i+=range_delta)
   {
-    float pred_range = (predicted_cloud[i] - (Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc)).norm();
+    // printf("LIDAR Loc (%f, %f) particle loc (%f, %f) intersection point (%f, %f)", lidar_loc.x(), lidar_loc.y(), p_ptr->loc.x(), p_ptr->loc.y(), predicted_cloud[i].x(), predicted_cloud[i].y());
+    float pred_range = (predicted_cloud[i] - lidar_loc).norm();
     float observed_range = ranges[i];
+    // printf("Difference between %d observed(%f) and predicted(%f) range %f\n", i, observed_range, pred_range, observed_range-pred_range);
     p_ptr->weight += CONFIG_gamma * (-0.5 * ((observed_range-pred_range)*(observed_range-pred_range))/(CONFIG_lidar_stddev*CONFIG_lidar_stddev));  //log likelihood
   }
+  // printf("Final weight %f\n", p_ptr->weight);
 }
 
 // Joey
@@ -170,19 +168,20 @@ void ParticleFilter::Resample() {
     }
   }
   for(Particle p : particles_)
-  {
+  {    
+    // printf("particle weight %f\n", p.weight - max_log_weight);
     p.weight = expf(p.weight - max_log_weight);
     sum_particle_weights += p.weight;
     buckets.push_back(sum_particle_weights);
   }
-  printf("sum particle weights %f\n", sum_particle_weights);
+  // printf("sum particle weights %f\n", sum_particle_weights);
   // Determine which bucket the random float falls into
   // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
   float x = rng_.UniformRandom(0, 1);
   float increment = sum_particle_weights/particles_.size();
   unsigned particle_index = static_cast<int>(x * (particles_.size()-1));
   float curr_weight = buckets[particle_index];
-  printf("Initial weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
+  // printf("Initial weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
   while(new_particles.size() < particles_.size())
   {
     if(curr_weight > buckets[particle_index])
@@ -199,19 +198,37 @@ void ParticleFilter::Resample() {
     new_particles.push_back(particles_[particle_index]);
     // printf("Added weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
   }
+  // float x = rng_.UniformRandom(0.0, sum_particle_weights);
+  // unsigned int idx = 0;
+  // while (x > buckets[idx]) ++idx;
+
+  // // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
+  // float increment = sum_particle_weights/FLAGS_num_particles;
+  // while(new_particles.size() < particles_.size())
+  // {
+  //   new_particles.push_back(particles_[idx]);
+  //   x += increment;
+  //   if (x > sum_particle_weights) {
+  //     idx = 0;
+  //     x = x-sum_particle_weights;
+  //   }
+  //   while (x > buckets[idx]) ++idx;
+  // }
+
+
   for(Particle& p : new_particles)
   {
     p.weight = 1;
   }
   particles_ = new_particles;
-
 }
 
 void ParticleFilter::ObserveLaser(const vector<float>& ranges,
                                   float range_min,
                                   float range_max,
                                   float angle_min,
-                                  float angle_max) {
+                                  float angle_max,
+                                  float angle_increment) {
   // A new laser scan observation is available (in the laser frame)
   // Call the Update and Resample steps as necessary.
   if(!odom_initialized_) return;
@@ -219,7 +236,7 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
   {
     for(Particle& p : particles_)
     {
-        Update(ranges, range_min, range_max, angle_min, angle_max, &p);
+        Update(ranges, range_min, range_max, angle_min, angle_max, angle_increment, &p);
         n_updates += 1;
     }
     if (n_updates > CONFIG_min_update_before_resample_count)
@@ -227,8 +244,9 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
       Resample();
       n_updates = 0;
     }
+    distance_traveled = 0;
+    angle_traveled = 0;
   }
-    distance_traveled = angle_traveled = 0;
 }
 
 // Adam
@@ -269,6 +287,7 @@ void ParticleFilter::Initialize(const string& map_file,
     particle.loc = loc + Eigen::Vector2f(rng_.Gaussian(0.0, CONFIG_init_loc_noise_), rng_.Gaussian(0.0, CONFIG_init_loc_noise_));
     particle.angle = angle + rng_.Gaussian(0.0, CONFIG_init_angle_noise_);
     particle.weight = uniform_weight;
+    // printf("init particl weight %f\n", particle.weight);
     particles_.push_back(particle);
   }
 }

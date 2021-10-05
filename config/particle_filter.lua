@@ -7,8 +7,8 @@ motion_model = {
     k4 = 0.05
 }
 gamma = 0.2
-lidar_stddev = 0.05
-ray_delta = 25
+lidar_stddev = 0.1
+rays = 50
 distance_observe_threshold = 0.1
 angle_observe_threshold = 1000
 min_update_before_resample_count = 10

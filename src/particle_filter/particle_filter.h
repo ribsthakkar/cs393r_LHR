@@ -49,7 +49,8 @@ class ParticleFilter {
                     float range_min,
                     float range_max,
                     float angle_min,
-                    float angle_max);
+                    float angle_max,
+                    float angle_increment);
 
   // Predict particle motion based on odometry.
   void Predict(const Eigen::Vector2f& odom_loc,
@@ -72,6 +73,7 @@ class ParticleFilter {
               float range_max,
               float angle_min,
               float angle_max,
+              float angle_increment,
               Particle* p);
 
   // Resample particles.
@@ -85,6 +87,7 @@ class ParticleFilter {
                               float range_max,
                               float angle_min,
                               float angle_max,
+                              float angle_increment,
                               std::vector<Eigen::Vector2f>* scan);
 
  private:

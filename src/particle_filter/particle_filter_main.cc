@@ -117,6 +117,7 @@ void PublishPredictedScan() {
       last_laser_msg_.range_max,
       last_laser_msg_.angle_min,
       last_laser_msg_.angle_max,
+      last_laser_msg_.angle_increment,
       &predicted_scan);
   for (const Vector2f& p : predicted_scan) {
     DrawPoint(p, kColor, vis_msg_);
@@ -172,7 +173,8 @@ void LaserCallback(const sensor_msgs::LaserScan& msg) {
       msg.range_min,
       msg.range_max,
       msg.angle_min,
-      msg.angle_max);
+      msg.angle_max,
+      msg.angle_increment);
   PublishVisualization();
 }
 

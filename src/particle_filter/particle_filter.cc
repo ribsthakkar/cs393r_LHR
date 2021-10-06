@@ -62,6 +62,7 @@ CONFIG_FLOAT(naive_k3, "naive_motion_model.k3");
 CONFIG_FLOAT(naive_k4, "naive_motion_model.k4");
 CONFIG_FLOAT(motion_k1, "motion_model.k1");
 CONFIG_FLOAT(motion_k2, "motion_model.k2");
+CONFIG_FLOAT(motion_k3, "motion_model.k3");
 CONFIG_FLOAT(gamma, "gamma");
 CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
 CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
@@ -146,7 +147,8 @@ void ParticleFilter::Update(const vector<float>& ranges,
     float pred_range = (predicted_cloud[i] - lidar_loc).norm();
     float observed_range = ranges[i];
     // printf("Difference between %d observed(%f) and predicted(%f) range %f\n", i, observed_range, pred_range, observed_range-pred_range);
-    p_ptr->weight += CONFIG_gamma * (-0.5 * ((observed_range-pred_range)*(observed_range-pred_range))/(CONFIG_lidar_stddev*CONFIG_lidar_stddev));  //log likelihood
+    float robust_multiple = pred_range - observed_range >= 0.1 ? 1.0: 20*logf(2.0);
+    p_ptr->weight += CONFIG_gamma * (-0.5 * robust_multiple * ((observed_range-pred_range)*(observed_range-pred_range))/(CONFIG_lidar_stddev*CONFIG_lidar_stddev));  //log likelihood
   }
   // printf("Final weight %f\n", p_ptr->weight);
 }
@@ -240,8 +242,8 @@ void ParticleFilter::ObserveLaser(const vector<float>& ranges,
     for(Particle& p : particles_)
     {
         Update(ranges, range_min, range_max, angle_min, angle_max, angle_increment, &p);
-        n_updates += 1;
     }
+    n_updates += 1;
     if (n_updates > CONFIG_min_update_before_resample_count)
     {
       Resample();
@@ -363,7 +365,7 @@ void ParticleFilter::UpdateParticles(Eigen::Vector2f& delta_pos, float delta_ang
   float radial_variance = CONFIG_motion_k2 * fabs(1/radius);
 
   // TODO think about how to handle this angle variance
-  float angle_variance = CONFIG_naive_k3*delta_pos.norm() + CONFIG_naive_k4 * fabs(delta_angle);
+  float angle_variance = CONFIG_motion_k3 * fabs(delta_angle);
 
   for (Particle& particle: particles_) {
     // Update the position/angle of the particles based on Motion Model

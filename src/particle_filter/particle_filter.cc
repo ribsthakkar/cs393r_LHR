@@ -67,7 +67,7 @@ CONFIG_FLOAT(gamma, "gamma");
 CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
 CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
 CONFIG_FLOAT(angle_observe_threshold, "angle_observe_threshold");
-CONFIG_FLOAT(robust_observation_likelihood_mulitple, "robust_observation_likelihood_multiple")
+CONFIG_FLOAT(robust_observation_likelihood_mulitple, "robust_observation_likelihood_multiple");
 CONFIG_FLOAT(min_update_before_resample_count, "min_update_before_resample_count");
 CONFIG_INT(rays, "rays");
 

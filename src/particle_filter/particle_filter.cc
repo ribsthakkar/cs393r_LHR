@@ -67,6 +67,7 @@ CONFIG_FLOAT(gamma, "gamma");
 CONFIG_FLOAT(lidar_stddev, "lidar_stddev");
 CONFIG_FLOAT(distance_observe_threshold, "distance_observe_threshold");
 CONFIG_FLOAT(angle_observe_threshold, "angle_observe_threshold");
+CONFIG_FLOAT(robust_observation_likelihood_mulitple, "robust_observation_likelihood_multiple")
 CONFIG_FLOAT(min_update_before_resample_count, "min_update_before_resample_count");
 CONFIG_INT(rays, "rays");
 
@@ -112,14 +113,10 @@ void ParticleFilter::GetPredictedPointCloud(const Vector2f& loc,
       Vector2f intersection_point; // Return variable
       bool intersects = map_line.Intersection(my_line, &intersection_point);
       if (intersects && (lidar_base-intersection_point).norm() < min_distance) {
-        // printf("Intersects at %f,%f\n", 
-        //       intersection_point.x(),
-        //       intersection_point.y());
         scan[i] = intersection_point;
         min_distance =  (lidar_base-intersection_point).norm();
       } 
     }
-    // printf("Min distance %f\n", min_distance);
   }
 }
 
@@ -138,19 +135,17 @@ void ParticleFilter::Update(const vector<float>& ranges,
   // predicted point cloud.
   if(!odom_initialized_) return;
   vector<Vector2f> predicted_cloud;
+  
   GetPredictedPointCloud(p_ptr->loc, p_ptr->angle, CONFIG_rays, range_min, range_max, angle_min, angle_max, angle_increment, &predicted_cloud);
   unsigned int range_delta = ranges.size()/CONFIG_rays;
   Eigen::Vector2f lidar_loc = Eigen::Rotation2Df(p_ptr->angle)*kLaserLoc + p_ptr->loc;
   for(unsigned i = 0; i < ranges.size(); i+=range_delta)
   {
-    // printf("LIDAR Loc (%f, %f) particle loc (%f, %f) intersection point (%f, %f)", lidar_loc.x(), lidar_loc.y(), p_ptr->loc.x(), p_ptr->loc.y(), predicted_cloud[i].x(), predicted_cloud[i].y());
     float pred_range = (predicted_cloud[i] - lidar_loc).norm();
     float observed_range = ranges[i];
-    // printf("Difference between %d observed(%f) and predicted(%f) range %f\n", i, observed_range, pred_range, observed_range-pred_range);
-    float robust_multiple = pred_range - observed_range >= 0.1 ? 1.0: 20*logf(2.0);
+    float robust_multiple = pred_range - observed_range >= 0.1 ? 1.0: CONFIG_robust_observation_likelihood_mulitple;
     p_ptr->weight += CONFIG_gamma * (-0.5 * robust_multiple * ((observed_range-pred_range)*(observed_range-pred_range))/(CONFIG_lidar_stddev*CONFIG_lidar_stddev));  //log likelihood
   }
-  // printf("Final weight %f\n", p_ptr->weight);
 }
 
 // Joey
@@ -174,12 +169,10 @@ void ParticleFilter::Resample() {
   }
   for(Particle p : particles_)
   {    
-    // printf("particle weight %f\n", p.weight - max_log_weight);
     p.weight = expf(p.weight - max_log_weight);
     sum_particle_weights += p.weight;
     buckets.push_back(sum_particle_weights);
   }
-  // printf("sum particle weights %f\n", sum_particle_weights);
   // Determine which bucket the random float falls into
   // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
   float x = rng_.UniformRandom(0, 1);
@@ -201,25 +194,7 @@ void ParticleFilter::Resample() {
     }
     curr_weight += increment;
     new_particles.push_back(particles_[particle_index]);
-    // printf("Added weight %f, idx %d increment %f\n", curr_weight, particle_index, increment);
   }
-  // float x = rng_.UniformRandom(0.0, sum_particle_weights);
-  // unsigned int idx = 0;
-  // while (x > buckets[idx]) ++idx;
-
-  // // Start the specific random bucket and add an offset = sum(particle weights)/num_particles
-  // float increment = sum_particle_weights/FLAGS_num_particles;
-  // while(new_particles.size() < particles_.size())
-  // {
-  //   new_particles.push_back(particles_[idx]);
-  //   x += increment;
-  //   if (x > sum_particle_weights) {
-  //     idx = 0;
-  //     x = x-sum_particle_weights;
-  //   }
-  //   while (x > buckets[idx]) ++idx;
-  // }
-
 
   for(Particle& p : new_particles)
   {
@@ -296,7 +271,6 @@ void ParticleFilter::Initialize(const string& map_file,
     particle.loc = loc + Eigen::Vector2f(rng_.Gaussian(0.0, CONFIG_init_loc_noise_), rng_.Gaussian(0.0, CONFIG_init_loc_noise_));
     particle.angle = angle + rng_.Gaussian(0.0, CONFIG_init_angle_noise_);
     particle.weight = uniform_weight;
-    // printf("init particl weight %f\n", particle.weight);
     particles_.push_back(particle);
   }
 }

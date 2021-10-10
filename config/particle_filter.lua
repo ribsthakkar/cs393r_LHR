@@ -16,4 +16,5 @@ lidar_stddev = 0.15
 rays = 50
 distance_observe_threshold = 0.05
 angle_observe_threshold = 0.1
+robust_observation_likelihood_multiple = 13.8629 -- 20log(2)
 min_update_before_resample_count = 6

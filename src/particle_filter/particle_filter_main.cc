@@ -75,10 +75,6 @@ DEFINE_string(init_topic,
 DECLARE_int32(v);
 
 // Create config reader entries
-CONFIG_STRING(map_name_, "map");
-CONFIG_FLOAT(init_x_, "init_x");
-CONFIG_FLOAT(init_y_, "init_y");
-CONFIG_FLOAT(init_r_, "init_r");
 config_reader::ConfigReader config_reader_({"config/particle_filter.lua"});
 
 bool run_ = true;
@@ -108,7 +104,7 @@ void PublishParticles() {
 }
 
 void PublishPredictedScan() {
-  const uint32_t kColor = 0xd67d00;
+  const uint32_t kColor = 0xFFC300;
   Vector2f robot_loc(0, 0);
   float robot_angle(0);
   particle_filter_.GetLocation(&robot_loc, &robot_angle);
@@ -121,6 +117,7 @@ void PublishPredictedScan() {
       last_laser_msg_.range_max,
       last_laser_msg_.angle_min,
       last_laser_msg_.angle_max,
+      last_laser_msg_.angle_increment,
       &predicted_scan);
   for (const Vector2f& p : predicted_scan) {
     DrawPoint(p, kColor, vis_msg_);
@@ -176,7 +173,8 @@ void LaserCallback(const sensor_msgs::LaserScan& msg) {
       msg.range_min,
       msg.range_max,
       msg.angle_min,
-      msg.angle_max);
+      msg.angle_max,
+      msg.angle_increment);
   PublishVisualization();
 }
 

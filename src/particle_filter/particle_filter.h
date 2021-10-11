@@ -95,6 +95,9 @@ class ParticleFilter {
   // Delta's here are in the base frame
   void UpdateParticlesNaive(Eigen::Vector2f& delta_pos, float delta_angle);
 
+  // Delta's here are in the base frame
+  void UpdateParticles(Eigen::Vector2f& delta_pos, float delta_angle);
+
   // List of particles being tracked.
   std::vector<Particle> particles_;
 

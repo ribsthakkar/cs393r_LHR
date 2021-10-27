@@ -58,6 +58,18 @@ class SLAM {
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
   bool odom_initialized_;
+
+  // All scans
+  vector<Vector2f> poses_locs;
+  vector<float> poses_angles;
+  vector<vector<Vector2f>> scans;
+
+  //for keeping track of successive poses
+  float distance_traveled;
+  float angle_traveled;
+
+  // Constructed Map
+  vector<Vector2f> map;
 };
 }  // namespace slam
 

@@ -52,12 +52,16 @@ namespace slam {
 SLAM::SLAM() :
     prev_odom_loc_(0, 0),
     prev_odom_angle_(0),
-    odom_initialized_(false) {}
+    odom_initialized_(false),
+    poses_locs(),
+    poses_angles(),
+    scans(),
+    map() {}
 
 void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   // Return the latest pose estimate of the robot.
-  *loc = Vector2f(0, 0);
-  *angle = 0;
+  *loc = poses_locs.back();
+  *angle = poses_angles.back();
 }
 
 void SLAM::ObserveLaser(const vector<float>& ranges,
@@ -68,6 +72,34 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
   // A new laser scan has been observed. Decide whether to add it as a pose
   // for SLAM. If decided to add, align it to the scan from the last saved pose,
   // and save both the scan and the optimized pose.
+  if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30) || poses.size() == 0)
+  {
+    scans.push_back(vector<Vector2f>());
+    // Convert the LaserScan to a point cloud
+    for (uint i = 0; i < msg.ranges.size(); ++i) {
+      float theta = msg.angle_min + i*msg.angle_increment;
+      // Transform to base link of robot by adding the laser location position
+      if (msg.ranges[i]>msg.range_max || msg.ranges[i]<msg.range_min) continue;
+      scans.back().push_back(Vector2f(cos(theta)*msg.ranges[i], sin(theta)*msg.ranges[i]) + kLaserLoc);
+    }
+    if (poses.size() > 1)
+    {
+      // Align last scan to the last-1th scan
+
+      // Determine the new pose
+
+      // Update map
+    } 
+    else
+    {
+      for(Vector2f p: scans.back())
+      {
+        map.push_back(p);
+      }
+      poses_locs.push_back(Vector2f(0,0));
+      poses_angles.push_back(0.0f);
+    }
+  }
 }
 
 void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
@@ -79,10 +111,16 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   }
   // Keep track of odometry to estimate how far the robot has moved between 
   // poses.
+  Vector2f delta_pos = Eigen::Rotation2Df(-1*prev_odom_angle_) * (odom_loc - prev_odom_loc_);
+  float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
+  
+  distance_traveled += delta_pos.norm();
+  angle_traveled += abs(delta_angle);
+  prev_odom_loc_ = odom_loc;
+  prev_odom_angle_ = odom_angle;
 }
 
 vector<Vector2f> SLAM::GetMap() {
-  vector<Vector2f> map;
   // Reconstruct the map as a single aligned point cloud from all saved poses
   // and their respective scans.
   return map;

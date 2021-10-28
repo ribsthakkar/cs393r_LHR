@@ -57,6 +57,8 @@ class SLAM {
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
+  Eigen::Vector2f poses_a_loc;
+  float poses_a_angle;
   bool odom_initialized_;
 
   // All scans
@@ -70,6 +72,7 @@ class SLAM {
 
   // Constructed Map
   vector<Vector2f> map;
+  map<pair<int, int>, float> observation_probabilities;
 };
 }  // namespace slam
 

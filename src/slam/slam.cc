@@ -83,6 +83,7 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
 
 void SLAM::Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta)
 {
+  // Convert the discrete index to a float representation of the deviation values around our odometry
   *dx = CONFIG_dloc_delta * (ix - CONFIG_dloc_count/2);
   *dx = CONFIG_dloc_delta * (iy - CONFIG_dloc_count/2);
   *dtheta = CONFIG_dangle_delta * (itheta - CONFIG_dangle_count/2);
@@ -94,13 +95,20 @@ float SLAM::ComputeObservationWeight(Vector2f loc, float angle, vector<Vector2f>
   for(Vector2f p: scan)
   {
     Vector2f transformed = Eigen::Rotation2Df(angle)*p + loc;
-    nll += observation_probabilities[std::make_pair(round(transformed.x()*CONFIG_rasterization_precision), round(transformed.y()*CONFIG_rasterization_precision))];
+    if (observation_probabilities.find() != observation_probabilities.end()) {
+      nll += observation_probabilities[std::make_pair(round(transformed.x()*CONFIG_rasterization_precision), round(transformed.y()*CONFIG_rasterization_precision))];
+    } else {
+      // We need to add a big positive number since we basically are saying that htis point doesnt exist in our observation likelihood map
+      // and we are minimizing the log likelihood
+      nll += 100;
+    }
   }
   return nll;
 }
 
 float SLAM::ComputeMotionWeight(float dx, float dy, float dtheta)
 {
+  // Use motion model constants to compute the error in our odometry being the input arguments
   float nll = 0.0f;
   Vector2f delta_pos(dx, dy);
   float linear_variance = CONFIG_k1*delta_pos.norm() + CONFIG_k2 * fabs(dtheta);
@@ -115,8 +123,10 @@ void SLAM::UpdateObservationLikelihoods()
 {
   for (Vector2f p: scans.back())
   {
+    // Project our float position to some precision (10, 100, 1000, etc.)
     int coarse_x = p.x() * CONFIG_rasterization_precision;
     int coarse_y = p.y() * CONFIG_rasterization_precision;
+    // Loop through nearby points and give them 
     for (int x = coarse_x - CONFIG_rasterization_radius; x <= coarse_x + CONFIG_rasterization_radius; ++x) {
       for (int y = coarse_x - CONFIG_rasterization_radius; y <= coarse_x + CONFIG_rasterization_radius; ++y) {
         observation_probabilities[make_pair(x, y)] += powf(Vector2f(x-coarse_x, y-coarse_y).norm(), 2)/(2*CONFIG_lidar_variance);
@@ -156,8 +166,11 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
       for(int ix = 0; ix < CONFIG_dloc_count; ix += 1) {
         for (int iy = 0; iy < CONFIG_dloc_count; iy += 1) {
           for (int itheta = 0; itheta < CONFIG_dangle_count; itheta += 1) {
+              // compute the dx, dy, dtheta for this element in our Cube
               float dx, dy, dtheta;
               Index2Delta(ix, iy, itheta, *dx, *dy, *dtheta);
+              
+              // Determine the true location and angle being considered in the map frame and determine nll weight
               Vector2f considered_loc = poses_locs.back() + dloc + Vector2f(dx, dy);
               float considered_angle = poses_angles.back() + dangle + dtheta;
               float pose_weight = ComputeObservationWeight(considered_loc, considered_angle, scans.back()) + ComputeMotionWeight(dx, dy, dtheta);

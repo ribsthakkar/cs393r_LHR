@@ -48,17 +48,17 @@ using std::swap;
 using std::vector;
 using vector_map::VectorMap;
 
-CONFIG_INT(dloc_count, "");
-CONFIG_FLOAT(dloc_delta, "");
-CONFIG_INT(dangle_count, "");
-CONFIG_FLOAT(dangle_delta, "");
-CONFIG_FLOAT(k1, "");
-CONFIG_FLOAT(k2, "");
-CONFIG_FLOAT(k3, "");
-CONFIG_FLOAT(k4, "");
-CONFIG_INT(rasterization_precision, "");
-CONFIG_INT(rasterization_radius, "")
-CONFIG_FLOAT(lidar_variance, "");
+CONFIG_INT(dloc_count, "odometry_estimation.linear_count");
+CONFIG_FLOAT(dloc_delta, "odometry_estimation.linear_precision");
+CONFIG_INT(dangle_count, "odometry_estimation.angular_count");
+CONFIG_FLOAT(dangle_delta, "odometry_estimation.angular_precision");
+CONFIG_FLOAT(k1, "motion_model.k1");
+CONFIG_FLOAT(k2, "motion_model.k2");
+CONFIG_FLOAT(k3, "motion_model.k3");
+CONFIG_FLOAT(k4, "motion_model.k4");
+CONFIG_INT(rasterization_precision, "rasterization.radius");
+CONFIG_INT(rasterization_square_size, "rasterization.square_size");
+CONFIG_FLOAT(lidar_variance, "lidar_variance");
 
 config_reader::ConfigReader config_reader_({"config/slam.lua"});
 
@@ -73,7 +73,10 @@ SLAM::SLAM() :
     poses_locs(),
     poses_angles(),
     scans(),
-    map() {}
+    distance_traveled(0),
+    angle_traveled(0),
+    constructed_map(),
+    observation_probabilities() {}
 
 void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   // Return the latest pose estimate of the robot.
@@ -89,7 +92,7 @@ void SLAM::Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta
   *dtheta = CONFIG_dangle_delta * (itheta - CONFIG_dangle_count/2);
 }
 
-float SLAM::ComputeObservationWeight(Vector2f loc, float angle, vector<Vector2f>& scan)
+float SLAM::ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan)
 {
   float nll = 0.0f
   for(Vector2f p: scan)
@@ -127,15 +130,16 @@ void SLAM::UpdateObservationLikelihoods()
     int coarse_x = p.x() * CONFIG_rasterization_precision;
     int coarse_y = p.y() * CONFIG_rasterization_precision;
     // Loop through nearby points and give them 
-    for (int x = coarse_x - CONFIG_rasterization_radius; x <= coarse_x + CONFIG_rasterization_radius; ++x) {
-      for (int y = coarse_x - CONFIG_rasterization_radius; y <= coarse_x + CONFIG_rasterization_radius; ++y) {
-        observation_probabilities[make_pair(x, y)] += powf(Vector2f(x-coarse_x, y-coarse_y).norm(), 2)/(2*CONFIG_lidar_variance);
+    for (int x = coarse_x - CONFIG_rasterization_square_size; x <= coarse_x + CONFIG_rasterization_square_size; ++x) {
+      for (int y = coarse_x - CONFIG_rasterization_square_size; y <= coarse_x + CONFIG_rasterization_square_size; ++y) {
+
+        observation_probabilities[make_pair(x, y)] += powf(Eigen::Vector2f((x-coarse_x)/CONFIG_rasterization_precision, (y-coarse_y)/CONFIG_rasterization_precision).norm(), 2)/(2*CONFIG_lidar_variance);
       }
     }
   }
 }
 
-void SLAM::ObserveLaser(const vector<float>& ranges,
+void SLAM::ObserveLaser(const std::vector<float>& ranges,
                         float range_min,
                         float range_max,
                         float angle_min,
@@ -145,10 +149,10 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
   // and save both the scan and the optimized pose.
   if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30) || poses.size() == 0)
   {
-    Vector2f dloc = prev_odom_loc_ - poses_a_loc;
+    Eigen::Vector2f dloc = prev_odom_loc_ - poses_a_loc;
     float dangle = prev_odom_angle_ - poses_a_angle;
 
-    scans.push_back(vector<Vector2f>());
+    scans.push_back(std::vector<Eigen::Vector2f>());
     // Convert the LaserScan to a point cloud
     for (uint i = 0; i < msg.ranges.size(); ++i) {
       float theta = msg.angle_min + i*msg.angle_increment;
@@ -160,8 +164,8 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
     {
       // Construct cube around dangle and dloc and select best pose
       float best_weight = std::numeric_limits<float>::infinity();
-      Vector2f best_loc = poses_locs.back();
-      Vector2f best_angle = poses_angles.back();
+      Eigen::Vector2f best_loc = poses_locs.back();
+      float best_angle = poses_angles.back();
 
       for(int ix = 0; ix < CONFIG_dloc_count; ix += 1) {
         for (int iy = 0; iy < CONFIG_dloc_count; iy += 1) {
@@ -196,7 +200,7 @@ void SLAM::ObserveLaser(const vector<float>& ranges,
       poses_angles.push_back(0.0f);
     }
     // Update Map
-    for(Vector2f p: scans.back())
+    for(Eigen::Vector2f p: scans.back())
     {
       map.push_back(p);
     }
@@ -218,7 +222,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   }
   // Keep track of odometry to estimate how far the robot has moved between 
   // poses.
-  Vector2f delta_pos = (odom_loc - prev_odom_loc_);
+  Eigen::Vector2f delta_pos = (odom_loc - prev_odom_loc_);
   float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
   distance_traveled += delta_pos.norm();
   angle_traveled += abs(delta_angle);
@@ -226,7 +230,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   prev_odom_angle_ = odom_angle;
 }
 
-vector<Vector2f> SLAM::GetMap() {
+std::vector<Eigen::Vector2f> SLAM::GetMap() {
   // Reconstruct the map as a single aligned point cloud from all saved poses
   // and their respective scans.
   return map;

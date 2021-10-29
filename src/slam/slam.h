@@ -54,6 +54,12 @@ class SLAM {
 
  private:
 
+  void Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta);
+  float ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan);
+  float ComputeMotionWeight(float dx, float dy, float dtheta);
+  void UpdateObservationLikelihoods();
+
+
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
@@ -62,17 +68,17 @@ class SLAM {
   bool odom_initialized_;
 
   // All scans
-  vector<Vector2f> poses_locs;
-  vector<float> poses_angles;
-  vector<vector<Vector2f>> scans;
+  std::vector<Vector2f> poses_locs;
+  std::vector<float> poses_angles;
+  std::vector<vector<Eigen::Vector2f>> scans;
 
   //for keeping track of successive poses
   float distance_traveled;
   float angle_traveled;
 
   // Constructed Map
-  vector<Vector2f> map;
-  map<pair<int, int>, float> observation_probabilities;
+  std::vector<Eigen::Vector2f> constructed_map;
+  std::map<std::pair<int, int>, float> observation_probabilities;
 };
 }  // namespace slam
 

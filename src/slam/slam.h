@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <map>
 
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
@@ -40,7 +41,8 @@ class SLAM {
                     float range_min,
                     float range_max,
                     float angle_min,
-                    float angle_max);
+                    float angle_max,
+                    float angle_increment);
 
   // Observe new odometry-reported location.
   void ObserveOdometry(const Eigen::Vector2f& odom_loc,
@@ -54,7 +56,7 @@ class SLAM {
 
  private:
 
-  void Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta);
+  void Index2Delta(int ix, int iy, int itheta, float* dx, float* dy, float* dtheta);
   float ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan);
   float ComputeMotionWeight(float dx, float dy, float dtheta);
   void UpdateObservationLikelihoods();
@@ -68,9 +70,9 @@ class SLAM {
   bool odom_initialized_;
 
   // All scans
-  std::vector<Vector2f> poses_locs;
+  std::vector<Eigen::Vector2f> poses_locs;
   std::vector<float> poses_angles;
-  std::vector<vector<Eigen::Vector2f>> scans;
+  std::vector<std::vector<Eigen::Vector2f>> scans;
 
   //for keeping track of successive poses
   float distance_traveled;

@@ -126,7 +126,8 @@ void LaserCallback(const sensor_msgs::LaserScan& msg) {
       msg.range_min,
       msg.range_max,
       msg.angle_min,
-      msg.angle_max);
+      msg.angle_max,
+      msg.angle_increment);
   PublishMap();
   PublishPose();
 }

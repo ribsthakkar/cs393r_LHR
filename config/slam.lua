@@ -5,7 +5,7 @@ odometry_estimation = {
     angular_count = 10
 }
 
-naive_motion_model = {
+motion_model = {
     k1 = 0.5,
     k2 = 0.5,
     k3 = 0.1,

@@ -30,6 +30,7 @@
 #include "shared/math/geometry.h"
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
+#include "config_reader/config_reader.h"
 
 #include "slam.h"
 
@@ -48,6 +49,10 @@ using std::swap;
 using std::vector;
 using vector_map::VectorMap;
 
+const Vector2f kLaserLoc(0.2, 0);
+
+namespace slam {
+
 CONFIG_INT(dloc_count, "odometry_estimation.linear_count");
 CONFIG_FLOAT(dloc_delta, "odometry_estimation.linear_precision");
 CONFIG_INT(dangle_count, "odometry_estimation.angular_count");
@@ -56,13 +61,11 @@ CONFIG_FLOAT(k1, "motion_model.k1");
 CONFIG_FLOAT(k2, "motion_model.k2");
 CONFIG_FLOAT(k3, "motion_model.k3");
 CONFIG_FLOAT(k4, "motion_model.k4");
-CONFIG_INT(rasterization_precision, "rasterization.radius");
+CONFIG_INT(rasterization_precision, "rasterization.precision");
 CONFIG_INT(rasterization_square_size, "rasterization.square_size");
 CONFIG_FLOAT(lidar_variance, "lidar_variance");
 
 config_reader::ConfigReader config_reader_({"config/slam.lua"});
-
-namespace slam {
 
 SLAM::SLAM() :
     prev_odom_loc_(0, 0),
@@ -84,7 +87,7 @@ void SLAM::GetPose(Eigen::Vector2f* loc, float* angle) const {
   *angle = poses_angles.back();
 }
 
-void SLAM::Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta)
+void SLAM::Index2Delta(int ix, int iy, int itheta, float* dx, float* dy, float* dtheta)
 {
   // Convert the discrete index to a float representation of the deviation values around our odometry
   *dx = CONFIG_dloc_delta * (ix - CONFIG_dloc_count/2);
@@ -94,11 +97,11 @@ void SLAM::Index2Delta(int ix, int iy, int itheta, int* dx, int* dy, int* dtheta
 
 float SLAM::ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan)
 {
-  float nll = 0.0f
+  float nll = 0.0f;
   for(Vector2f p: scan)
   {
     Vector2f transformed = Eigen::Rotation2Df(angle)*p + loc;
-    if (observation_probabilities.find() != observation_probabilities.end()) {
+    if (observation_probabilities.find(std::make_pair(round(transformed.x()*CONFIG_rasterization_precision), round(transformed.y()*CONFIG_rasterization_precision))) != observation_probabilities.end()) {
       nll += observation_probabilities[std::make_pair(round(transformed.x()*CONFIG_rasterization_precision), round(transformed.y()*CONFIG_rasterization_precision))];
     } else {
       // We need to add a big positive number since we basically are saying that htis point doesnt exist in our observation likelihood map
@@ -132,8 +135,7 @@ void SLAM::UpdateObservationLikelihoods()
     // Loop through nearby points and give them 
     for (int x = coarse_x - CONFIG_rasterization_square_size; x <= coarse_x + CONFIG_rasterization_square_size; ++x) {
       for (int y = coarse_x - CONFIG_rasterization_square_size; y <= coarse_x + CONFIG_rasterization_square_size; ++y) {
-
-        observation_probabilities[make_pair(x, y)] += powf(Eigen::Vector2f((x-coarse_x)/CONFIG_rasterization_precision, (y-coarse_y)/CONFIG_rasterization_precision).norm(), 2)/(2*CONFIG_lidar_variance);
+        observation_probabilities[std::make_pair(x, y)] += powf(Eigen::Vector2f((x-coarse_x)/CONFIG_rasterization_precision, (y-coarse_y)/CONFIG_rasterization_precision).norm(), 2)/(2*CONFIG_lidar_variance);
       }
     }
   }
@@ -143,24 +145,25 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
                         float range_min,
                         float range_max,
                         float angle_min,
-                        float angle_max) {
+                        float angle_max,
+                        float angle_increment) {
   // A new laser scan has been observed. Decide whether to add it as a pose
   // for SLAM. If decided to add, align it to the scan from the last saved pose,
   // and save both the scan and the optimized pose.
-  if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30) || poses.size() == 0)
+  if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30) || poses_locs.size() == 0)
   {
     Eigen::Vector2f dloc = prev_odom_loc_ - poses_a_loc;
     float dangle = prev_odom_angle_ - poses_a_angle;
 
     scans.push_back(std::vector<Eigen::Vector2f>());
     // Convert the LaserScan to a point cloud
-    for (uint i = 0; i < msg.ranges.size(); ++i) {
-      float theta = msg.angle_min + i*msg.angle_increment;
+    for (uint i = 0; i < ranges.size(); ++i) {
+      float theta = angle_min + i*angle_increment;
       // Transform to base link of robot by adding the laser location position
-      if (msg.ranges[i]>msg.range_max || msg.ranges[i]<msg.range_min) continue;
-      scans.back().push_back(Vector2f(cos(theta)*msg.ranges[i], sin(theta)*msg.ranges[i]) + kLaserLoc);
+      if (ranges[i]>range_max || ranges[i]<range_min) continue;
+      scans.back().push_back(Vector2f(cos(theta)*ranges[i], sin(theta)*ranges[i]) + kLaserLoc);
     }
-    if (poses.size() > 1)
+    if (poses_locs.size() > 1)
     {
       // Construct cube around dangle and dloc and select best pose
       float best_weight = std::numeric_limits<float>::infinity();
@@ -172,12 +175,12 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
           for (int itheta = 0; itheta < CONFIG_dangle_count; itheta += 1) {
               // compute the dx, dy, dtheta for this element in our Cube
               float dx, dy, dtheta;
-              Index2Delta(ix, iy, itheta, *dx, *dy, *dtheta);
+              SLAM::Index2Delta(ix, iy, itheta, &dx, &dy, &dtheta);
               
               // Determine the true location and angle being considered in the map frame and determine nll weight
               Vector2f considered_loc = poses_locs.back() + dloc + Vector2f(dx, dy);
               float considered_angle = poses_angles.back() + dangle + dtheta;
-              float pose_weight = ComputeObservationWeight(considered_loc, considered_angle, scans.back()) + ComputeMotionWeight(dx, dy, dtheta);
+              float pose_weight = SLAM::ComputeObservationWeight(considered_loc, considered_angle, scans.back()) + SLAM::ComputeMotionWeight(dx, dy, dtheta);
               if (pose_weight < best_weight)
               {
                 best_loc = considered_loc;
@@ -189,9 +192,9 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
       poses_locs.push_back(best_loc);
       poses_angles.push_back(best_angle);
       // Use best pose to align last scan to the last-1th scan
-      for (int i = 0; i < scans.back().size(); ++i)
+      for (uint i = 0; i < scans.back().size(); ++i)
       {
-        scans.back()[i] = scans.back()[i]* Eigen::Rotation2Df(poses_angles.back()) + poses_locs.back();
+        scans.back()[i] = Eigen::Rotation2Df(poses_angles.back())*scans.back()[i] + poses_locs.back();
       }
     }
     else
@@ -202,10 +205,10 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
     // Update Map
     for(Eigen::Vector2f p: scans.back())
     {
-      map.push_back(p);
+      constructed_map.push_back(p);
     }
     // Update Observation Likelihood Lookup-Table
-    UpdateObservationLikelihoods();
+    SLAM::UpdateObservationLikelihoods();
 
     // Update prev odom pose to compute delta next time
     poses_a_angle = prev_odom_angle_;
@@ -233,7 +236,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
 std::vector<Eigen::Vector2f> SLAM::GetMap() {
   // Reconstruct the map as a single aligned point cloud from all saved poses
   // and their respective scans.
-  return map;
+  return constructed_map;
 }
 
 }  // namespace slam

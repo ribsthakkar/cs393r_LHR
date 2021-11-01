@@ -106,7 +106,7 @@ float SLAM::ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vect
     } else {
       // We need to add a big positive number since we basically are saying that htis point doesnt exist in our observation likelihood map
       // and we are minimizing the log likelihood
-      nll += 100;
+      nll += 1000000000.0f;
     }
   }
   return nll;
@@ -127,16 +127,29 @@ float SLAM::ComputeMotionWeight(float dx, float dy, float dtheta)
 
 void SLAM::UpdateObservationLikelihoods()
 {
-  for (Vector2f p: scans.back())
+  for (Eigen::Vector2f p: scans.back())
   {
     // Project our float position to some precision (10, 100, 1000, etc.)
     int coarse_x = p.x() * CONFIG_rasterization_precision;
     int coarse_y = p.y() * CONFIG_rasterization_precision;
     // Loop through nearby points and give them 
     for (int x = coarse_x - CONFIG_rasterization_square_size; x <= coarse_x + CONFIG_rasterization_square_size; ++x) {
-      for (int y = coarse_x - CONFIG_rasterization_square_size; y <= coarse_x + CONFIG_rasterization_square_size; ++y) {
+      for (int y = coarse_y - CONFIG_rasterization_square_size; y <= coarse_y + CONFIG_rasterization_square_size; ++y) {
         observation_probabilities[std::make_pair(x, y)] += powf(Eigen::Vector2f((x-coarse_x)/CONFIG_rasterization_precision, (y-coarse_y)/CONFIG_rasterization_precision).norm(), 2)/(2*CONFIG_lidar_variance);
       }
+    }
+  }
+}
+
+void SLAM::UpdateMap()
+{
+  for(Eigen::Vector2f p: scans.back())
+  {
+    int coarse_x = p.x() * CONFIG_rasterization_precision;
+    int coarse_y = p.y() * CONFIG_rasterization_precision;
+    if (observation_probabilities.find(std::make_pair(coarse_x, coarse_y)) != observation_probabilities.end() && observation_probabilities[std::make_pair(coarse_x, coarse_y)] < 1000000.0f && std::find(constructed_map.rbegin(), constructed_map.rend(), p) == constructed_map.rend())
+    {
+      constructed_map.push_back(p);
     }
   }
 }
@@ -160,7 +173,7 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
     for (uint i = 0; i < ranges.size(); ++i) {
       float theta = angle_min + i*angle_increment;
       // Transform to base link of robot by adding the laser location position
-      if (ranges[i]>range_max || ranges[i]<range_min) continue;
+      if (ranges[i]>range_max-1 || ranges[i]<range_min) continue;
       scans.back().push_back(Vector2f(cos(theta)*ranges[i], sin(theta)*ranges[i]) + kLaserLoc);
     }
     if (poses_locs.size() > 1)
@@ -202,13 +215,11 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
       poses_locs.push_back(Vector2f(0,0));
       poses_angles.push_back(0.0f);
     }
-    // Update Map
-    for(Eigen::Vector2f p: scans.back())
-    {
-      constructed_map.push_back(p);
-    }
     // Update Observation Likelihood Lookup-Table
     SLAM::UpdateObservationLikelihoods();
+
+    // Update Map
+    SLAM::UpdateMap();
 
     // Update prev odom pose to compute delta next time
     poses_a_angle = prev_odom_angle_;

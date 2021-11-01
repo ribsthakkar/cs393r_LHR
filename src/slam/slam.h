@@ -60,7 +60,7 @@ class SLAM {
   float ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan);
   float ComputeMotionWeight(float dx, float dy, float dtheta);
   void UpdateObservationLikelihoods();
-
+  void UpdateMap();
 
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;

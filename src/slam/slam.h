@@ -37,7 +37,7 @@ class SLAM {
   SLAM();
 
   // Observe a new laser scan.
-  void ObserveLaser(const std::vector<float>& ranges,
+  bool ObserveLaser(const std::vector<float>& ranges,
                     float range_min,
                     float range_max,
                     float angle_min,

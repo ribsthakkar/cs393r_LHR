@@ -1,7 +1,7 @@
 odometry_estimation = {
-    linear_precision = 0.1,
+    linear_precision = 0.01,
     linear_count = 10,
-    angular_precision = 0.01,
+    angular_precision = 0.02,
     angular_count = 10
 }
 

@@ -13,8 +13,9 @@ motion_model = {
 }
 
 rasterization = {
-    precision = 10,
-    square_size = 5
+    precision = 100,
+    square_size = 10
 }
 
 lidar_variance = 0.15
+min_matching_observed_points = 300;

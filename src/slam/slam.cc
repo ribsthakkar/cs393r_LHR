@@ -64,6 +64,7 @@ CONFIG_FLOAT(k4, "motion_model.k4");
 CONFIG_INT(rasterization_precision, "rasterization.precision");
 CONFIG_INT(rasterization_square_size, "rasterization.square_size");
 CONFIG_FLOAT(lidar_variance, "lidar_variance");
+CONFIG_INT(min_matching_points, "min_matching_observed_points");
 
 config_reader::ConfigReader config_reader_({"config/slam.lua"});
 
@@ -111,7 +112,7 @@ float SLAM::ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vect
       // nll += 100000000.0f;
     }
   }
-  return matching_points > 200 ? nll: -100.0f;
+  return matching_points > CONFIG_min_matching_points ? nll: -100.0f;
 }
 
 float SLAM::ComputeMotionWeight(float dx, float dy, float dtheta)
@@ -193,8 +194,8 @@ bool SLAM::ObserveLaser(const std::vector<float>& ranges,
     {
       // Construct cube around dangle and dloc and select best pose
       float best_weight = std::numeric_limits<float>::infinity();
-      Eigen::Vector2f best_loc = dloc;
-      float best_angle = dangle;
+      Eigen::Vector2f best_loc = poses_locs.back() + dloc;
+      float best_angle = poses_angles.back() + dangle;
 
       for(int ix = 0; ix < CONFIG_dloc_count; ix += 1) {
         for (int iy = 0; iy < CONFIG_dloc_count; iy += 1) {
@@ -215,6 +216,7 @@ bool SLAM::ObserveLaser(const std::vector<float>& ranges,
               {
                 best_loc = considered_loc;
                 best_angle = considered_angle;
+                best_weight = pose_weight;
               }
           }
         }

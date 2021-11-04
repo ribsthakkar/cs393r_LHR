@@ -178,7 +178,7 @@ bool SLAM::ObserveLaser(const std::vector<float>& ranges,
   // and save both the scan and the optimized pose.
   if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30.0f) || poses_locs.size() == 0)
   {
-    Eigen::Vector2f dloc = Eigen::Rotation2Df(-1*prev_odom_angle_) * (prev_odom_loc_ - poses_a_loc);
+    Eigen::Vector2f dloc = Eigen::Rotation2Df(-1*poses_a_angle) * (prev_odom_loc_ - poses_a_loc);
     float dangle = math_util::AngleMod(prev_odom_angle_ - poses_a_angle);
     printf("Dloc is (%f, %f)\n", dloc.x(), dloc.y());
     printf("Dangle is %f\n", dangle);
@@ -205,8 +205,8 @@ bool SLAM::ObserveLaser(const std::vector<float>& ranges,
               SLAM::Index2Delta(ix, iy, itheta, &dx, &dy, &dtheta);
               
               // Determine the true location and angle being considered in the map frame and determine nll weight
-              Vector2f considered_loc = poses_locs.back() + dloc + Vector2f(dx, dy);
               float considered_angle = poses_angles.back() + dangle + dtheta;
+              Vector2f considered_loc = poses_locs.back() + Eigen::Rotation2Df(considered_angle) * (dloc + Vector2f(dx, dy));
               float observation_weight = SLAM::ComputeObservationWeight(considered_loc, considered_angle, scans.back());
               float motion_weight = 100000 * SLAM::ComputeMotionWeight(dx, dy, dtheta);
               float pose_weight = observation_weight + motion_weight;
@@ -263,7 +263,7 @@ void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {
   }
   // Keep track of odometry to estimate how far the robot has moved between 
   // poses.
-  Eigen::Vector2f delta_pos = Eigen::Rotation2Df(-1*prev_odom_angle_) * (odom_loc - prev_odom_loc_);
+  Eigen::Vector2f delta_pos = (odom_loc - prev_odom_loc_);
   float delta_angle = math_util::AngleMod(odom_angle - prev_odom_angle_);
   distance_traveled += delta_pos.norm();
   angle_traveled += abs(delta_angle);

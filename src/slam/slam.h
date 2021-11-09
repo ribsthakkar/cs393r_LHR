@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <vector>
+#include <map>
 
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
@@ -36,11 +37,12 @@ class SLAM {
   SLAM();
 
   // Observe a new laser scan.
-  void ObserveLaser(const std::vector<float>& ranges,
+  bool ObserveLaser(const std::vector<float>& ranges,
                     float range_min,
                     float range_max,
                     float angle_min,
-                    float angle_max);
+                    float angle_max,
+                    float angle_increment);
 
   // Observe new odometry-reported location.
   void ObserveOdometry(const Eigen::Vector2f& odom_loc,
@@ -54,10 +56,31 @@ class SLAM {
 
  private:
 
+  void Index2Delta(int ix, int iy, int itheta, float* dx, float* dy, float* dtheta);
+  float ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vector<Eigen::Vector2f>& scan);
+  float ComputeMotionWeight(float dx, float dy, float dtheta);
+  void UpdateObservationLikelihoods();
+  void UpdateMap();
+
   // Previous odometry-reported locations.
   Eigen::Vector2f prev_odom_loc_;
   float prev_odom_angle_;
+  Eigen::Vector2f poses_a_loc;
+  float poses_a_angle;
   bool odom_initialized_;
+
+  // All scans
+  std::vector<Eigen::Vector2f> poses_locs;
+  std::vector<float> poses_angles;
+  std::vector<std::vector<Eigen::Vector2f>> scans;
+
+  //for keeping track of successive poses
+  float distance_traveled;
+  float angle_traveled;
+
+  // Constructed Map
+  std::vector<Eigen::Vector2f> constructed_map;
+  std::map<std::pair<int, int>, float> observation_probabilities;
 };
 }  // namespace slam
 

@@ -121,15 +121,17 @@ void LaserCallback(const sensor_msgs::LaserScan& msg) {
     printf("Laser t=%f\n", msg.header.stamp.toSec());
   }
   last_laser_msg_ = msg;
-  slam_.ObserveLaser(
+  if (slam_.ObserveLaser(
       msg.ranges,
       msg.range_min,
       msg.range_max,
       msg.angle_min,
       msg.angle_max,
-      msg.angle_increment);
+      msg.angle_increment)) {
+
   PublishMap();
   PublishPose();
+      }
 }
 
 void OdometryCallback(const nav_msgs::Odometry& msg) {

@@ -64,6 +64,7 @@ CONFIG_FLOAT(k4, "motion_model.k4");
 CONFIG_INT(rasterization_precision, "rasterization.precision");
 CONFIG_INT(rasterization_square_size, "rasterization.square_size");
 CONFIG_FLOAT(lidar_variance, "lidar_variance");
+CONFIG_INT(min_matching_points, "min_matching_observed_points");
 
 config_reader::ConfigReader config_reader_({"config/slam.lua"});
 
@@ -108,10 +109,10 @@ float SLAM::ComputeObservationWeight(Eigen::Vector2f loc, float angle, std::vect
     } else {
       // We need to add a big positive number since we basically are saying that htis point doesnt exist in our observation likelihood map
       // and we are minimizing the log likelihood
-      nll += 100000000.0f;
+      // nll += 100000000.0f;
     }
   }
-  return matching_points > 30 ? nll: -100.0f;
+  return matching_points > CONFIG_min_matching_points ? nll: -100.0f;
 }
 
 float SLAM::ComputeMotionWeight(float dx, float dy, float dtheta)
@@ -121,9 +122,16 @@ float SLAM::ComputeMotionWeight(float dx, float dy, float dtheta)
   Vector2f delta_pos(dx, dy);
   float linear_variance = CONFIG_k1*delta_pos.norm() + CONFIG_k2 * fabs(dtheta);
   float angle_variance = CONFIG_k3*delta_pos.norm() + CONFIG_k4 * fabs(dtheta);
-  nll += -log(1/(linear_variance * sqrt(2*M_PI))) + ((dx*dx)/(2*linear_variance));
-  nll += -log(1/(linear_variance * sqrt(2*M_PI))) + ((dy*dy)/(2*linear_variance));
-  nll += -log(1/(angle_variance * sqrt(2*M_PI))) + ((dtheta*dtheta)/(2*angle_variance));
+  nll += ((dx*dx)/(2*linear_variance));
+  nll += ((dy*dy)/(2*linear_variance));
+  nll += ((dtheta*dtheta)/(2*angle_variance));
+
+  if (std::isnan(nll))
+  {
+    // printf("X is (%f)\nY is (%f)\n, theta is %f\n", dx, dy, dtheta);
+    return 0;
+  }
+
   return nll;
 }
 
@@ -137,7 +145,7 @@ void SLAM::UpdateObservationLikelihoods()
     // Loop through nearby points and give them 
     for (int x = coarse_x - CONFIG_rasterization_square_size; x <= coarse_x + CONFIG_rasterization_square_size; ++x) {
       for (int y = coarse_y - CONFIG_rasterization_square_size; y <= coarse_y + CONFIG_rasterization_square_size; ++y) {
-        observation_probabilities[std::make_pair(x, y)] += Eigen::Vector2f((x-coarse_x)/CONFIG_rasterization_precision, (y-coarse_y)/CONFIG_rasterization_precision).squaredNorm()/(2*CONFIG_lidar_variance);
+        observation_probabilities[std::make_pair(x, y)] += Eigen::Vector2f(1.0f*(x-coarse_x)/CONFIG_rasterization_precision, 1.0f*(y-coarse_y)/CONFIG_rasterization_precision).squaredNorm()/(2*CONFIG_lidar_variance);
       }
     }
   }
@@ -156,19 +164,22 @@ void SLAM::UpdateMap()
   }
 }
 
-void SLAM::ObserveLaser(const std::vector<float>& ranges,
+bool SLAM::ObserveLaser(const std::vector<float>& ranges,
                         float range_min,
                         float range_max,
                         float angle_min,
                         float angle_max,
                         float angle_increment) {
+
+  if (!odom_initialized_) return false;
+
   // A new laser scan has been observed. Decide whether to add it as a pose
   // for SLAM. If decided to add, align it to the scan from the last saved pose,
   // and save both the scan and the optimized pose.
   if(distance_traveled > 0.5 || angle_traveled > math_util::DegToRad(30.0f) || poses_locs.size() == 0)
   {
-    Eigen::Vector2f dloc = prev_odom_loc_ - poses_a_loc;
-    float dangle = prev_odom_angle_ - poses_a_angle;
+    Eigen::Vector2f dloc = Eigen::Rotation2Df(-1*poses_a_angle) * (prev_odom_loc_ - poses_a_loc);
+    float dangle = math_util::AngleMod(prev_odom_angle_ - poses_a_angle);
     printf("Dloc is (%f, %f)\n", dloc.x(), dloc.y());
     printf("Dangle is %f\n", dangle);
     scans.push_back(std::vector<Eigen::Vector2f>());
@@ -183,8 +194,8 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
     {
       // Construct cube around dangle and dloc and select best pose
       float best_weight = std::numeric_limits<float>::infinity();
-      Eigen::Vector2f best_loc = dloc;
-      float best_angle = dangle;
+      Eigen::Vector2f best_loc = poses_locs.back() + dloc;
+      float best_angle = poses_angles.back() + dangle;
 
       for(int ix = 0; ix < CONFIG_dloc_count; ix += 1) {
         for (int iy = 0; iy < CONFIG_dloc_count; iy += 1) {
@@ -194,17 +205,18 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
               SLAM::Index2Delta(ix, iy, itheta, &dx, &dy, &dtheta);
               
               // Determine the true location and angle being considered in the map frame and determine nll weight
-              Vector2f considered_loc = poses_locs.back() + dloc + Vector2f(dx, dy);
               float considered_angle = poses_angles.back() + dangle + dtheta;
+              Vector2f considered_loc = poses_locs.back() + Eigen::Rotation2Df(considered_angle) * (dloc + Vector2f(dx, dy));
               float observation_weight = SLAM::ComputeObservationWeight(considered_loc, considered_angle, scans.back());
-              float motion_weight = SLAM::ComputeMotionWeight(dx, dy, dtheta);
+              float motion_weight = 100000 * SLAM::ComputeMotionWeight(dx, dy, dtheta);
               float pose_weight = observation_weight + motion_weight;
-              if (observation_weight > 0)
-                printf("dloc (%f, %f) dangle(%f) pose_weight (%f)\n", (dloc + Vector2f(dx, dy)).x(), (dloc + Vector2f(dx, dy)).y(), dangle+dtheta, pose_weight);
+              // if (true)
+              //   printf("dloc (%f, %f) dangle(%f) pose_weight (%f) odom_weight(%f) lidar_weight(%f)\n", (dloc + Vector2f(dx, dy)).x(), (dloc + Vector2f(dx, dy)).y(), dangle+dtheta, pose_weight, motion_weight, observation_weight);
               if (observation_weight > 0 && pose_weight < best_weight)
               {
                 best_loc = considered_loc;
                 best_angle = considered_angle;
+                best_weight = pose_weight;
               }
           }
         }
@@ -238,6 +250,8 @@ void SLAM::ObserveLaser(const std::vector<float>& ranges,
     distance_traveled = 0.0f;
     angle_traveled = 0.0f;
   }
+
+  return true;
 }
 
 void SLAM::ObserveOdometry(const Vector2f& odom_loc, const float odom_angle) {

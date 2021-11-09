@@ -1,7 +1,7 @@
 odometry_estimation = {
-    linear_precision = 0.1,
+    linear_precision = 0.01,
     linear_count = 10,
-    angular_precision = 0.01,
+    angular_precision = 0.02,
     angular_count = 10
 }
 
@@ -13,8 +13,9 @@ motion_model = {
 }
 
 rasterization = {
-    precision = 10,
-    square_size = 5
+    precision = 100,
+    square_size = 10
 }
 
 lidar_variance = 0.15
+min_matching_observed_points = 300;

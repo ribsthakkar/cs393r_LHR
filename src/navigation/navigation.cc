@@ -67,6 +67,10 @@ inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
   return RadiusOfPoint(radius, point.x(), point.y());
 };
 
+inline bool checkGoalReached(const Vector2f& goal, const Vector2f& current_loc, float threshold=0.5) {
+  return (goal - current_loc).norm() < threshold;
+}
+
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
 
@@ -232,7 +236,16 @@ void Navigation::Run() {
   visualization::ClearVisualizationMsg(global_viz_msg_);
 
   // If odometry has not been initialized, we can't do anything.
-  if (!odom_initialized_) return;
+  if (!odom_initialized_ || !localization_initialized_) return;
+
+  // Always publish the car visualization
+  DrawCar(0xff0000, local_viz_msg_);
+  local_viz_msg_.header.stamp = ros::Time::now();
+  viz_pub_.publish(local_viz_msg_);
+
+  // If there is no plan or we finished it, don't do anything
+  // Note: this assumes the last element of the global plan is the goal
+  if (global_plan_.empty() || checkGoalReached(*global_plan_.end(), robot_loc_, 0.5)) return;
 
   // The control iteration goes here. 
 
@@ -404,14 +417,11 @@ drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.no
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }
-  DrawCar(0xff0000, local_viz_msg_);
 
   // Add timestamps to all messages.
-  local_viz_msg_.header.stamp = ros::Time::now();
   global_viz_msg_.header.stamp = ros::Time::now();
   drive_msg_.header.stamp = ros::Time::now();
   // Publish messages.
-  viz_pub_.publish(local_viz_msg_);
   viz_pub_.publish(global_viz_msg_);
   drive_pub_.publish(drive_msg_);
 }

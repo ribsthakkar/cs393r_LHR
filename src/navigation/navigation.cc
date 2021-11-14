@@ -79,7 +79,8 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     robot_omega_(0),
     last_odom_loc_(0, 0),
     odom_dist_traversed_(0),
-    nav_complete_(true),
+    nav_set_(false),
+    nav_complete_(false),
     nav_goal_loc_(0, 0),
     nav_goal_angle_(0),
     front_left_corner_(WHEELBASE+0.5*(LENGTH-WHEELBASE)+FLAGS_safety_margin, 0.5*WIDTH + FLAGS_safety_margin),
@@ -106,13 +107,23 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
   InitRosHeader("base_link", &drive_msg_.header);
 }
 
+void Navigation::GlobalPlan() {
+
+}
+
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
+  nav_goal_loc_ = loc;
+  (void) angle;
+  nav_set_ = true;
 }
 
 void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   localization_initialized_ = true;
   robot_loc_ = loc;
   robot_angle_ = angle;
+  if (nav_set_) {
+
+  }
 }
 
 void Navigation::UpdateOdometry(const Vector2f& loc,

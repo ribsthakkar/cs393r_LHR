@@ -107,6 +107,9 @@ class Navigation {
 
  private:
 
+  // Compute Global Plan
+  void GlobalPlan();
+
   // Estimate odometry values after latency compensation
   void estimate_latency_compensated_odometry(Eigen::Vector2f* projected_loc, float* projected_angle, Eigen::Vector2f* projected_vel, float* projected_dist_traversed);
   
@@ -155,6 +158,8 @@ class Navigation {
   // Latest observed point cloud.
   std::vector<Eigen::Vector2f> point_cloud_;
 
+  // Whether navigation goal is set
+  bool nav_set_;
   // Whether navigation is complete.
   bool nav_complete_;
   // Navigation goal location.

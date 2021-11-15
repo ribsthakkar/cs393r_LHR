@@ -29,6 +29,8 @@
 #include "eigen3/Eigen/Geometry"
 
 #include "visualization/visualization.h"
+#include "vector_map/vector_map.h"
+#include "graph/graph.h"
 
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
@@ -166,6 +168,8 @@ class Navigation {
   Eigen::Vector2f nav_goal_loc_;
   // Navigation goal angle.
   float nav_goal_angle_;
+  // List of points to follow for optimal global path
+  std::vector<Eigen::Vector2f> path;
 
   // Points of interest on the car
   Eigen::Vector2f front_left_corner_;
@@ -187,6 +191,11 @@ class Navigation {
   std::deque<float> vel_history_;
   //Last Issued Steering Commands
   std::deque<float> steer_history_;
+
+  // Map of the environment.
+  vector_map::VectorMap map_;
+  // Graph representation of environment
+  graph::Graph graph_;
 };
 
 }  // namespace navigation

@@ -32,6 +32,8 @@
 #include "shared/ros/ros_helpers.h"
 #include "navigation.h"
 #include "visualization/visualization.h"
+#include "vector_map/vector_map.h"
+#include "graph/graph.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
@@ -91,12 +93,14 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     right_wheel_outside_(0.0, front_right_corner_.y()),
     system_latency_(system_latency),
     act_latency_((ac_to_obs/(ac_to_obs+1.0))*system_latency),
-    obs_latency_((1.0/(ac_to_obs+1.0))*system_latency) {
+    obs_latency_((1.0/(ac_to_obs+1.0))*system_latency),
+    map_(map_file),
+    graph_(map_) {
   
   uint history_length = static_cast<uint>(CONTROL_FREQUENCY * system_latency) + 1;
   vel_history_ = std::deque<float>(history_length, 0.0);
   steer_history_ = std::deque<float>(history_length, 0.0);
-  
+
   drive_pub_ = n->advertise<AckermannCurvatureDriveMsg>(
       "ackermann_curvature_drive", 1);
   viz_pub_ = n->advertise<VisualizationMsg>("visualization", 1);
@@ -108,7 +112,7 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 }
 
 void Navigation::GlobalPlan() {
-
+  path = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {

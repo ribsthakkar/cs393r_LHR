@@ -28,6 +28,7 @@
 #include "glog/logging.h"
 #include "ros/ros.h"
 #include "shared/math/math_util.h"
+#include "shared/math/geometry.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
 #include "navigation.h"
@@ -69,6 +70,21 @@ inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
 
 inline bool checkGoalReached(const Vector2f& goal, const Vector2f& current_loc, float threshold=0.5) {
   return (goal - current_loc).norm() < threshold;
+}
+
+bool pointIsCloseToSegment(const Vector2f& point, const Vector2f& seg_a, const Vector2f& seg_b, float threshold=0.5) {
+  bool output = false;
+
+  // Perp distance: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+  const float dist_numer = fabs((seg_b.x()-seg_a.x())*(seg_a.y()-point.y()) - (seg_a.x()-point.x())*(seg_b.y()-seg_a.y()));
+  const float perp_dist = dist_numer/(seg_a - seg_b).norm();
+
+  // Check 3 cases: perpindicular distance to line, and distance to each end point
+  output |= perp_dist < threshold;
+  output |= (seg_a - point).norm() < threshold;
+  output |= (seg_b - point).norm() < threshold;
+
+  return output;
 }
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
@@ -502,6 +518,28 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
       std::cout << "Could not find collision point for front between " << back_left_corner_.x() << " and " << front_left_corner_.x() << std::endl;
       std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
       return output;
+  }
+
+  return output;
+}
+
+std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
+  auto output = std::make_pair(false, Vector2f(0, 0));
+
+  float carrot_radius = 5;
+  float squared_distance = -1;
+  Vector2f free_point;
+
+  // Go backwards through the global plan and check if we are close to the segment
+  for(size_t i = global_plan_.size() - 1; i >= 1; i--) {
+    // Check if we are close to this segment of the plan
+    if (pointIsCloseToSegment(robot_loc_, global_plan_.at(i), global_plan_.at(i-1), 0.5)) {
+      output.first = true;
+    }
+    if (squared_distance > 0) continue;
+    if (geometry::FurthestFreePointCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, carrot_radius, &squared_distance, &free_point)) {
+      output.second = free_point;
+    }
   }
 
   return output;

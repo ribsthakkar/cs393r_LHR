@@ -132,6 +132,10 @@ class Navigation {
 
   // Returns the point (in base_link frame) where the point will collide with the robot
   Eigen::Vector2f GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type);
+
+  // First is false if global plan is invalid
+  // If found local goal, it is the second
+  std::pair<bool, Eigen::Vector2f> getLocalGoal();
   
   // Whether odometry has been initialized.
   bool odom_initialized_;

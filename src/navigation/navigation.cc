@@ -611,6 +611,7 @@ std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
     Vector2f intersection;
     if (segmentIntersectsCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, FLAGS_carrot_radius, &intersection)) {
       found_local_goal = true;
+      visualization::DrawCross(intersection, 5, 0x000000, global_viz_msg_);
       output.second = Eigen::Rotation2Df(robot_angle_) * (intersection - robot_loc_);
     }
   }

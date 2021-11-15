@@ -48,7 +48,7 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
-DEFINE_double(fpl_weight, 1, "Free path length weight");
+DEFINE_double(fpl_weight, 0.25, "Free path length weight");
 DEFINE_double(clearance_weight, .25, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
@@ -87,52 +87,6 @@ bool pointIsCloseToSegment(const Vector2f& point, const Vector2f& seg_a, const V
 
   return output;
 }
-
-// Returns true if the segment intersects, false otherwise
-// "interection" is filled with the point of intersection closes to seg_start segment start (there may be 2 intersection points)
-// bool segmentIntersectsCircle(const Vector2f& seg_start, const Vector2f& seg_end, const Vector2f& circ_center, float radius, Vector2f* intersection) {
-//   // First figure out if the whole line intersects
-//   // https://mathworld.wolfram.com/Circle-LineIntersection.html
-//   auto seg_a = seg_start - circ_center;
-//   auto seg_b = seg_end - circ_center;
-
-//   const Vector2f delta = seg_b - seg_a;
-//   const float dr_squared = delta.squaredNorm();
-//   const float D = seg_a.x()*seg_b.y() - seg_b.x()*seg_a.y();
-//   const float incidence = pow(radius, 2)*dr_squared - pow(D, 2);
-
-//   // No intersection case
-//   if (incidence < 0) return false;
-//   // If close to 0 -> 1 intersection
-//   else if (fabs(incidence) < 1e-5) {
-//     *intersection = Vector2f(D*delta.y()/dr_squared, -1*D*delta.x()/dr_squared) + circ_center;
-//     return true;
-//   }
-//   // Otherwise 2 intersections
-//   const float sgn = delta.y() < 0 ? -1 : 1;
-//   const float first_x = D*delta.y() + sgn*delta.x()*sqrt(incidence)/dr_squared;
-//   const float second_x = D*delta.y() - sgn*delta.x()*sqrt(incidence)/dr_squared;
-//   const float first_y = -1*D*delta.x() + fabs(delta.y())*sqrt(incidence)/dr_squared;
-//   const float second_y = -1*D*delta.x() - fabs(delta.y())*sqrt(incidence)/dr_squared;
-
-//   const Vector2f first_intersection = Vector2f(first_x, first_y) + circ_center;
-//   const Vector2f second_intersection = Vector2f(second_x, second_y) + circ_center;
-
-//   float distance_to_start = std::numeric_limits<float>::infinity();
-//   bool found_good_intersect = false;
-//   if (geometry::IsBetween(seg_start, seg_end, first_intersection, 1e-3f)) {
-//     distance_to_start = (seg_start - first_intersection).squaredNorm();
-//     found_good_intersect = true;
-//     *intersection = first_intersection;
-//   }
-//   if (geometry::IsBetween(seg_start, seg_end, second_intersection, 1e-3f)) {
-//     found_good_intersect = true;
-//     if ((seg_start - second_intersection).squaredNorm() < distance_to_start) {
-//       *intersection = second_intersection;
-//     }
-//   }
-//   return found_good_intersect;
-// }
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
@@ -304,9 +258,20 @@ void Navigation::Run() {
   DrawCar(0xff0000, local_viz_msg_);
   local_viz_msg_.header.stamp = ros::Time::now();
 
+  // The control iteration goes here. 
+
+  // STEP 1: Latency compensation-odometry  
+  // Project our position to estimated position actuation latency from now.
+  // Use history of actuations 1 system latency ago
+  Vector2f projected_loc = odom_loc_;
+  float projected_angle = odom_angle_;
+  Vector2f projected_velocity = robot_vel_;
+  float projected_dist_traversed = odom_dist_traversed_;
+  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
+
   // If there is no plan or we finished it, don't do anything
   // Note: this assumes the last element of the global plan is the goal
-  if (global_plan_.empty() || checkGoalReached(*global_plan_.end(), robot_loc_, 0.5)) return;
+  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) return;
 
   // Check if we need to replan
   std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
@@ -323,16 +288,6 @@ void Navigation::Run() {
     visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
   }
 
-  // The control iteration goes here. 
-
-  // STEP 1: Latency compensation-odometry  
-  // Project our position to estimated position actuation latency from now.
-  // Use history of actuations 1 system latency ago
-  Vector2f projected_loc = odom_loc_;
-  float projected_angle = odom_angle_;
-  Vector2f projected_velocity = robot_vel_;
-  float projected_dist_traversed = odom_dist_traversed_;
-  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
 
   // STEP 2: Latency compensation-point_cloud/vehicle landmarks
   // The latest observed point cloud is accessible via "point_cloud_"
@@ -350,6 +305,7 @@ void Navigation::Run() {
   float chosen_distance_to_goal = 0.0;
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
+  float absolute_min_distance2goal = 100000.0f;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
@@ -365,6 +321,7 @@ void Navigation::Run() {
           // Point will collide
           if (new_free_path_length > point_cloud_.at(i).x() - front_left_corner_.x()) {
             new_free_path_length = point_cloud_.at(i).x() - front_left_corner_.x();
+            path_options.at(loop_counter).free_path_length = new_free_path_length;
             path_options.at(loop_counter).collision_type = FRONT;
             path_options.at(loop_counter).obstruction = point_cloud_.at(i);
             path_options.at(loop_counter).closest_point = Eigen::Vector2f(front_left_corner_.x(), point_cloud_.at(i).y());
@@ -372,8 +329,9 @@ void Navigation::Run() {
         }
       }
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
+      absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
-      // visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
+      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
       float max_arc_angle = M_PI;
       path_options.at(loop_counter).curvature = curvature;
@@ -419,10 +377,11 @@ void Navigation::Run() {
         }
       }
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal);
+      absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
-      // visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
-      // visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
-      // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
+      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
     if(loop_counter >= 1)
@@ -439,7 +398,8 @@ void Navigation::Run() {
       path_options.at(loop_counter - 1).clearance = previous_path_clearance/included_paths; //set the clearance of the previous path as the average itself and its neighboring paths
       path_options.at(loop_counter - 1).score += FLAGS_clearance_weight*path_options.at(loop_counter - 1).clearance; //also adjust their score
     }
-    path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;
+
+    path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;;
     float current_score = path_options.at(loop_counter).score;
     int max_index = loop_counter;
     if(loop_counter >= 1)
@@ -460,23 +420,46 @@ void Navigation::Run() {
       }
      ++loop_counter;
   }
-// Since clearance for a radius r is set in the r+1 iteration, the final radius will not have its clearance set in this loop. The following logic remedies this issue
-path_options.at(loop_counter-1).clearance = path_options.at(loop_counter-2).free_path_length;
-path_options.at(loop_counter-1).score += -FLAGS_d2g_weight*path_options.at(loop_counter-1).clearance;
-if (path_options.at(loop_counter-1).score > max_weighted_score) {
-      chosen_free_path_length = path_options.at(loop_counter-1).free_path_length;
-      max_weighted_score  = path_options.at(loop_counter-1).score;
-      chosen_curvature = path_options.at(loop_counter-1).curvature;
-      chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
-}
+  // Since clearance for a radius r is set in the r+1 iteration, the final radius will not have its clearance set in this loop. The following logic remedies this issue
+  path_options.at(loop_counter-1).clearance = path_options.at(loop_counter-2).free_path_length;
+  path_options.at(loop_counter-1).score += -FLAGS_d2g_weight*path_options.at(loop_counter-1).clearance;
+  if (path_options.at(loop_counter-1).score > max_weighted_score) {
+        chosen_free_path_length = path_options.at(loop_counter-1).free_path_length;
+        max_weighted_score  = path_options.at(loop_counter-1).score;
+        chosen_curvature = path_options.at(loop_counter-1).curvature;
+        chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
+  }
 
-// visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-drive_msg_.curvature = chosen_curvature;
-// (void) chosen_curvature;
-// drive_msg_.curvature = 1.0;
+
+  if ((robot_loc_-global_plan_.back()).norm() <= 4.0f)
+  {
+    std::cout << "orig fpl: " << chosen_free_path_length << '\n';
+    std::cout << "orig curv: " << chosen_curvature << '\n';
+    std::cout << "orig mws: " << max_weighted_score << '\n';
+    for (auto& po: path_options)
+    {
+      if (fabs(po.second.min_distance_to_goal - absolute_min_distance2goal) <= 1e-3)
+      {
+        chosen_free_path_length = po.second.free_path_length;
+        max_weighted_score  = po.second.score;
+        chosen_curvature = po.second.curvature;
+        chosen_distance_to_goal = po.second.min_distance_to_goal;
+      }
+    }
+    std::cout << "new fpl: " << chosen_free_path_length << '\n';
+    std::cout << "new curv: " << chosen_curvature << '\n';
+    std::cout << "new mws: " << max_weighted_score << '\n';
+  }
+
+  visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
+  drive_msg_.curvature = chosen_curvature;
+  // (void) chosen_curvature;
+  // drive_msg_.curvature = 1.0;
+  // STEP 5: Apply 1D TOC to determine velocity 
 // STEP 5: Apply 1D TOC to determine velocity 
-drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
-// drive_msg_.velocity = 0.3;
+  // STEP 5: Apply 1D TOC to determine velocity 
+  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
+  // drive_msg_.velocity = 0.3;
 
 
   // STEP 6: Update History
@@ -498,6 +481,7 @@ drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.no
   drive_msg_.header.stamp = ros::Time::now();
   // Publish messages.
   viz_pub_.publish(global_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
   drive_pub_.publish(drive_msg_);
 }
 
@@ -588,10 +572,10 @@ std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
   auto output = std::make_pair(false, Vector2f(0, 0));
 
   // If we are close enough to the goal, set it directly
-  if ((*global_plan_.end() - robot_loc_).norm() < FLAGS_carrot_radius) {
+  if ((global_plan_.back() - robot_loc_).norm() < FLAGS_carrot_radius) {
     output.first = true;
-    output.second = *global_plan_.end();
-    visualization::DrawCross(output.second, 5, 0x000000, global_viz_msg_);
+    output.second = Eigen::Rotation2Df(-1*robot_angle_) * (global_plan_.back() - robot_loc_);
+    visualization::DrawCross(global_plan_.back(), 5, 0x000000, global_viz_msg_);
     return output;
   }
 

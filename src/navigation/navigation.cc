@@ -90,49 +90,49 @@ bool pointIsCloseToSegment(const Vector2f& point, const Vector2f& seg_a, const V
 
 // Returns true if the segment intersects, false otherwise
 // "interection" is filled with the point of intersection closes to seg_start segment start (there may be 2 intersection points)
-bool segmentIntersectsCircle(const Vector2f& seg_start, const Vector2f& seg_end, const Vector2f& circ_center, float radius, Vector2f* intersection) {
-  // First figure out if the whole line intersects
-  // https://mathworld.wolfram.com/Circle-LineIntersection.html
-  auto seg_a = seg_start - circ_center;
-  auto seg_b = seg_end - circ_center;
+// bool segmentIntersectsCircle(const Vector2f& seg_start, const Vector2f& seg_end, const Vector2f& circ_center, float radius, Vector2f* intersection) {
+//   // First figure out if the whole line intersects
+//   // https://mathworld.wolfram.com/Circle-LineIntersection.html
+//   auto seg_a = seg_start - circ_center;
+//   auto seg_b = seg_end - circ_center;
 
-  const Vector2f delta = seg_b - seg_a;
-  const float dr_squared = delta.squaredNorm();
-  const float D = seg_a.x()*seg_b.y() - seg_b.x()*seg_a.y();
-  const float incidence = pow(radius, 2)*dr_squared - pow(D, 2);
+//   const Vector2f delta = seg_b - seg_a;
+//   const float dr_squared = delta.squaredNorm();
+//   const float D = seg_a.x()*seg_b.y() - seg_b.x()*seg_a.y();
+//   const float incidence = pow(radius, 2)*dr_squared - pow(D, 2);
 
-  // No intersection case
-  if (incidence < 0) return false;
-  // If close to 0 -> 1 intersection
-  else if (fabs(incidence) < 1e-5) {
-    *intersection = Vector2f(D*delta.y()/dr_squared, -1*D*delta.x()/dr_squared) + circ_center;
-    return true;
-  }
-  // Otherwise 2 intersections
-  const float sgn = delta.y() < 0 ? -1 : 1;
-  const float first_x = D*delta.y() + sgn*delta.x()*sqrt(incidence)/dr_squared;
-  const float second_x = D*delta.y() - sgn*delta.x()*sqrt(incidence)/dr_squared;
-  const float first_y = -1*D*delta.x() + fabs(delta.y())*sqrt(incidence)/dr_squared;
-  const float second_y = -1*D*delta.x() - fabs(delta.y())*sqrt(incidence)/dr_squared;
+//   // No intersection case
+//   if (incidence < 0) return false;
+//   // If close to 0 -> 1 intersection
+//   else if (fabs(incidence) < 1e-5) {
+//     *intersection = Vector2f(D*delta.y()/dr_squared, -1*D*delta.x()/dr_squared) + circ_center;
+//     return true;
+//   }
+//   // Otherwise 2 intersections
+//   const float sgn = delta.y() < 0 ? -1 : 1;
+//   const float first_x = D*delta.y() + sgn*delta.x()*sqrt(incidence)/dr_squared;
+//   const float second_x = D*delta.y() - sgn*delta.x()*sqrt(incidence)/dr_squared;
+//   const float first_y = -1*D*delta.x() + fabs(delta.y())*sqrt(incidence)/dr_squared;
+//   const float second_y = -1*D*delta.x() - fabs(delta.y())*sqrt(incidence)/dr_squared;
 
-  const Vector2f first_intersection = Vector2f(first_x, first_y) + circ_center;
-  const Vector2f second_intersection = Vector2f(second_x, second_y) + circ_center;
+//   const Vector2f first_intersection = Vector2f(first_x, first_y) + circ_center;
+//   const Vector2f second_intersection = Vector2f(second_x, second_y) + circ_center;
 
-  float distance_to_start = std::numeric_limits<float>::infinity();
-  bool found_good_intersect = false;
-  if (geometry::IsBetween(seg_start, seg_end, first_intersection, 1e-3f)) {
-    distance_to_start = (seg_start - first_intersection).squaredNorm();
-    found_good_intersect = true;
-    *intersection = first_intersection;
-  }
-  if (geometry::IsBetween(seg_start, seg_end, second_intersection, 1e-3f)) {
-    found_good_intersect = true;
-    if ((seg_start - second_intersection).squaredNorm() < distance_to_start) {
-      *intersection = second_intersection;
-    }
-  }
-  return found_good_intersect;
-}
+//   float distance_to_start = std::numeric_limits<float>::infinity();
+//   bool found_good_intersect = false;
+//   if (geometry::IsBetween(seg_start, seg_end, first_intersection, 1e-3f)) {
+//     distance_to_start = (seg_start - first_intersection).squaredNorm();
+//     found_good_intersect = true;
+//     *intersection = first_intersection;
+//   }
+//   if (geometry::IsBetween(seg_start, seg_end, second_intersection, 1e-3f)) {
+//     found_good_intersect = true;
+//     if ((seg_start - second_intersection).squaredNorm() < distance_to_start) {
+//       *intersection = second_intersection;
+//     }
+//   }
+//   return found_good_intersect;
+// }
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
@@ -303,7 +303,6 @@ void Navigation::Run() {
   // Always publish the car visualization
   DrawCar(0xff0000, local_viz_msg_);
   local_viz_msg_.header.stamp = ros::Time::now();
-  viz_pub_.publish(local_viz_msg_);
 
   // If there is no plan or we finished it, don't do anything
   // Note: this assumes the last element of the global plan is the goal
@@ -592,6 +591,7 @@ std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
   if ((*global_plan_.end() - robot_loc_).norm() < FLAGS_carrot_radius) {
     output.first = true;
     output.second = *global_plan_.end();
+    visualization::DrawCross(output.second, 5, 0x000000, global_viz_msg_);
     return output;
   }
 
@@ -608,11 +608,16 @@ std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
     if (output.first && found_local_goal) return output;
     if (found_local_goal) continue;
 
-    Vector2f intersection;
-    if (segmentIntersectsCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, FLAGS_carrot_radius, &intersection)) {
+    // Vector2f intersection;
+    // if (segmentIntersectsCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, FLAGS_carrot_radius, &intersection)) {
+    //   found_local_goal = true;
+    //   visualization::DrawCross(intersection, 5, 0x000000, global_viz_msg_);
+    //   output.second = Eigen::Rotation2Df(-1*robot_angle_) * (intersection - robot_loc_);
+    // }
+    if ((global_plan_.at(i) - robot_loc_).norm() < FLAGS_carrot_radius) {
       found_local_goal = true;
-      visualization::DrawCross(intersection, 5, 0x000000, global_viz_msg_);
-      output.second = Eigen::Rotation2Df(robot_angle_) * (intersection - robot_loc_);
+      visualization::DrawCross(global_plan_.at(i), 5, 0x000000, global_viz_msg_);
+      output.second = Eigen::Rotation2Df(-1*robot_angle_) * (global_plan_.at(i) - robot_loc_);
     }
   }
 

@@ -180,10 +180,12 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 
 void Navigation::GlobalPlan() {
   global_plan_ = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
-  for(auto& p: global_plan_) {
-    printf("(%f, %f)\n", p.x(), p.y());
+  for (std::vector<Vector2f>::iterator it = global_plan_.begin(); it != global_plan_.end(); ++it) {
+    printf("(%f, %f)\n", it->x(), it->y());
+    if (it != global_plan_.end()) {
+      visualization::DrawLine(*it, *(it+1), 0x203ee8, global_viz_msg_);
+    }
   }
-  exit(0);
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
@@ -317,6 +319,8 @@ void Navigation::Run() {
     return;
   }
   auto goal = local_goal.second;
+  visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
 
   // The control iteration goes here. 
 
@@ -501,6 +505,7 @@ void Navigation::DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg) {
   visualization::DrawLine(front_right_corner_, back_right_corner_, color, msg);
   visualization::DrawLine(back_left_corner_, back_right_corner_, color, msg);
   visualization::DrawLine(front_left_corner_, back_left_corner_, color, msg);
+  visualization::DrawArc(Vector2f(0,0), FLAGS_carrot_radius, 0, 2*M_PI, 0xe834eb, msg);
 }
 
 Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {

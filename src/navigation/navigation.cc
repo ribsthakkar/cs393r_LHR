@@ -113,6 +113,10 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 
 void Navigation::GlobalPlan() {
   path = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
+  for(auto& p: path) {
+    printf("(%f, %f)\n", p.x(), p.y());
+  }
+  exit(0);
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
@@ -125,8 +129,9 @@ void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   localization_initialized_ = true;
   robot_loc_ = loc;
   robot_angle_ = angle;
+  printf("%d\n", nav_set_);
   if (nav_set_) {
-
+    GlobalPlan();
   }
 }
 

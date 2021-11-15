@@ -22,8 +22,9 @@ namespace graph {
         FILE* fid = fopen(pre_calculated_file.c_str(), "r");
         if (fid == NULL) {
             // Precomputed graph file doesn't exist. Let's create it
-            fid = fopen(pre_calculated_file.c_str(), "rw");
-            float minx(100000.0f), miny(100000.0f), maxx(-100000.0f), maxy(100000.0f);
+            printf("here\n");
+            fid = fopen(pre_calculated_file.c_str(), "w");
+            float minx(100000.0f), miny(100000.0f), maxx(-100000.0f), maxy(-100000.0f);
             for (size_t j = 0; j < map_.lines.size(); ++j) {
                 const geometry::line2f map_line = map_.lines[j];
                 minx = std::min(minx, std::min(map_line.p0.x(), map_line.p1.x()));
@@ -55,7 +56,7 @@ namespace graph {
                             nodes[src].add_adjacent(nodes.at(dest), cost);
                             edges.push_back(Edge(nodes.at(src), nodes.at(dest), cost));
                             // write edge to file
-                            fprintf(fid, "%f,%f,%f,%f", x1, y1, x2, y2);
+                            fprintf(fid, "%f,%f,%f,%f\n", x1, y1, x2, y2);
                         }
                     }
                 }
@@ -79,6 +80,7 @@ namespace graph {
                 edges.push_back(Edge(nodes.at(src), nodes.at(dest), cost));
             }
         }
+        printf("Finished setting up graph\n");
     }
     bool Graph::isEdgeValid(Eigen::Vector2f edge_p1, Eigen::Vector2f edge_p2)
     {

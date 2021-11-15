@@ -132,8 +132,8 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 }
 
 void Navigation::GlobalPlan() {
-  path = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
-  for(auto& p: path) {
+  global_plan_ = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
+  for(auto& p: global_plan_) {
     printf("(%f, %f)\n", p.x(), p.y());
   }
   exit(0);

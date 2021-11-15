@@ -180,11 +180,8 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 
 void Navigation::GlobalPlan() {
   global_plan_ = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
-  for (std::vector<Vector2f>::iterator it = global_plan_.begin(); it != global_plan_.end(); ++it) {
-    printf("(%f, %f)\n", it->x(), it->y());
-    if (it != global_plan_.end()) {
-      visualization::DrawLine(*it, *(it+1), 0x203ee8, global_viz_msg_);
-    }
+  for(auto& p: global_plan_) {
+    printf("(%f, %f)\n", p.x(), p.y());
   }
 }
 
@@ -321,6 +318,11 @@ void Navigation::Run() {
   auto goal = local_goal.second;
   visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
   viz_pub_.publish(local_viz_msg_);
+
+  // Visualize global plan
+  for (size_t i=0 ; i < global_plan_.size()-1; i++) {
+    visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
+  }
 
   // The control iteration goes here. 
 

@@ -51,6 +51,7 @@ DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 1, "Free path length weight");
 DEFINE_double(clearance_weight, .25, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
+DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -85,6 +86,52 @@ bool pointIsCloseToSegment(const Vector2f& point, const Vector2f& seg_a, const V
   output |= (seg_b - point).norm() < threshold;
 
   return output;
+}
+
+// Returns true if the segment intersects, false otherwise
+// "interection" is filled with the point of intersection closes to seg_start segment start (there may be 2 intersection points)
+bool segmentIntersectsCircle(const Vector2f& seg_start, const Vector2f& seg_end, const Vector2f& circ_center, float radius, Vector2f* intersection) {
+  // First figure out if the whole line intersects
+  // https://mathworld.wolfram.com/Circle-LineIntersection.html
+  auto seg_a = seg_start - circ_center;
+  auto seg_b = seg_end - circ_center;
+
+  const Vector2f delta = seg_b - seg_a;
+  const float dr_squared = delta.squaredNorm();
+  const float D = seg_a.x()*seg_b.y() - seg_b.x()*seg_a.y();
+  const float incidence = pow(radius, 2)*dr_squared - pow(D, 2);
+
+  // No intersection case
+  if (incidence < 0) return false;
+  // If close to 0 -> 1 intersection
+  else if (fabs(incidence) < 1e-5) {
+    *intersection = Vector2f(D*delta.y()/dr_squared, -1*D*delta.x()/dr_squared) + circ_center;
+    return true;
+  }
+  // Otherwise 2 intersections
+  const float sgn = delta.y() < 0 ? -1 : 1;
+  const float first_x = D*delta.y() + sgn*delta.x()*sqrt(incidence)/dr_squared;
+  const float second_x = D*delta.y() - sgn*delta.x()*sqrt(incidence)/dr_squared;
+  const float first_y = -1*D*delta.x() + fabs(delta.y())*sqrt(incidence)/dr_squared;
+  const float second_y = -1*D*delta.x() - fabs(delta.y())*sqrt(incidence)/dr_squared;
+
+  const Vector2f first_intersection = Vector2f(first_x, first_y) + circ_center;
+  const Vector2f second_intersection = Vector2f(second_x, second_y) + circ_center;
+
+  float distance_to_start = std::numeric_limits<float>::infinity();
+  bool found_good_intersect = false;
+  if (geometry::IsBetween(seg_start, seg_end, first_intersection, 1e-3f)) {
+    distance_to_start = (seg_start - first_intersection).squaredNorm();
+    found_good_intersect = true;
+    *intersection = first_intersection;
+  }
+  if (geometry::IsBetween(seg_start, seg_end, second_intersection, 1e-3f)) {
+    found_good_intersect = true;
+    if ((seg_start - second_intersection).squaredNorm() < distance_to_start) {
+      *intersection = second_intersection;
+    }
+  }
+  return found_good_intersect;
 }
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
@@ -263,6 +310,14 @@ void Navigation::Run() {
   // Note: this assumes the last element of the global plan is the goal
   if (global_plan_.empty() || checkGoalReached(*global_plan_.end(), robot_loc_, 0.5)) return;
 
+  // Check if we need to replan
+  std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
+  if (!local_goal.first) {
+    GlobalPlan();
+    return;
+  }
+  auto goal = local_goal.second;
+
   // The control iteration goes here. 
 
   // STEP 1: Latency compensation-odometry  
@@ -288,7 +343,6 @@ void Navigation::Run() {
   (void) chosen_curvature;
   float max_weighted_score = 0.0;
   float chosen_distance_to_goal = 0.0;
-  Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
@@ -523,22 +577,34 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
   return output;
 }
 
+// Returns goal in robot's local frame
 std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
   auto output = std::make_pair(false, Vector2f(0, 0));
 
-  float carrot_radius = 5;
-  float squared_distance = -1;
-  Vector2f free_point;
+  // If we are close enough to the goal, set it directly
+  if ((*global_plan_.end() - robot_loc_).norm() < FLAGS_carrot_radius) {
+    output.first = true;
+    output.second = *global_plan_.end();
+    return output;
+  }
 
   // Go backwards through the global plan and check if we are close to the segment
+  bool found_local_goal = false;
   for(size_t i = global_plan_.size() - 1; i >= 1; i--) {
     // Check if we are close to this segment of the plan
     if (pointIsCloseToSegment(robot_loc_, global_plan_.at(i), global_plan_.at(i-1), 0.5)) {
       output.first = true;
     }
-    if (squared_distance > 0) continue;
-    if (geometry::FurthestFreePointCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, carrot_radius, &squared_distance, &free_point)) {
-      output.second = free_point;
+
+    // Check if this segment intersects with the carrot circle
+    // If already found, continue (set it to segment intersect closest to goal)
+    if (output.first && found_local_goal) return output;
+    if (found_local_goal) continue;
+
+    Vector2f intersection;
+    if (segmentIntersectsCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, FLAGS_carrot_radius, &intersection)) {
+      found_local_goal = true;
+      output.second = intersection - robot_loc_;
     }
   }
 

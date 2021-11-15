@@ -173,7 +173,7 @@ class Navigation {
   // Navigation goal angle.
   float nav_goal_angle_;
   // List of points to follow for optimal global path
-  std::vector<Eigen::Vector2f> path;
+  std::vector<Eigen::Vector2f> global_plan_;
 
   // Points of interest on the car
   Eigen::Vector2f front_left_corner_;
@@ -200,7 +200,6 @@ class Navigation {
   vector_map::VectorMap map_;
   // Graph representation of environment
   graph::Graph graph_;
-  std::vector<Eigen::Vector2f> global_plan_;
 };
 
 }  // namespace navigation

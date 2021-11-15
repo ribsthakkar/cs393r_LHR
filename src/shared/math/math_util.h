@@ -295,6 +295,14 @@ inline bool IsBetween(T lower, T val, T upper, bool eq_lower=true, bool eq_upper
   return false;
 }
 
+// Accessed from StackOverflow Here: https://stackoverflow.com/questions/3407012/rounding-up-to-the-nearest-multiple-of-a-number
+template<typename T>
+T roundMultiple( T value, T multiple )
+{
+    if (multiple == 0) return value;
+    return static_cast<T>(std::round(static_cast<double>(value)/static_cast<double>(multiple))*static_cast<double>(multiple));
+}
+
 }  // namespace math_util
 
 #endif  // SRC_MATH_MATH_UTIL_H_

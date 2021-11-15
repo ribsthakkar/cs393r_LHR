@@ -44,8 +44,8 @@ namespace graph {
                             float x2 = x1 + dx * precision;
                             float y2 = y1 + dy * precision;
                             if (!isEdgeValid(Eigen::Vector2f(x1, y1), Eigen::Vector2f(x2, y2))) continue;
-                            std::pair<int, int> src = std::make_pair(round(x1*100), round(y1*100));
-                            std::pair<int, int> dest = std::make_pair(round(x2*100), round(y2*100));
+                            std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(x1, precision)*100), round(math_util::roundMultiple(y1, precision)*100));
+                            std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(x2, precision)*100), round(math_util::roundMultiple(y2, precision)*100));
                             if (nodes.find(src) == nodes.end()) {
                                 nodes[src] = Node(src);
                             }
@@ -61,14 +61,15 @@ namespace graph {
                     }
                 }
             }
+            fclose(fid);
         }
         else
         {
             // Parse the precomputed graph file
             float x1(0), y1(0), x2(0), y2(0);
             while (fscanf(fid, "%f,%f,%f,%f", &x1, &y1, &x2, &y2) == 4) {
-                std::pair<int, int> src = std::make_pair(round(x1*100), round(y1*100));
-                std::pair<int, int> dest = std::make_pair(round(x2*100), round(y2*100));
+                std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(x1, precision)*100), round(math_util::roundMultiple(y1, precision)*100));
+                std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(x2, precision)*100), round(math_util::roundMultiple(y2, precision)*100));
                 if (nodes.find(src) == nodes.end()) {
                     nodes[src] = Node(src);
                 }
@@ -79,8 +80,13 @@ namespace graph {
                 nodes[src].add_adjacent(nodes.at(dest), cost);
                 edges.push_back(Edge(nodes.at(src), nodes.at(dest), cost));
             }
+            fclose(fid);
         }
         printf("Finished setting up graph\n");
+        for(auto& n:nodes)
+        {
+            printf("(%d, %d)\n", n.first.first, n.first.second);
+        }
     }
     bool Graph::isEdgeValid(Eigen::Vector2f edge_p1, Eigen::Vector2f edge_p2)
     {
@@ -94,8 +100,10 @@ namespace graph {
     }
 
     std::vector<Eigen::Vector2f> Graph::ShortestPath(Eigen::Vector2f robot_loc, Eigen::Vector2f target_loc) {
-        std::pair<int, int> nearest_src = std::make_pair(round(fmod(robot_loc.x(), precision) * 100), round(fmod(robot_loc.y(), precision) * 100));
-        std::pair<int, int> nearest_dest = std::make_pair(round(fmod(target_loc.x(), precision) * 100), round(fmod(target_loc.y(), precision) * 100));
+        std::pair<int, int> nearest_src = std::make_pair(round(math_util::roundMultiple(robot_loc.x(), precision) * 100), round(math_util::roundMultiple(robot_loc.y(), precision) * 100));
+        std::pair<int, int> nearest_dest = std::make_pair(round(math_util::roundMultiple(target_loc.x(), precision) * 100), round(math_util::roundMultiple(target_loc.y(), precision) * 100));
+        printf("Robot Loc: (%d, %d)\n", nearest_src.first, nearest_src.second);
+        printf("Target Loc: (%d, %d)\n", nearest_dest.first, nearest_dest.second);
         if (nodes.find(nearest_src) == nodes.end() || nodes.find(nearest_dest) == nodes.end())
             return std::vector<Eigen::Vector2f>();
         std::map<Node, float> weights;
@@ -105,11 +113,15 @@ namespace graph {
         }
         Node& src = nodes[nearest_src];
         Node& dest = nodes[nearest_dest];
+        printf("Src Node Loc: (%d, %d)\n", src.id.first, src.id.second);
+        printf("Dest Node Loc: (%d, %d)\n", dest.id.first, dest.id.second);
+
         SimpleQueue<Node, float> q;
         std::map<Node, Node> parent;
         parent[src] = src;
         weights[src] = 0.0f;
         q.Push(src, 0.0f);
+        printf("Here\n");
         while (!q.Empty()) {
             const Node& current = q.Pop();
             if (current == dest)
@@ -127,11 +139,20 @@ namespace graph {
         }
         std::vector<Eigen::Vector2f> path;
         Node& curr_p = dest;
-        while (!(curr_p == src)) {
+        while (true) {
             path.push_back(Eigen::Vector2f(curr_p.id.first/100.0f, curr_p.id.second/100.0f));
+            if (parent.find(curr_p) == parent.end())
+            {
+                path.clear();
+                break;
+            }
+            if (parent.at(curr_p) == src) 
+            {
+                path.push_back(Eigen::Vector2f(src.id.first/100.0f, src.id.second/100.0f));
+                break;
+            }
             curr_p = parent[curr_p];
         }
-        path.push_back(Eigen::Vector2f(src.id.first/100.0f, src.id.second/100.0f));
         return path;
     }
     float Graph::Heuristic(const Node& curr, const Node& dest) {

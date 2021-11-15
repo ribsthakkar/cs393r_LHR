@@ -108,16 +108,16 @@ namespace graph {
         q.Push(src, 0.0f);
         printf("Here\n");
         while (!q.Empty()) {
-            const auto& current = q.Pop();
+            const auto current = q.Pop();
             if (current == dest)
                 break;
-            for (auto& p: nodes[current])
+            for (auto p: nodes[current])
             {
-                auto& n = p.first;
+                auto n = p.first;
                 float new_weight = weights[current] + p.second;
                 if (new_weight < weights[n]) {
                     weights[n] = new_weight;
-                    q.Push(n, new_weight + Heuristic(current, dest));
+                    q.Push(n, -(new_weight + Heuristic(current, dest)));
                     parent[n] = current;
                 }
             }

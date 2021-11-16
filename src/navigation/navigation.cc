@@ -48,8 +48,8 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
-DEFINE_double(fpl_weight, 0.05, "Free path length weight");
-DEFINE_double(clearance_weight, .25, "Clearance weight");
+DEFINE_double(fpl_weight, 0.00, "Free path length weight");
+DEFINE_double(clearance_weight, 0.01, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
 
@@ -310,7 +310,7 @@ void Navigation::Run() {
   float chosen_free_path_length = 0.0;
   float chosen_curvature = 0.0;
   (void) chosen_curvature;
-  float max_weighted_score = 0.0;
+  float max_weighted_score = -99999999.0f;
   float chosen_distance_to_goal = 0.0;
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
@@ -330,13 +330,13 @@ void Navigation::Run() {
           // Point will collide
           if (new_free_path_length > point_cloud_.at(i).x() - front_left_corner_.x()) {
             new_free_path_length = point_cloud_.at(i).x() - front_left_corner_.x();
-            path_options.at(loop_counter).free_path_length = new_free_path_length;
             path_options.at(loop_counter).collision_type = FRONT;
             path_options.at(loop_counter).obstruction = point_cloud_.at(i);
             path_options.at(loop_counter).closest_point = Eigen::Vector2f(front_left_corner_.x(), point_cloud_.at(i).y());
           }
         }
       }
+      path_options.at(loop_counter).free_path_length = new_free_path_length;
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true, new_free_path_length); 
       absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
@@ -482,6 +482,7 @@ void Navigation::Run() {
     std::cout << "velocity history: " << vel_history_ << '\n';
     std::cout << "steering history: " << steer_history_ << '\n';
     std::cout << "fpl: " << chosen_free_path_length << '\n';
+    std::cout << "chosen curv: " << chosen_curvature << '\n';
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }

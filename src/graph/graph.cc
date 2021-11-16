@@ -84,7 +84,7 @@ namespace graph {
         for (size_t j = 0; j < map_.lines.size(); ++j) {
             const geometry::line2f map_line = map_.lines[j];
             // Need to make this configurable
-            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.1) 
+            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.4) 
                 return false;
         }
         return true;

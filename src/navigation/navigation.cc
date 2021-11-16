@@ -143,6 +143,7 @@ void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
   nav_goal_loc_ = loc;
   (void) angle;
   nav_set_ = true;
+  nav_complete_ = false;
 }
 
 void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
@@ -257,7 +258,7 @@ void Navigation::Run() {
   visualization::ClearVisualizationMsg(global_viz_msg_);
 
   // If odometry has not been initialized, we can't do anything.
-  if (!odom_initialized_ || !localization_initialized_) return;
+  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
 
   // Always publish the car visualization
   DrawCar(0xff0000, local_viz_msg_);
@@ -276,7 +277,10 @@ void Navigation::Run() {
 
   // If there is no plan or we finished it, don't do anything
   // Note: this assumes the last element of the global plan is the goal
-  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) return;
+  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
+    nav_complete_ = true;
+    return;
+  }
 
   // Check if we need to replan
   std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();

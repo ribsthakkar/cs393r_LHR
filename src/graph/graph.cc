@@ -45,6 +45,7 @@ namespace graph {
                             float y2 = y1 + dy * precision;
                             std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(x1, precision)*100), round(math_util::roundMultiple(y1, precision)*100));
                             std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(x2, precision)*100), round(math_util::roundMultiple(y2, precision)*100));
+                            if (!isEdgeValid(Eigen::Vector2f(x1, y1), Eigen::Vector2f(x2, y2))) continue;
                             if (nodes.find(src) == nodes.end()) {
                                 nodes[src] = std::map<std::pair<int, int>, float>();
                             }
@@ -83,7 +84,7 @@ namespace graph {
         for (size_t j = 0; j < map_.lines.size(); ++j) {
             const geometry::line2f map_line = map_.lines[j];
             // Need to make this configurable
-            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.3) 
+            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.1) 
                 return false;
         }
         return true;

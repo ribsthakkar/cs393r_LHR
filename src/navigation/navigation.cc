@@ -230,10 +230,15 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
 float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false, float max_angle=M_PI)
 {
   if (!straight) {
-    float angle_to_goal = std::min(atan2(goal.y() - arc_radius, goal.x()), max_angle);
-    float delta_x = arc_radius*cos(angle_to_goal) - goal.x();
-    float delta_y = arc_radius + arc_radius*sin(angle_to_goal) - goal.y();
-    return sqrt(delta_x*delta_x + delta_y*delta_y);
+    // float angle_to_goal = std::min(atan2(goal.x(), goal.y() - arc_radius), max_angle);
+    // float delta_x = arc_radius*sin(angle_to_goal) - goal.x();
+    // float delta_y = arc_radius*cos(angle_to_goal) - goal.y();
+    // return sqrt(delta_x*delta_x + delta_y*delta_y);
+     auto goal2 = Eigen::Vector2f(goal.x() + 0.01f, goal.y() + 0.01f);
+     auto center = Eigen::Vector2f(0.0f, arc_radius);
+     float min_a_angle = arc_radius > 0 ? (float) (-M_PI/2) : (float) (-max_angle + M_PI/2);
+     float max_a_angle = arc_radius > 0 ? (float) (-M_PI/2 + max_angle): (float) (0.0f + M_PI/2);
+    return geometry::MinDistanceLineArc(goal, goal2, center, fabs(arc_radius), min_a_angle, max_a_angle, 1);
   } else {
     if (goal.x() < 0) {
       return goal.norm();
@@ -307,7 +312,7 @@ void Navigation::Run() {
   int loop_counter = 0;
   float absolute_min_distance2goal = 100000.0f;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
-    float new_free_path_length = 30.0;
+    float new_free_path_length = 10.0;
     float curvature = tan(theta)/WHEELBASE;
     float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
     path_options[loop_counter] = PathOption();
@@ -328,7 +333,7 @@ void Navigation::Run() {
           }
         }
       }
-      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true, new_free_path_length); 
       absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
@@ -336,13 +341,13 @@ void Navigation::Run() {
       float max_arc_angle = M_PI;
       path_options.at(loop_counter).curvature = curvature;
       path_options.at(loop_counter).collision_type = NONE;
+      new_free_path_length = fabs(radius * max_arc_angle);
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
 
         // Skip if this point won't collide
         if (collision == NONE) {
-          new_free_path_length = fabs(radius * max_arc_angle);
           continue;
         }
         // Find point on car where it will collide
@@ -371,12 +376,12 @@ void Navigation::Run() {
           max_arc_angle = arc_angle;
           new_free_path_length = fabs(radius * arc_angle);
           path_options.at(loop_counter).collision_type = collision;
-          path_options.at(loop_counter).free_path_length = new_free_path_length;
-          path_options.at(loop_counter).obstruction = point_cloud_.at(i);
           path_options.at(loop_counter).closest_point = collision_point;
+          path_options.at(loop_counter).obstruction = point_cloud_.at(i);
         }
       }
-      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal);
+      path_options.at(loop_counter).free_path_length = new_free_path_length;
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, false, max_arc_angle);
       absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
       visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
@@ -438,6 +443,7 @@ void Navigation::Run() {
     std::cout << "orig mws: " << max_weighted_score << '\n';
     for (auto& po: path_options)
     {
+      printf("Curvature (%f) min dist to goal (%f)\n", po.second.curvature, po.second.min_distance_to_goal);
       if (fabs(po.second.min_distance_to_goal - absolute_min_distance2goal) <= 1e-3)
       {
         chosen_free_path_length = po.second.free_path_length;

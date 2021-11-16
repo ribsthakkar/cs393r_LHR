@@ -93,8 +93,8 @@ namespace graph {
     std::vector<Eigen::Vector2f> Graph::ShortestPath(Eigen::Vector2f robot_loc, Eigen::Vector2f target_loc) {
         std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(robot_loc.x(), precision) * 100), round(math_util::roundMultiple(robot_loc.y(), precision) * 100));
         std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(target_loc.x(), precision) * 100), round(math_util::roundMultiple(target_loc.y(), precision) * 100));
-        printf("Robot Loc: (%d, %d)\n", src.first, src.second);
-        printf("Target Loc: (%d, %d)\n", dest.first, dest.second);
+        // printf("Robot Loc: (%d, %d)\n", src.first, src.second);
+        // printf("Target Loc: (%d, %d)\n", dest.first, dest.second);
         if (nodes.find(src) == nodes.end() || nodes.find(dest) == nodes.end())
             return std::vector<Eigen::Vector2f>();
         std::map<std::pair<int, int>, float> weights;

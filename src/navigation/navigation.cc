@@ -48,8 +48,8 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
-DEFINE_double(fpl_weight, 0.00, "Free path length weight");
-DEFINE_double(clearance_weight, 0.01, "Clearance weight");
+DEFINE_double(fpl_weight, 0.01, "Free path length weight");
+DEFINE_double(clearance_weight, 0.05, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
 
@@ -339,6 +339,7 @@ void Navigation::Run() {
           }
         }
       }
+      path_options.at(loop_counter).max_arc_angle = new_free_path_length/30.0 * M_PI;
       path_options.at(loop_counter).free_path_length = new_free_path_length;
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true, new_free_path_length); 
       absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
@@ -387,6 +388,7 @@ void Navigation::Run() {
           path_options.at(loop_counter).obstruction = point_cloud_.at(i);
         }
       }
+      path_options.at(loop_counter).max_arc_angle = max_arc_angle;
       path_options.at(loop_counter).free_path_length = new_free_path_length;
       path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, false, max_arc_angle);
       absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
@@ -398,12 +400,12 @@ void Navigation::Run() {
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
     if(loop_counter >= 1)
     {
-      float previous_path_clearance = path_options.at(loop_counter).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(1), 1's clearance = avg(0,2), and 2's clearance = avg(1)
+      float previous_path_clearance = path_options.at(loop_counter).max_arc_angle; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(1), 1's clearance = avg(0,2), and 2's clearance = avg(1)
       float included_paths = 1;
       // are we at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
       if(loop_counter >= 2)
       {
-        previous_path_clearance += path_options.at(loop_counter - 2).free_path_length;
+        previous_path_clearance += path_options.at(loop_counter - 2).max_arc_angle;
         included_paths += 1;
       }
       // The idea of "clearance" implemented here was inspired by discussions with other team in the class (Johnny 6)

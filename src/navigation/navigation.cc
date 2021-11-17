@@ -317,8 +317,9 @@ void Navigation::Run() {
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
   float absolute_min_distance2goal = 100000.0f;
+  float max_arc_angle = M_PI;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
-    float new_free_path_length = 10.0;
+    float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
     float radius = fabs(curvature) < kEpsilon ? INT_MAX: 1/curvature;
     path_options[loop_counter] = PathOption();
@@ -344,7 +345,7 @@ void Navigation::Run() {
       // Draw the path
       visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
-      float max_arc_angle = M_PI;
+      max_arc_angle = M_PI;
       path_options.at(loop_counter).curvature = curvature;
       path_options.at(loop_counter).collision_type = NONE;
       new_free_path_length = fabs(radius * max_arc_angle);
@@ -485,6 +486,7 @@ void Navigation::Run() {
     std::cout << "steering history: " << steer_history_ << '\n';
     std::cout << "fpl: " << chosen_free_path_length << '\n';
     std::cout << "chosen curv: " << chosen_curvature << '\n';
+    std::cout << "chosen arc angle: " << max_arc_angle << '\n';
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }

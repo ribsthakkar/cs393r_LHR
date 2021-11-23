@@ -28,10 +28,13 @@
 #include "glog/logging.h"
 #include "ros/ros.h"
 #include "shared/math/math_util.h"
+#include "shared/math/geometry.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
 #include "navigation.h"
 #include "visualization/visualization.h"
+#include "vector_map/vector_map.h"
+#include "graph/graph.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
@@ -45,9 +48,10 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
-DEFINE_double(fpl_weight, 1, "Free path length weight");
-DEFINE_double(clearance_weight, .25, "Clearance weight");
+DEFINE_double(fpl_weight, 0.01, "Free path length weight");
+DEFINE_double(clearance_weight, 0.05, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
+DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -64,6 +68,25 @@ inline float RadiusOfPoint(float radius, float x, float y) {
 inline float RadiusOfPoint(float radius, Eigen::Vector2f& point) {
   return RadiusOfPoint(radius, point.x(), point.y());
 };
+
+inline bool checkGoalReached(const Vector2f& goal, const Vector2f& current_loc, float threshold=0.5) {
+  return (goal - current_loc).norm() < threshold;
+}
+
+bool pointIsCloseToSegment(const Vector2f& point, const Vector2f& seg_a, const Vector2f& seg_b, float threshold=0.5) {
+  bool output = false;
+
+  // Perp distance: https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+  const float dist_numer = fabs((seg_b.x()-seg_a.x())*(seg_a.y()-point.y()) - (seg_a.x()-point.x())*(seg_b.y()-seg_a.y()));
+  const float perp_dist = dist_numer/(seg_a - seg_b).norm();
+
+  // Check 3 cases: perpindicular distance to line, and distance to each end point
+  output |= perp_dist < threshold;
+  output |= (seg_a - point).norm() < threshold;
+  output |= (seg_b - point).norm() < threshold;
+
+  return output;
+}
 
 std::map<navigation::Collision, std::string> collision_string_ { {navigation::NONE, "NONE"}, {navigation::FRONT, "FRONT"}, {navigation::INSIDE, "INSIDE"}, {navigation::OUTSIDE, "OUTSIDE"}, };
 } //namespace
@@ -91,12 +114,14 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     right_wheel_outside_(0.0, front_right_corner_.y()),
     system_latency_(system_latency),
     act_latency_((ac_to_obs/(ac_to_obs+1.0))*system_latency),
-    obs_latency_((1.0/(ac_to_obs+1.0))*system_latency) {
+    obs_latency_((1.0/(ac_to_obs+1.0))*system_latency),
+    map_(map_file),
+    graph_(map_) {
   
   uint history_length = static_cast<uint>(CONTROL_FREQUENCY * system_latency) + 1;
   vel_history_ = std::deque<float>(history_length, 0.0);
   steer_history_ = std::deque<float>(history_length, 0.0);
-  
+
   drive_pub_ = n->advertise<AckermannCurvatureDriveMsg>(
       "ackermann_curvature_drive", 1);
   viz_pub_ = n->advertise<VisualizationMsg>("visualization", 1);
@@ -108,21 +133,28 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
 }
 
 void Navigation::GlobalPlan() {
-
+  auto new_global_plan = graph_.ShortestPath(robot_loc_, nav_goal_loc_);
+  if (!new_global_plan.empty())
+    global_plan_ = new_global_plan;
+  for(auto& p: global_plan_) {
+    printf("(%f, %f)\n", p.x(), p.y());
+  }
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
   nav_goal_loc_ = loc;
   (void) angle;
   nav_set_ = true;
+  nav_complete_ = false;
 }
 
 void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   localization_initialized_ = true;
   robot_loc_ = loc;
   robot_angle_ = angle;
+  // printf("%d\n", nav_set_);
   if (nav_set_) {
-
+    GlobalPlan();
   }
 }
 
@@ -201,10 +233,15 @@ void Navigation::apply_latency_compensated_odometry(Vector2f dloc, float dangle)
 float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f goal, bool straight=false, float max_angle=M_PI)
 {
   if (!straight) {
-    float angle_to_goal = std::min(atan2(goal.y() - arc_radius, goal.x()), max_angle);
-    float delta_x = arc_radius*cos(angle_to_goal) - goal.x();
-    float delta_y = arc_radius + arc_radius*sin(angle_to_goal) - goal.y();
-    return sqrt(delta_x*delta_x + delta_y*delta_y);
+    // float angle_to_goal = std::min(atan2(goal.x(), goal.y() - arc_radius), max_angle);
+    // float delta_x = arc_radius*sin(angle_to_goal) - goal.x();
+    // float delta_y = arc_radius*cos(angle_to_goal) - goal.y();
+    // return sqrt(delta_x*delta_x + delta_y*delta_y);
+     auto goal2 = Eigen::Vector2f(goal.x() + 0.01f, goal.y() + 0.01f);
+     auto center = Eigen::Vector2f(0.0f, arc_radius);
+     float min_a_angle = arc_radius > 0 ? (float) (-M_PI/2) : (float) (-max_angle + M_PI/2);
+     float max_a_angle = arc_radius > 0 ? (float) (-M_PI/2 + max_angle): (float) (0.0f + M_PI/2);
+    return geometry::MinDistanceLineArc(goal, goal2, center, fabs(arc_radius), min_a_angle, max_a_angle, 1);
   } else {
     if (goal.x() < 0) {
       return goal.norm();
@@ -223,7 +260,11 @@ void Navigation::Run() {
   visualization::ClearVisualizationMsg(global_viz_msg_);
 
   // If odometry has not been initialized, we can't do anything.
-  if (!odom_initialized_) return;
+  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
+
+  // Always publish the car visualization
+  DrawCar(0xff0000, local_viz_msg_);
+  local_viz_msg_.header.stamp = ros::Time::now();
 
   // The control iteration goes here. 
 
@@ -235,6 +276,29 @@ void Navigation::Run() {
   Vector2f projected_velocity = robot_vel_;
   float projected_dist_traversed = odom_dist_traversed_;
   estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
+
+  // If there is no plan or we finished it, don't do anything
+  // Note: this assumes the last element of the global plan is the goal
+  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
+    nav_complete_ = true;
+    return;
+  }
+
+  // Check if we need to replan
+  std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
+  if (!local_goal.first) {
+    GlobalPlan();
+    return;
+  }
+  auto goal = local_goal.second;
+  visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
+
+  // Visualize global plan
+  for (size_t i=0 ; i < global_plan_.size()-1; i++) {
+    visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
+  }
+
 
   // STEP 2: Latency compensation-point_cloud/vehicle landmarks
   // The latest observed point cloud is accessible via "point_cloud_"
@@ -248,11 +312,12 @@ void Navigation::Run() {
   float chosen_free_path_length = 0.0;
   float chosen_curvature = 0.0;
   (void) chosen_curvature;
-  float max_weighted_score = 0.0;
+  float max_weighted_score = -99999999.0f;
   float chosen_distance_to_goal = 0.0;
-  Eigen::Vector2f goal(5,0); // Fixed to 5ms ahead for now
   std::map<int, PathOption> path_options;
   int loop_counter = 0;
+  float absolute_min_distance2goal = 100000.0f;
+  float max_arc_angle = M_PI;
   for(float theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
     float new_free_path_length = 30.0;
     float curvature = tan(theta)/WHEELBASE;
@@ -274,20 +339,23 @@ void Navigation::Run() {
           }
         }
       }
-      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true); 
+      path_options.at(loop_counter).max_arc_angle = new_free_path_length/30.0 * M_PI;
+      path_options.at(loop_counter).free_path_length = new_free_path_length;
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, true, new_free_path_length); 
+      absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
-      // visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
+      visualization::DrawLine(Eigen::Vector2f(front_left_corner_.x(), 0.0), Eigen::Vector2f(front_left_corner_.x() + new_free_path_length, 0.0), 0x0000ff, local_viz_msg_);
     } else {
-      float max_arc_angle = M_PI;
+      max_arc_angle = M_PI;
       path_options.at(loop_counter).curvature = curvature;
       path_options.at(loop_counter).collision_type = NONE;
+      new_free_path_length = fabs(radius * max_arc_angle);
       for(uint i = 0; i < point_cloud_.size(); ++i) {
         // Check for collision
         Collision collision = CheckCollision(radius, point_cloud_.at(i));
 
         // Skip if this point won't collide
         if (collision == NONE) {
-          new_free_path_length = fabs(radius * max_arc_angle);
           continue;
         }
         // Find point on car where it will collide
@@ -316,33 +384,36 @@ void Navigation::Run() {
           max_arc_angle = arc_angle;
           new_free_path_length = fabs(radius * arc_angle);
           path_options.at(loop_counter).collision_type = collision;
-          path_options.at(loop_counter).free_path_length = new_free_path_length;
-          path_options.at(loop_counter).obstruction = point_cloud_.at(i);
           path_options.at(loop_counter).closest_point = collision_point;
+          path_options.at(loop_counter).obstruction = point_cloud_.at(i);
         }
       }
-      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal);
+      path_options.at(loop_counter).max_arc_angle = max_arc_angle;
+      path_options.at(loop_counter).free_path_length = new_free_path_length;
+      path_options.at(loop_counter).min_distance_to_goal = compute_arc_distance_to_goal(radius, goal, false, max_arc_angle);
+      absolute_min_distance2goal = std::min(absolute_min_distance2goal, path_options.at(loop_counter).min_distance_to_goal);
       // Draw the path
-      // visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
-      // visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
-      // visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).obstruction, 0.1, 0xff0000, local_viz_msg_);
+      visualization::DrawCross(path_options.at(loop_counter).closest_point, 0.1, 0x0000ff, local_viz_msg_);
+      visualization::DrawPathOption(curvature, new_free_path_length, 0.0, local_viz_msg_);
     }
     // since the current theta is responsible for the previous theta's clearance, we can't run this with the first theta
     if(loop_counter >= 1)
     {
-      float previous_path_clearance = path_options.at(loop_counter).free_path_length; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(1), 1's clearance = avg(0,2), and 2's clearance = avg(1)
+      float previous_path_clearance = path_options.at(loop_counter).max_arc_angle; // if we have three free path lengths, 0 1 2, then 0's clearance = avg(1), 1's clearance = avg(0,2), and 2's clearance = avg(1)
       float included_paths = 1;
       // are we at the third iteration in our loop? (i.e., are there currently three existing free path lengths that we can index into?)
       if(loop_counter >= 2)
       {
-        previous_path_clearance += path_options.at(loop_counter - 2).free_path_length;
+        previous_path_clearance += path_options.at(loop_counter - 2).max_arc_angle;
         included_paths += 1;
       }
       // The idea of "clearance" implemented here was inspired by discussions with other team in the class (Johnny 6)
       path_options.at(loop_counter - 1).clearance = previous_path_clearance/included_paths; //set the clearance of the previous path as the average itself and its neighboring paths
       path_options.at(loop_counter - 1).score += FLAGS_clearance_weight*path_options.at(loop_counter - 1).clearance; //also adjust their score
     }
-    path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;
+
+    path_options.at(loop_counter).score = -FLAGS_d2g_weight*path_options.at(loop_counter).min_distance_to_goal + FLAGS_fpl_weight*path_options.at(loop_counter).free_path_length;;
     float current_score = path_options.at(loop_counter).score;
     int max_index = loop_counter;
     if(loop_counter >= 1)
@@ -363,23 +434,47 @@ void Navigation::Run() {
       }
      ++loop_counter;
   }
-// Since clearance for a radius r is set in the r+1 iteration, the final radius will not have its clearance set in this loop. The following logic remedies this issue
-path_options.at(loop_counter-1).clearance = path_options.at(loop_counter-2).free_path_length;
-path_options.at(loop_counter-1).score += -FLAGS_d2g_weight*path_options.at(loop_counter-1).clearance;
-if (path_options.at(loop_counter-1).score > max_weighted_score) {
-      chosen_free_path_length = path_options.at(loop_counter-1).free_path_length;
-      max_weighted_score  = path_options.at(loop_counter-1).score;
-      chosen_curvature = path_options.at(loop_counter-1).curvature;
-      chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
-}
+  // Since clearance for a radius r is set in the r+1 iteration, the final radius will not have its clearance set in this loop. The following logic remedies this issue
+  path_options.at(loop_counter-1).clearance = path_options.at(loop_counter-2).free_path_length;
+  path_options.at(loop_counter-1).score += -FLAGS_d2g_weight*path_options.at(loop_counter-1).clearance;
+  if (path_options.at(loop_counter-1).score > max_weighted_score) {
+        chosen_free_path_length = path_options.at(loop_counter-1).free_path_length;
+        max_weighted_score  = path_options.at(loop_counter-1).score;
+        chosen_curvature = path_options.at(loop_counter-1).curvature;
+        chosen_distance_to_goal = path_options.at(loop_counter-1).min_distance_to_goal;
+  }
 
-// visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-drive_msg_.curvature = chosen_curvature;
-// (void) chosen_curvature;
-// drive_msg_.curvature = 1.0;
+
+  if ((robot_loc_-global_plan_.back()).norm() <= 4.0f)
+  {
+    // std::cout << "orig fpl: " << chosen_free_path_length << '\n';
+    // std::cout << "orig curv: " << chosen_curvature << '\n';
+    // std::cout << "orig mws: " << max_weighted_score << '\n';
+    for (auto& po: path_options)
+    {
+      printf("Curvature (%f) min dist to goal (%f)\n", po.second.curvature, po.second.min_distance_to_goal);
+      if (fabs(po.second.min_distance_to_goal - absolute_min_distance2goal) <= 1e-3)
+      {
+        chosen_free_path_length = po.second.free_path_length;
+        max_weighted_score  = po.second.score;
+        chosen_curvature = po.second.curvature;
+        chosen_distance_to_goal = po.second.min_distance_to_goal;
+      }
+    }
+    // std::cout << "new fpl: " << chosen_free_path_length << '\n';
+    // std::cout << "new curv: " << chosen_curvature << '\n';
+    // std::cout << "new mws: " << max_weighted_score << '\n';
+  }
+
+  visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
+  drive_msg_.curvature = chosen_curvature;
+  // (void) chosen_curvature;
+  // drive_msg_.curvature = 1.0;
+  // STEP 5: Apply 1D TOC to determine velocity 
 // STEP 5: Apply 1D TOC to determine velocity 
-drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
-// drive_msg_.velocity = 0.3;
+  // STEP 5: Apply 1D TOC to determine velocity 
+  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
+  // drive_msg_.velocity = 0.3;
 
 
   // STEP 6: Update History
@@ -392,18 +487,18 @@ drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.no
     std::cout << "velocity history: " << vel_history_ << '\n';
     std::cout << "steering history: " << steer_history_ << '\n';
     std::cout << "fpl: " << chosen_free_path_length << '\n';
+    std::cout << "chosen curv: " << chosen_curvature << '\n';
+    std::cout << "chosen arc angle: " << max_arc_angle << '\n';
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }
-  DrawCar(0xff0000, local_viz_msg_);
 
   // Add timestamps to all messages.
-  local_viz_msg_.header.stamp = ros::Time::now();
   global_viz_msg_.header.stamp = ros::Time::now();
   drive_msg_.header.stamp = ros::Time::now();
   // Publish messages.
-  viz_pub_.publish(local_viz_msg_);
   viz_pub_.publish(global_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
   drive_pub_.publish(drive_msg_);
 }
 
@@ -412,6 +507,7 @@ void Navigation::DrawCar(uint32_t color, amrl_msgs::VisualizationMsg& msg) {
   visualization::DrawLine(front_right_corner_, back_right_corner_, color, msg);
   visualization::DrawLine(back_left_corner_, back_right_corner_, color, msg);
   visualization::DrawLine(front_left_corner_, back_left_corner_, color, msg);
+  visualization::DrawArc(Vector2f(0,0), FLAGS_carrot_radius, 0, 2*M_PI, 0xe834eb, msg);
 }
 
 Collision Navigation::CheckCollision(float radius, Eigen::Vector2f& point) {
@@ -483,6 +579,47 @@ Eigen::Vector2f Navigation::GetCollisionPoint(float turn_radius, float point_rad
       std::cout << "Could not find collision point for front between " << back_left_corner_.x() << " and " << front_left_corner_.x() << std::endl;
       std::cout << "Point option 1 " << point_option1 << " and Point option 2 " << point_option2 << std::endl;
       return output;
+  }
+
+  return output;
+}
+
+// Returns goal in robot's local frame
+std::pair<bool, Eigen::Vector2f> Navigation::getLocalGoal() {
+  auto output = std::make_pair(false, Vector2f(0, 0));
+
+  // If we are close enough to the goal, set it directly
+  if ((global_plan_.back() - robot_loc_).norm() < FLAGS_carrot_radius) {
+    output.first = true;
+    output.second = Eigen::Rotation2Df(-1*robot_angle_) * (global_plan_.back() - robot_loc_);
+    visualization::DrawCross(global_plan_.back(), 5, 0x000000, global_viz_msg_);
+    return output;
+  }
+
+  // Go backwards through the global plan and check if we are close to the segment
+  bool found_local_goal = false;
+  for(size_t i = global_plan_.size() - 1; i >= 1; i--) {
+    // Check if we are close to this segment of the plan
+    if (pointIsCloseToSegment(robot_loc_, global_plan_.at(i), global_plan_.at(i-1), 0.5)) {
+      output.first = true;
+    }
+
+    // Check if this segment intersects with the carrot circle
+    // If already found, continue (set it to segment intersect closest to goal)
+    if (output.first && found_local_goal) return output;
+    if (found_local_goal) continue;
+
+    // Vector2f intersection;
+    // if (segmentIntersectsCircle(global_plan_.at(i), global_plan_.at(i-1), robot_loc_, FLAGS_carrot_radius, &intersection)) {
+    //   found_local_goal = true;
+    //   visualization::DrawCross(intersection, 5, 0x000000, global_viz_msg_);
+    //   output.second = Eigen::Rotation2Df(-1*robot_angle_) * (intersection - robot_loc_);
+    // }
+    if ((global_plan_.at(i) - robot_loc_).norm() < FLAGS_carrot_radius) {
+      found_local_goal = true;
+      visualization::DrawCross(global_plan_.at(i), 5, 0x000000, global_viz_msg_);
+      output.second = Eigen::Rotation2Df(-1*robot_angle_) * (global_plan_.at(i) - robot_loc_);
+    }
   }
 
   return output;

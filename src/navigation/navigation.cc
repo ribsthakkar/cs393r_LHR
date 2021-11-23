@@ -152,7 +152,7 @@ void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   localization_initialized_ = true;
   robot_loc_ = loc;
   robot_angle_ = angle;
-  printf("%d\n", nav_set_);
+  // printf("%d\n", nav_set_);
   if (nav_set_) {
     GlobalPlan();
   }
@@ -447,9 +447,9 @@ void Navigation::Run() {
 
   if ((robot_loc_-global_plan_.back()).norm() <= 4.0f)
   {
-    std::cout << "orig fpl: " << chosen_free_path_length << '\n';
-    std::cout << "orig curv: " << chosen_curvature << '\n';
-    std::cout << "orig mws: " << max_weighted_score << '\n';
+    // std::cout << "orig fpl: " << chosen_free_path_length << '\n';
+    // std::cout << "orig curv: " << chosen_curvature << '\n';
+    // std::cout << "orig mws: " << max_weighted_score << '\n';
     for (auto& po: path_options)
     {
       printf("Curvature (%f) min dist to goal (%f)\n", po.second.curvature, po.second.min_distance_to_goal);
@@ -461,9 +461,9 @@ void Navigation::Run() {
         chosen_distance_to_goal = po.second.min_distance_to_goal;
       }
     }
-    std::cout << "new fpl: " << chosen_free_path_length << '\n';
-    std::cout << "new curv: " << chosen_curvature << '\n';
-    std::cout << "new mws: " << max_weighted_score << '\n';
+    // std::cout << "new fpl: " << chosen_free_path_length << '\n';
+    // std::cout << "new curv: " << chosen_curvature << '\n';
+    // std::cout << "new mws: " << max_weighted_score << '\n';
   }
 
   visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);

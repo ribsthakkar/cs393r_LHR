@@ -9,7 +9,7 @@ naive_motion_model = {
 motion_model = {
     k1 = 0.15,
     k2 = 0.01,
-    k3 = 0.4
+    k3 = 0.8
 }
 gamma = 0.8
 lidar_stddev = 0.15

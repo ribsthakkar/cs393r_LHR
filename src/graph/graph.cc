@@ -45,6 +45,7 @@ namespace graph {
                             float y2 = y1 + dy * precision;
                             std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(x1, precision)*100), round(math_util::roundMultiple(y1, precision)*100));
                             std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(x2, precision)*100), round(math_util::roundMultiple(y2, precision)*100));
+                            if (!isEdgeValid(Eigen::Vector2f(x1, y1), Eigen::Vector2f(x2, y2))) continue;
                             if (nodes.find(src) == nodes.end()) {
                                 nodes[src] = std::map<std::pair<int, int>, float>();
                             }
@@ -83,7 +84,7 @@ namespace graph {
         for (size_t j = 0; j < map_.lines.size(); ++j) {
             const geometry::line2f map_line = map_.lines[j];
             // Need to make this configurable
-            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.1) 
+            if (geometry::MinDistanceLineLine(edge_p1, edge_p2, map_line.p0, map_line.p1) <= 0.4) 
                 return false;
         }
         return true;
@@ -92,8 +93,8 @@ namespace graph {
     std::vector<Eigen::Vector2f> Graph::ShortestPath(Eigen::Vector2f robot_loc, Eigen::Vector2f target_loc) {
         std::pair<int, int> src = std::make_pair(round(math_util::roundMultiple(robot_loc.x(), precision) * 100), round(math_util::roundMultiple(robot_loc.y(), precision) * 100));
         std::pair<int, int> dest = std::make_pair(round(math_util::roundMultiple(target_loc.x(), precision) * 100), round(math_util::roundMultiple(target_loc.y(), precision) * 100));
-        printf("Robot Loc: (%d, %d)\n", src.first, src.second);
-        printf("Target Loc: (%d, %d)\n", dest.first, dest.second);
+        // printf("Robot Loc: (%d, %d)\n", src.first, src.second);
+        // printf("Target Loc: (%d, %d)\n", dest.first, dest.second);
         if (nodes.find(src) == nodes.end() || nodes.find(dest) == nodes.end())
             return std::vector<Eigen::Vector2f>();
         std::map<std::pair<int, int>, float> weights;
@@ -108,16 +109,16 @@ namespace graph {
         q.Push(src, 0.0f);
         printf("Here\n");
         while (!q.Empty()) {
-            const auto& current = q.Pop();
+            const auto current = q.Pop();
             if (current == dest)
                 break;
-            for (auto& p: nodes[current])
+            for (auto p: nodes[current])
             {
-                auto& n = p.first;
+                auto n = p.first;
                 float new_weight = weights[current] + p.second;
                 if (new_weight < weights[n]) {
                     weights[n] = new_weight;
-                    q.Push(n, new_weight + Heuristic(current, dest));
+                    q.Push(n, -(new_weight + Heuristic(current, dest)));
                     parent[n] = current;
                 }
             }

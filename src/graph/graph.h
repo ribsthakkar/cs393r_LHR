@@ -11,7 +11,7 @@
 
 namespace graph {
     struct Graph {
-        Graph(const vector_map::VectorMap& map, float precision=1.0f);
+        Graph(const vector_map::VectorMap& map, float precision=0.5f);
         std::vector<Eigen::Vector2f> ShortestPath(Eigen::Vector2f robot_loc, Eigen::Vector2f target_loc); 
         bool isEdgeValid(Eigen::Vector2f edge_p0, Eigen::Vector2f edge_p1);
         float Heuristic(const std::pair<int,int>& curr, const std::pair<int, int>& dest) const;

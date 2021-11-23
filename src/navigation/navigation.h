@@ -44,7 +44,7 @@
 #define SYSTEM_LATENCY 0.35
 #define MAX_ACCELERATION 6.0
 #define MAX_DECELERATION 6.0
-#define MAX_VELOCITY 2.0
+#define MAX_VELOCITY 0.5
 #define MIN_STEER -30.0
 #define MAX_STEER 30.0
 #define DSTEER 0.25
@@ -132,6 +132,10 @@ class Navigation {
 
   // Returns the point (in base_link frame) where the point will collide with the robot
   Eigen::Vector2f GetCollisionPoint(float turn_radius, float point_radius, Collision collision_type);
+
+  // First is false if global plan is invalid
+  // If found local goal, it is the second
+  std::pair<bool, Eigen::Vector2f> getLocalGoal();
   
   // Whether odometry has been initialized.
   bool odom_initialized_;
@@ -169,7 +173,7 @@ class Navigation {
   // Navigation goal angle.
   float nav_goal_angle_;
   // List of points to follow for optimal global path
-  std::vector<Eigen::Vector2f> path;
+  std::vector<Eigen::Vector2f> global_plan_;
 
   // Points of interest on the car
   Eigen::Vector2f front_left_corner_;

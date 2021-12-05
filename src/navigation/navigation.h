@@ -31,6 +31,7 @@
 #include "visualization/visualization.h"
 #include "vector_map/vector_map.h"
 #include "graph/graph.h"
+#include "rrt/rrt.h"
 
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
@@ -200,6 +201,9 @@ class Navigation {
   vector_map::VectorMap map_;
   // Graph representation of environment
   graph::Graph graph_;
+
+  // RRT Class
+  rrt::RRT rrt_;
 };
 
 }  // namespace navigation

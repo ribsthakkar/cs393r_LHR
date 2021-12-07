@@ -18,11 +18,22 @@ struct Ellipse {
   Ellipse(const Eigen::Vector2f& start_point, const Eigen::Vector2f& goal_point);
 };
 
+struct State {
+  Eigen::Vector2f loc;
+  Eigen::Vector2f vel;
+  double heading;
+};
+
 class RRT {
  public:
   Eigen::Vector2f Sample(double c_max);
   Eigen::Vector2f Nearest(Eigen::Vector2f& x_rand);
-  Eigen::Vector2f Steer(Eigen::Vector2f& x_nearest, Eigen::Vector2f& x_rand);
+
+  // Given the nearest node on the tree, and the sampled point, this goes through a bunch
+  // of steering options to find which one brings us the closest to the goal.
+  // It returns the state (tree node) resulting from that move, and sets the curvature and travel of the move
+  State Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, double* travel);
+
   Eigen::Vector2f Near(Eigen::Vector2f& x_near);
 
  private:
@@ -35,6 +46,9 @@ class RRT {
 
   // Save the problem ellipse here
   Ellipse ellipse_;
+
+  // Possible steering angles
+  std::vector<double> turning_radii_;
 };
 
 } // namespace rrt

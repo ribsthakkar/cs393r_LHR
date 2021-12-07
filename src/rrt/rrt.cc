@@ -64,9 +64,81 @@ Vector2f RRT::Nearest(Eigen::Vector2f& x_rand) {
   return Vector2f(0, 0);
 }
 
-Vector2f RRT::Steer(Eigen::Vector2f& x_nearest, Eigen::Vector2f& x_rand) {
-  // TODO
-  return Vector2f(0, 0);
+State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, double* travel) {
+  // Distance to move
+  // TODO fill this in
+  const double max_dist = 0.1;
+
+  Rotation2Df rot_matrix(x_nearest.heading);
+
+  State best_state;
+  double best_goal_distance = std::numeric_limits<double>::infinity();
+
+  // Iterate through the possible steering angles
+  // TODO fill turning_radii_ in somewhere
+  for (auto radius: turning_radii_) {
+
+    // Check for r = infinity case
+    if (fabs(1/radius) < 1e-5) {
+      // Find line to goal
+      const Vector2f nearest_to_goal = rot_matrix.inverse() * (x_rand - x_nearest.loc); // x_nearest frame
+
+      // Clamp travel distance to goal
+      double travel_distance = nearest_to_goal.x();
+      math_util::Clamp(travel_distance, -1*max_dist, max_dist);
+
+      // Find next state
+      State new_state;
+      new_state.heading = x_nearest.heading;
+      new_state.loc = x_nearest.loc + rot_matrix * Vector2f(travel_distance, 0); // Map frame
+
+      // Measure the distance
+      const double dist_squared = (new_state.loc - x_rand).squaredNorm();
+
+      // Check if its the best
+      if (dist_squared < best_goal_distance) {
+        best_goal_distance = dist_squared;
+        best_state = new_state;
+        *curvature = 0;
+        *travel = travel_distance;
+      }
+
+      continue;
+    }
+
+    // Figure out where center of turn is
+    const Vector2f radius_line = rot_matrix * Vector2f(0, radius); // In map frame
+    const Vector2f turn_center = x_nearest.loc + radius_line; // In map frame
+
+    // Calculate max alpha for max_dist
+    const double max_alpha = fabs(max_dist / radius);
+
+    // Calculate alpha to goal
+    const Vector2f center_to_goal = x_rand - turn_center;
+    const double goal_direction_sign = (rot_matrix * Vector2f(1,0)).dot(center_to_goal); 
+    double alpha = copysign(acos((-1*radius_line.dot(center_to_goal))/(fabs(radius) * center_to_goal.norm())), goal_direction_sign); // Using dot product
+
+    // Set alpha = min(max_alpha, alpha to goal)
+    math_util::Clamp(alpha, -1*max_alpha, max_alpha);
+
+    // Find State after following this radius for alpha
+    State new_state;
+    new_state.loc = turn_center + Rotation2Df(alpha) * -radius_line;
+    new_state.heading = x_nearest.heading + alpha;
+
+    // Measure distance to goal at this State
+    const double dist_squared = (new_state.loc - x_rand).squaredNorm();
+
+    // Check if its the best
+    if (dist_squared < best_goal_distance) {
+      best_goal_distance = dist_squared;
+      best_state = new_state;
+      *curvature = 1/radius;
+      *travel = radius*alpha;
+    }
+  }
+
+  return best_state;
 }
 
 Vector2f RRT::Near(Eigen::Vector2f& x_near) {

@@ -155,7 +155,7 @@ void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   robot_angle_ = angle;
   // printf("%d\n", nav_set_);
   if (nav_set_) {
-    GlobalPlan();
+    // GlobalPlan();
   }
 }
 
@@ -431,20 +431,25 @@ std::pair<double, double> Navigation::BasicLocalPlan(Eigen::Vector2f& goal) {
 
 std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, double initial_angle) {
   // TODO
-  return std::make_pair(0.0, 0.0);
+  if (!nav_set_)
+    return std::make_pair(0.0, 0.0);
   
   // Condition for when to replan
-  if (false) {
-    auto rr_tree = rrt::RRT(initialLoc, initial_angle, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, -45.0), std::make_pair(0.0, 20.0));
+  if (rrt_plan_.size() == 0) {
+    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 20.0));
     // POINT COULD IS IN ROBOT's LOCAL FRAME
     rrt_plan_ = rr_tree.InformedRRT(point_cloud_);
     // Don't move anywhere for this input
     return std::make_pair(0.0, 0.0);
   }
+  for (size_t i=rrt_plan_.size()-1 ; i >0 ; i--) {
+    visualization::DrawLine(rrt_plan_.at(i).second, rrt_plan_.at(i-1).second, 0x203ee8, global_viz_msg_);
+  }
   auto next_move = rrt_plan_.back();
   auto chord_distance = (initialLoc - next_move.second).norm();
-  if (chord_distance < 0.05)
-  {
+  printf("Steps left in rrt_plan %ld \n", rrt_plan_.size());
+  cout << "Next way ppoint " << next_move.second << std::endl;
+  if (chord_distance < GOAL_RADIUS) {
     rrt_plan_.pop_back();
     next_move = rrt_plan_.back();
     chord_distance = (initialLoc - next_move.second).norm();
@@ -485,12 +490,6 @@ void Navigation::Run() {
   float projected_dist_traversed = odom_dist_traversed_;
   estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
 
-  // If there is no plan or we finished it, don't do anything
-  // Note: this assumes the last element of the global plan is the goal
-  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
-    nav_complete_ = true;
-    return;
-  }
 
   // STEP 2: Latency compensation-point_cloud/vehicle landmarks
   // The latest observed point cloud is accessible via "point_cloud_"
@@ -499,8 +498,14 @@ void Navigation::Run() {
   apply_latency_compensated_odometry(dloc, dangle);
 
   std::pair<double, double> local_plan_results;
-  if (true)
+  if (false)
   {
+    // If there is no plan or we finished it, don't do anything
+    // Note: this assumes the last element of the global plan is the goal
+    if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
+      nav_complete_ = true;
+      return;
+    }
     // Check if we need to replan
     std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
     if (!local_goal.first) {

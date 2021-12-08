@@ -9,11 +9,20 @@
 #include "shared/util/random.h"
 #include "shared/math/math_util.h"
 #include "vector_map/vector_map.h"
+#include "visualization/visualization.h"
+#include "navigation/navigation.h"
+#include "ros/ros.h"
+#include "shared/ros/ros_helpers.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
+using amrl_msgs::VisualizationMsg;
+using namespace ros_helpers;
+
 
 namespace rrt {
+VisualizationMsg global_viz_msg_;
+ros::Publisher viz_pub_;
 
 Vector2f sampleCircle(util_random::Random& rng, float radius=1.0) {
   const float theta = rng.UniformRandom(0, 2*M_PI);
@@ -24,7 +33,10 @@ Vector2f sampleCircle(util_random::Random& rng, float radius=1.0) {
 
 Vector2f sampleEllipse(util_random::Random& rng, Ellipse& ellipse, double c_best) {
   if (math_util::definitelyGreaterThan(ellipse.c_min, c_best, 1e-7)) {
-    throw std::invalid_argument("c_best can't be smaller than c_min!");
+    char *issue;
+    int result =  asprintf(&issue, "c_best (%f) can't be smaller than c_min (%f)!", c_best, ellipse.c_min);
+    (void) result;
+    throw std::invalid_argument(issue);
   }
 
   // See paper, construct L matrix from ellipse axes
@@ -43,7 +55,9 @@ Ellipse::Ellipse(const Eigen::Vector2f& start_point, const Eigen::Vector2f& goal
 
   // Do all math for ellipses once
   const Vector2f distance = goal - start;
-  c_min = distance.norm();
+  cout << "start " << start << std::endl;
+  cout << "goal " << goal << std::endl;
+  c_min = distance.norm() - GOAL_RADIUS;
   centre = start + 0.5*(distance);
   const float theta = atan2(distance.y(), distance.x());
   rotation = Rotation2Df(theta);
@@ -53,11 +67,12 @@ State::State(){}
 State::State(const Eigen::Vector2f& loc, double heading):
   loc(loc), heading(heading) {}
 
-TreeNode::TreeNode(): parent(nullptr), state(), children() {}
+TreeNode::TreeNode(): parent(nullptr), state(), children(), cost(0.0) {}
 TreeNode::TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent):
   parent(parent),
   state(loc, heading),
-  children() {}
+  children(),
+  cost() {}
 
 TreeNode* TreeNode::AddNewChild(State& child, double cost, std::pair<double, double> control_data)
 {
@@ -87,11 +102,19 @@ RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, doub
   x_bounds_(x_bounds),
   y_bounds_(y_bounds),
   ellipse_(x_start_loc, x_goal_loc),
-  root_(x_start_loc, x_start_heading) {}
+  root_(new TreeNode(x_start_loc, x_start_heading)) {
+      node_ptrs_.push_back(root_);
+      ros::NodeHandle n;
+      global_viz_msg_ = visualization::NewVisualizationMessage(
+      "map", "navigation_global");
+        viz_pub_ = n.advertise<VisualizationMsg>("visualization", 1);
+
+  }
 
 RRT::~RRT() {
   for (auto p: node_ptrs_)
   {
+    // printf("Address to delete %p\n", (void *)p);  
     delete p;
   }
 }
@@ -113,7 +136,7 @@ TreeNode* RRT::Nearest(Eigen::Vector2f& x_rand) {
   // TODO
   double minDistance = 100000000.0;
   TreeNode* nearest = nullptr;
-  TreeNode* currentNode = &root_;
+  TreeNode* currentNode = root_;
   std::stack<TreeNode*> s;
   s.push(currentNode);
   while (!s.empty())
@@ -145,8 +168,9 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
 
   // Iterate through the possible steering angles
   // TODO fill turning_radii_ in somewhere
-  for (auto radius: turning_radii_) {
-
+  for(double theta = math_util::DegToRad(MIN_STEER); theta < math_util::DegToRad(MAX_STEER); theta+=math_util::DegToRad(DSTEER)) {
+    float curv = tan(theta)/WHEELBASE;
+    float radius = fabs(curv) < 1e-5 ? INT_MAX: 1.0f/curv;
     // Check for r = infinity case
     if (fabs(1/radius) < 1e-5) {
       // Find line to goal
@@ -213,7 +237,7 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
 std::vector<TreeNode*> RRT::Near(State& x_new, double neighborhood_radius) {
   std::vector<TreeNode*> neighborhood;
   std::stack<TreeNode*> s;
-  TreeNode* currentNode = &root_;
+  TreeNode* currentNode = root_;
   s.push(currentNode);
   while (!s.empty())
   {
@@ -239,6 +263,8 @@ bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std
 
 std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
 {
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+  cout << "Planning with Informed RRT\n" << std::endl;
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
@@ -248,16 +274,21 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     {
       if (gn.second < c_best)
       {
+        printf("new c_best (%f)\n", gn.second);
         c_best = gn.second;
         x_best = gn.first;
       }
     }
 
+    printf("Started Sample\n");
     Vector2f x_rand = Sample(c_best);
+    printf("Finished Sample\n");
     TreeNode* x_nearest = Nearest(x_rand);
+    printf("Finished Nearest\n");
     double curvature;
     double distance;
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
+    printf("finished steer\n");
     if (CollisionFree(x_nearest->state, curvature, distance, points))
     {
       std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
@@ -267,9 +298,10 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
       double distance_min = distance;
       for(auto other_near: x_near)
       {
+        //printf("Other near %p\n", other_near);
         // Check kinematic feasibility of going from other_near to x_new
         State other_x_new = Steer(other_near->state, x_new.loc, &curvature, &distance);
-        double c_new = other_near->cost + distance;
+        double c_new = other_near->cost + fabs(distance);
         // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
         if (c_new < c_min && (other_x_new.loc - x_new.loc).norm() <= 1e-4)
         {
@@ -283,40 +315,61 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
         }
       }
       TreeNode* added_x_new = x_min->AddNewChild(x_new, c_min, std::make_pair(curvature_min, distance_min));
+      //printf("Addded x_new coordinates (%d) (%f, %f) \n", i, added_x_new->state.loc.x(), added_x_new->state.loc.y());
+      visualization::DrawPoint(added_x_new->state.loc, 0xFF0000, global_viz_msg_);
+      viz_pub_.publish(global_viz_msg_);
       node_ptrs_.push_back(added_x_new);
       for(auto other_near: x_near)
       {
+        //printf("Other near %p\n", other_near);
+        if (other_near == root_)
+          continue;
+        //printf("Looking at other near %d, (%f, %f) \n", i, other_near->state.loc.x(), other_near->state.loc.y());
         double c_near = other_near->cost;
         // Check kinematic feasibility of going from other_near to x_new
-        State other_x_new = Steer(other_near->state, added_x_new->state.loc, &curvature, &distance);
-        double c_new = other_near->cost + distance;
-        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        State other_x_new = Steer(added_x_new->state, other_near->state.loc, &curvature, &distance);
+        double c_new = added_x_new->cost + fabs(distance);
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
         if (c_new < c_near && (other_x_new.loc - added_x_new->state.loc).norm() <= 1e-4)
         {
           if (CollisionFree(other_near->state, curvature, distance, points))
           {
+            //printf("Updating other near\n");
             TreeNode* old_parent = other_near->parent;
+            //printf("Other near parent %p\n", old_parent);
             old_parent->RemoveChild(other_near);
             other_near->parent = added_x_new;
             added_x_new->AddExistingChild(other_near, std::make_pair(curvature, distance));
+            other_near->cost = c_new;
+            // printf("Finished updating other near\n");
           }
         }
       }
-      if ((added_x_new->state.loc-x_goal_).norm() <= 0.5)
+      if ((added_x_new->state.loc-x_goal_).norm() <= GOAL_RADIUS)
       {
-        goalNodes[added_x_new] = (added_x_new->state.loc-x_goal_).norm();
+        goalNodes[added_x_new] = added_x_new->cost;
       }
     }
   }
-
+  printf("HERE\n");
+  printf("x_best is %p\n", (void *)x_best);  
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<std::pair<double, Vector2f>> output;
-  while (x_best->parent != nullptr)
+  while (x_best != nullptr && x_best->parent != nullptr)
   {
     output.push_back(std::make_pair(x_best->parent->children[x_best].first, x_best->state.loc));
     x_best = x_best->parent;
   }
-  std::reverse(output.begin(), output.end());
+
+  // Visualize plan
+  for (size_t i=output.size()-1; i > 0; --i) {
+    auto p = output[i];
+    auto chord_distance = (p.second - output[i-1].second).norm();
+    auto radius = 1/p.first;
+    auto angle = 2*std::asin(chord_distance/(2*radius));
+    Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+    visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+  }
   return output;
 }
 

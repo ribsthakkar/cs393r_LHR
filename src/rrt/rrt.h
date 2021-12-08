@@ -7,6 +7,8 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "vector_map/vector_map.h"
+#define GOAL_RADIUS 2.0f
+
 
 namespace rrt {
 
@@ -64,7 +66,7 @@ class RRT {
   bool CollisionFree(State& x_nearest, double curvature, double distance, std::vector<Eigen::Vector2f> obsevation_points);
 
   // Run the informed RRT* algorithm
-  std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=10000);
+  std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=1000);
 
 
  private:
@@ -92,7 +94,7 @@ class RRT {
   std::vector<double> turning_radii_;
 
   // Tree Root
-  TreeNode root_;
+  TreeNode* root_;
 
   //TreeNode pointers to store and clean up preventing memory leaks
   std::vector<TreeNode*> node_ptrs_;

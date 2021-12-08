@@ -204,22 +204,23 @@ void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projecte
 }
 
 float Navigation::compute_toc(float distance_to_target, float init_v) {
+  float dtt = fabs(distance_to_target);
   float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
   float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
   float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
-  float x2 = distance_to_target - x1 - x3;
+  float x2 = dtt - x1 - x3;
   float t2 = x2/MAX_VELOCITY;
   if (t2 < DT) { // Not enough time to accelerate to cruising speed
     float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
-    float new_x1 = distance_to_target - new_x3;
+    float new_x1 = dtt - new_x3;
     if (new_x1 < 0) { // Not enough distance to brake
       return 0.0; 
     }
     float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
-    return target_v;
+    return copysignf(target_v, distance_to_target);
   } else { // Enough time to accelerate to cruising speed
     float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
-    return target_v;
+    return copysignf(target_v, distance_to_target);
   }
 }
 
@@ -436,19 +437,19 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   
   // Condition for when to replan
   if (rrt_plan_.size() == 0) {
-    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 20.0), map_);
+    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(robot_loc_.x()-5.0, robot_loc_.x()+5.0), std::make_pair(robot_loc_.y()-5.0, robot_loc_.y()+5.0), map_);
     // POINT COULD IS IN ROBOT's LOCAL FRAME
     rrt_plan_ = rr_tree.InformedRRT(point_cloud_);
     // Don't move anywhere for this input
     return std::make_pair(0.0, 0.0);
   }
   // Visualize plan
-  for (int i=rrt_plan_.size()-1; i >= 0; --i) {
-    auto p = rrt_plan_[i];
-    visualization::DrawCross(p.second, 3, 0x203ee8, global_viz_msg_);
-    if (i > 0) {
+  for (size_t i=rrt_plan_.size(); i > 0; --i) {
+    if (i < rrt_plan_.size()) {
+      auto p = rrt_plan_[i];
+      visualization::DrawCross(p.second, 0.2, 0x203ee8, global_viz_msg_);
       auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
-      if (p.first < 1e-4) {
+      if (p.first < 1e4) {
         visualization::DrawLine(p.second, rrt_plan_[i-1].second, 0x203ee8, global_viz_msg_);
       } else {
         auto radius = 1/p.first;
@@ -457,8 +458,9 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
         visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
       }
     } else {
+      auto p = rrt_plan_[i-1];
       auto chord_distance = (p.second - robot_loc_).norm();
-      if (p.first < 1e-4) {
+      if (p.first < 1e4) {
         visualization::DrawLine(p.second, robot_loc_, 0x203ee8, global_viz_msg_);
       } else {
         auto radius = 1/p.first;
@@ -473,13 +475,21 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   auto chord_distance = (robot_loc_ - next_move.second).norm();
   printf("Steps left in rrt_plan %ld \n", rrt_plan_.size());
   cout << "Next way ppoint " << next_move.second << std::endl;
-  if (chord_distance < 0.1) {
+  if (chord_distance < 0.2) {
     rrt_plan_.pop_back();
+    if (rrt_plan_.size() == 0)
+    {
+      nav_set_ = false;
+      return std::make_pair(0.0, 0.0);
+    }
     next_move = rrt_plan_.back();
     chord_distance = (robot_loc_ - next_move.second).norm();
   }
   if (next_move.first <= 1e-4)
   {
+    Eigen::Vector2f h = geometry::Heading(robot_angle_);
+    if ((robot_loc_ + h - next_move.second).norm() > ((robot_loc_ - h) - next_move.second).norm())
+      chord_distance *= -1;
     return std::make_pair(next_move.first, chord_distance);
   }
   else {

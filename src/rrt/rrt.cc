@@ -79,15 +79,15 @@ void TreeNode::RemoveChild(TreeNode* childToRemove)
 
 // RRT::RRT() {}
 
-// RRT::RRT(Vector2f x_start_loc, x_start_heading, Vector2f x_goal_loc, Vector2f x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds):
-//   x_start_(x_start),
-//   x_start_heading_(x_start_heading),
-//   x_goal_(x_goal),
-//   x_goal_heading_(x_goal_heading),
-//   x_bounds_(x_bounds_),
-//   y_bounds_(y_bounds),
-//   ellipse_(x_start_loc, x_goal_loc),
-//   root_(x_start, x_start_heading) {}
+RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds):
+  x_start_(x_start_loc),
+  x_start_heading_(x_start_heading),
+  x_goal_(x_goal_loc),
+  x_goal_heading_(x_goal_heading),
+  x_bounds_(x_bounds),
+  y_bounds_(y_bounds),
+  ellipse_(x_start_loc, x_goal_loc),
+  root_(x_start_loc, x_start_heading) {}
 
 RRT::~RRT() {
   for (auto p: node_ptrs_)

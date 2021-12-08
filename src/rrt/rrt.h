@@ -45,7 +45,7 @@ struct TreeNode
 class RRT {
  public:
   // RRT();
-  // RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_);
+  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_);
 
   ~RRT();
   Eigen::Vector2f Sample(double c_max);

@@ -18,7 +18,7 @@
 \author  Joydeep Biswas, (C) 2019
 */
 //========================================================================
-
+#include <cmath>
 #include "gflags/gflags.h"
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
@@ -35,6 +35,7 @@
 #include "visualization/visualization.h"
 #include "vector_map/vector_map.h"
 #include "graph/graph.h"
+#include "rrt/rrt.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
@@ -252,60 +253,7 @@ float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f
   }
 }
 
-void Navigation::Run() {
-  // This function gets called 20 times a second to form the control loop.
-  
-  // Clear previous visualizations.
-  visualization::ClearVisualizationMsg(local_viz_msg_);
-  visualization::ClearVisualizationMsg(global_viz_msg_);
-
-  // If odometry has not been initialized, we can't do anything.
-  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
-
-  // Always publish the car visualization
-  DrawCar(0xff0000, local_viz_msg_);
-  local_viz_msg_.header.stamp = ros::Time::now();
-
-  // The control iteration goes here. 
-
-  // STEP 1: Latency compensation-odometry  
-  // Project our position to estimated position actuation latency from now.
-  // Use history of actuations 1 system latency ago
-  Vector2f projected_loc = odom_loc_;
-  float projected_angle = odom_angle_;
-  Vector2f projected_velocity = robot_vel_;
-  float projected_dist_traversed = odom_dist_traversed_;
-  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
-
-  // If there is no plan or we finished it, don't do anything
-  // Note: this assumes the last element of the global plan is the goal
-  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
-    nav_complete_ = true;
-    return;
-  }
-
-  // Check if we need to replan
-  std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
-  if (!local_goal.first) {
-    GlobalPlan();
-    return;
-  }
-  auto goal = local_goal.second;
-  visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
-  viz_pub_.publish(local_viz_msg_);
-
-  // Visualize global plan
-  for (size_t i=0 ; i < global_plan_.size()-1; i++) {
-    visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
-  }
-
-
-  // STEP 2: Latency compensation-point_cloud/vehicle landmarks
-  // The latest observed point cloud is accessible via "point_cloud_"
-  float dangle = odom_angle_ - projected_angle;
-  Vector2f dloc = odom_loc_ - projected_loc;
-  apply_latency_compensated_odometry(dloc, dangle);
-
+std::pair<double, double> Navigation::BasicLocalPlan(Eigen::Vector2f& goal) {
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
   drive_msg_.curvature = 0.0;
@@ -467,22 +415,7 @@ void Navigation::Run() {
   }
 
   visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-  drive_msg_.curvature = chosen_curvature;
-  // (void) chosen_curvature;
-  // drive_msg_.curvature = 1.0;
-  // STEP 5: Apply 1D TOC to determine velocity 
-// STEP 5: Apply 1D TOC to determine velocity 
-  // STEP 5: Apply 1D TOC to determine velocity 
-  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
-  // drive_msg_.velocity = 0.3;
-
-
-  // STEP 6: Update History
-  vel_history_.pop_front();
-  steer_history_.pop_front();
-  vel_history_.push_back(drive_msg_.velocity);
-  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
-
+  
   if (FLAGS_verbose) {
     std::cout << "velocity history: " << vel_history_ << '\n';
     std::cout << "steering history: " << steer_history_ << '\n';
@@ -492,6 +425,116 @@ void Navigation::Run() {
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }
+  
+  return std::make_pair(chosen_curvature, chosen_free_path_length);
+}
+
+std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, double initial_angle) {
+  // TODO
+  return std::make_pair(0.0, 0.0);
+  
+  // Condition for when to replan
+  if (false) {
+    auto rr_tree = rrt::RRT(initialLoc, initial_angle, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, -45.0), std::make_pair(0.0, 20.0));
+    // POINT COULD IS IN ROBOT's LOCAL FRAME
+    rrt_plan_ = rr_tree.InformedRRT(point_cloud_);
+    // Don't move anywhere for this input
+    return std::make_pair(0.0, 0.0);
+  }
+  auto next_move = rrt_plan_.back();
+  auto chord_distance = (initialLoc - next_move.second).norm();
+  if (chord_distance < 0.05)
+  {
+    rrt_plan_.pop_back();
+    next_move = rrt_plan_.back();
+    chord_distance = (initialLoc - next_move.second).norm();
+  }
+  if (next_move.first <= 1e-4)
+  {
+    return std::make_pair(next_move.first, chord_distance);
+  }
+  else {
+    auto radius = 1/next_move.first;
+    float travel_dist = radius * 2*std::asin(chord_distance/(2*radius));
+    return std::make_pair(next_move.first, travel_dist);
+  }
+}
+
+void Navigation::Run() {
+  // This function gets called 20 times a second to form the control loop.
+  
+  // Clear previous visualizations.
+  visualization::ClearVisualizationMsg(local_viz_msg_);
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+
+  // If odometry has not been initialized, we can't do anything.
+  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
+
+  // Always publish the car visualization
+  DrawCar(0xff0000, local_viz_msg_);
+  local_viz_msg_.header.stamp = ros::Time::now();
+
+  // The control iteration goes here. 
+
+  // STEP 1: Latency compensation-odometry  
+  // Project our position to estimated position actuation latency from now.
+  // Use history of actuations 1 system latency ago
+  Vector2f projected_loc = odom_loc_;
+  float projected_angle = odom_angle_;
+  Vector2f projected_velocity = robot_vel_;
+  float projected_dist_traversed = odom_dist_traversed_;
+  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
+
+  // If there is no plan or we finished it, don't do anything
+  // Note: this assumes the last element of the global plan is the goal
+  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
+    nav_complete_ = true;
+    return;
+  }
+
+  // STEP 2: Latency compensation-point_cloud/vehicle landmarks
+  // The latest observed point cloud is accessible via "point_cloud_"
+  float dangle = odom_angle_ - projected_angle;
+  Vector2f dloc = odom_loc_ - projected_loc;
+  apply_latency_compensated_odometry(dloc, dangle);
+
+  std::pair<double, double> local_plan_results;
+  if (true)
+  {
+    // Check if we need to replan
+    std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
+    if (!local_goal.first) {
+      GlobalPlan();
+      return;
+    }
+    auto goal = local_goal.second;
+    visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
+    viz_pub_.publish(local_viz_msg_);
+
+    // Visualize global plan
+    for (size_t i=0 ; i < global_plan_.size()-1; i++) {
+      visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
+    }
+    local_plan_results = BasicLocalPlan(goal);
+  } else {
+    local_plan_results = RRTLocalPlan(projected_loc, projected_angle);
+  }
+  
+  drive_msg_.curvature = local_plan_results.first;
+  // (void) chosen_curvature;
+  // drive_msg_.curvature = 1.0;
+  // STEP 5: Apply 1D TOC to determine velocity 
+// STEP 5: Apply 1D TOC to determine velocity 
+  // STEP 5: Apply 1D TOC to determine velocity 
+  drive_msg_.velocity = compute_toc(local_plan_results.second, projected_velocity.norm());
+  // drive_msg_.velocity = 0.3;
+
+
+  // STEP 6: Update History
+  vel_history_.pop_front();
+  steer_history_.pop_front();
+  vel_history_.push_back(drive_msg_.velocity);
+  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
 
   // Add timestamps to all messages.
   global_viz_msg_.header.stamp = ros::Time::now();

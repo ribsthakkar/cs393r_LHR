@@ -1,3 +1,4 @@
+#include <stack>
 #include "rrt.h"
 
 #include "math.h"
@@ -46,6 +47,28 @@ Ellipse::Ellipse(const Eigen::Vector2f& start_point, const Eigen::Vector2f& goal
   rotation = Rotation2Df(theta);
 }
 
+State::State(){}
+State::State(const Eigen::Vector2f& loc, double heading):
+  loc(loc), heading(heading) {}
+
+TreeNode::TreeNode(): parent(nullptr), state(), children() {}
+TreeNode::TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent):
+  parent(parent),
+  state(loc, heading),
+  children() {}
+
+// RRT::RRT() {}
+
+// RRT::RRT(Vector2f x_start_loc, x_start_heading, Vector2f x_goal_loc, Vector2f x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds):
+//   x_start_(x_start),
+//   x_start_heading_(x_start_heading),
+//   x_goal_(x_goal),
+//   x_goal_heading_(x_goal_heading),
+//   x_bounds_(x_bounds_),
+//   y_bounds_(y_bounds),
+//   ellipse_(x_start_loc, x_goal_loc),
+//   root_(x_start, x_start_heading) {}
+
 Vector2f RRT::Sample(double c_max) {
   // If c_max is infinity, return a random sample from whole domain
   // TODO make sure this isinf() works
@@ -61,7 +84,26 @@ Vector2f RRT::Sample(double c_max) {
 
 Vector2f RRT::Nearest(Eigen::Vector2f& x_rand) {
   // TODO
-  return Vector2f(0, 0);
+  double minDistance = 100000000.0;
+  Vector2f nearest;
+  std::stack<TreeNode*> s;
+  TreeNode* currentNode = &root_;
+  s.push(currentNode);
+  while (!s.empty())
+  {
+    currentNode = s.top();
+    s.pop();
+    if ((currentNode->state.loc - x_rand).norm() < minDistance)
+    {
+      minDistance = (currentNode->state.loc - x_rand).norm();
+      nearest = currentNode->state.loc;
+    }
+    for (auto& c: currentNode->children)
+    {
+      s.push(c.second.get());
+    }
+  }
+  return nearest;
 }
 
 State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, double* travel) {
@@ -141,9 +183,26 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
   return best_state;
 }
 
-Vector2f RRT::Near(Eigen::Vector2f& x_near) {
-  // TODO
-  return Vector2f(0, 0);
+std::vector<TreeNode* > RRT::Near(TreeNode* x_new, double neighborhood_radius) {
+  std::vector<TreeNode*> neighborhood;
+  std::stack<TreeNode*> s;
+  TreeNode* currentNode = &root_;
+  s.push(currentNode);
+  while (!s.empty())
+  {
+    currentNode = s.top();
+    s.pop();
+    // Maybe we also needd to check if we can actually steer from this location to x_new
+    if ((currentNode->state.loc - x_new->state.loc).norm() < neighborhood_radius)
+    {
+      neighborhood.push_back(currentNode);
+    }
+    for (auto& c: currentNode->children)
+    {
+      s.push(c.second.get());
+    }
+  }
+  return neighborhood;
 }
 
 }  // namespace rrt

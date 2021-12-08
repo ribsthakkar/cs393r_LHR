@@ -45,7 +45,7 @@ struct TreeNode
 class RRT {
  public:
   // RRT();
-  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_);
+  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_, const vector_map::VectorMap& map);
 
   ~RRT();
   Eigen::Vector2f Sample(double c_max);
@@ -66,6 +66,8 @@ class RRT {
   // Run the informed RRT* algorithm
   std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=10000);
 
+  // Sets the map_cloud_ variable to represent the pointcloud in the map frame
+  void getMapPointCloud(const std::vector<Eigen::Vector2f>& points);
 
  private:
   // Initial State
@@ -96,6 +98,9 @@ class RRT {
 
   //TreeNode pointers to store and clean up preventing memory leaks
   std::vector<TreeNode*> node_ptrs_;
+
+  // Point cloud in map frame
+  std::vector<Eigen::Vector2f> map_cloud_;
 };
 
 } // namespace rrt

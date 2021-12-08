@@ -443,13 +443,22 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     return std::make_pair(0.0, 0.0);
   }
   // Visualize plan
-  for (size_t i=rrt_plan_.size()-1; i > 0; --i) {
+  for (int i=rrt_plan_.size()-1; i >= 0; --i) {
     auto p = rrt_plan_[i];
-    auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
-    auto radius = 1/p.first;
-    auto angle = 2*std::asin(chord_distance/(2*radius));
-    Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
-    visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+    if (i > 0) {
+      auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
+      auto radius = 1/p.first;
+      auto angle = 2*std::asin(chord_distance/(2*radius));
+      Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+      visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+    } else {
+      auto chord_distance = (p.second - robot_loc_).norm();
+      auto radius = 1/p.first;
+      auto angle = 2*std::asin(chord_distance/(2*radius));
+      Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+      visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+
+    }
   }
   auto next_move = rrt_plan_.back();
   auto chord_distance = (initialLoc - next_move.second).norm();

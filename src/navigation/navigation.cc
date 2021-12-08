@@ -447,17 +447,24 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     auto p = rrt_plan_[i];
     if (i > 0) {
       auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
-      auto radius = 1/p.first;
-      auto angle = 2*std::asin(chord_distance/(2*radius));
-      Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
-      visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+      if (p.first < 1e-4) {
+        visualization::DrawLine(p.second, rrt_plan_[i-1].second, 0x203ee8, global_viz_msg_);
+      } else {
+        auto radius = 1/p.first;
+        auto angle = 2*std::asin(chord_distance/(2*radius));
+        Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+        visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+      }
     } else {
       auto chord_distance = (p.second - robot_loc_).norm();
-      auto radius = 1/p.first;
-      auto angle = 2*std::asin(chord_distance/(2*radius));
-      Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
-      visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
-
+      if (p.first < 1e-4) {
+        visualization::DrawLine(p.second, robot_loc_, 0x203ee8, global_viz_msg_);
+      } else {
+        auto radius = 1/p.first;
+        auto angle = 2*std::asin(chord_distance/(2*radius));
+        Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+        visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
+      }
     }
   }
   auto next_move = rrt_plan_.back();

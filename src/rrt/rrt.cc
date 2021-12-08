@@ -1,4 +1,5 @@
 #include <stack>
+#include <limits>
 #include "rrt.h"
 
 #include "math.h"
@@ -7,6 +8,7 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "shared/math/math_util.h"
+#include "vector_map/vector_map.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
@@ -57,6 +59,24 @@ TreeNode::TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent)
   state(loc, heading),
   children() {}
 
+TreeNode* TreeNode::AddNewChild(State& child, double cost, std::pair<double, double> control_data)
+{
+  TreeNode* newChild = new TreeNode(child.loc, child.heading, this);
+  newChild->cost = cost;
+  children[newChild] = control_data;
+  return newChild;
+}
+
+void TreeNode::AddExistingChild(TreeNode* newChild, std::pair<double, double> control_data)
+{
+  children[newChild] = control_data;
+}
+
+void TreeNode::RemoveChild(TreeNode* childToRemove)
+{
+  children.erase(childToRemove);
+}
+
 // RRT::RRT() {}
 
 // RRT::RRT(Vector2f x_start_loc, x_start_heading, Vector2f x_goal_loc, Vector2f x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds):
@@ -68,6 +88,13 @@ TreeNode::TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent)
 //   y_bounds_(y_bounds),
 //   ellipse_(x_start_loc, x_goal_loc),
 //   root_(x_start, x_start_heading) {}
+
+RRT::~RRT() {
+  for (auto p: node_ptrs_)
+  {
+    delete p;
+  }
+}
 
 Vector2f RRT::Sample(double c_max) {
   // If c_max is infinity, return a random sample from whole domain
@@ -82,12 +109,12 @@ Vector2f RRT::Sample(double c_max) {
   return sampleEllipse(rng_, ellipse_, c_max);
 }
 
-Vector2f RRT::Nearest(Eigen::Vector2f& x_rand) {
+TreeNode* RRT::Nearest(Eigen::Vector2f& x_rand) {
   // TODO
   double minDistance = 100000000.0;
-  Vector2f nearest;
-  std::stack<TreeNode*> s;
+  TreeNode* nearest = nullptr;
   TreeNode* currentNode = &root_;
+  std::stack<TreeNode*> s;
   s.push(currentNode);
   while (!s.empty())
   {
@@ -96,11 +123,11 @@ Vector2f RRT::Nearest(Eigen::Vector2f& x_rand) {
     if ((currentNode->state.loc - x_rand).norm() < minDistance)
     {
       minDistance = (currentNode->state.loc - x_rand).norm();
-      nearest = currentNode->state.loc;
+      nearest = currentNode;
     }
     for (auto& c: currentNode->children)
     {
-      s.push(c.second.get());
+      s.push(c.first);
     }
   }
   return nearest;
@@ -183,7 +210,7 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
   return best_state;
 }
 
-std::vector<TreeNode* > RRT::Near(TreeNode* x_new, double neighborhood_radius) {
+std::vector<TreeNode*> RRT::Near(State& x_new, double neighborhood_radius) {
   std::vector<TreeNode*> neighborhood;
   std::stack<TreeNode*> s;
   TreeNode* currentNode = &root_;
@@ -193,16 +220,105 @@ std::vector<TreeNode* > RRT::Near(TreeNode* x_new, double neighborhood_radius) {
     currentNode = s.top();
     s.pop();
     // Maybe we also needd to check if we can actually steer from this location to x_new
-    if ((currentNode->state.loc - x_new->state.loc).norm() < neighborhood_radius)
+    if ((currentNode->state.loc - x_new.loc).norm() < neighborhood_radius)
     {
       neighborhood.push_back(currentNode);
     }
     for (auto& c: currentNode->children)
     {
-      s.push(c.second.get());
+      s.push(c.first);
     }
   }
   return neighborhood;
 }
+
+bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std::vector<Vector2f> local_observation_points)
+{
+  return true;
+} 
+
+std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+{
+  std::map<TreeNode*, double> goalNodes;
+  TreeNode* x_best = nullptr;
+  double c_best = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < max_iterations; ++i)
+  {
+    for(auto gn: goalNodes)
+    {
+      if (gn.second < c_best)
+      {
+        c_best = gn.second;
+        x_best = gn.first;
+      }
+    }
+
+    Vector2f x_rand = Sample(c_best);
+    TreeNode* x_nearest = Nearest(x_rand);
+    double curvature;
+    double distance;
+    State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
+    if (CollisionFree(x_nearest->state, curvature, distance, points))
+    {
+      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      TreeNode* x_min = x_nearest;
+      double c_min = x_nearest->cost + distance;
+      double curvature_min = curvature;
+      double distance_min = distance;
+      for(auto other_near: x_near)
+      {
+        // Check kinematic feasibility of going from other_near to x_new
+        State other_x_new = Steer(other_near->state, x_new.loc, &curvature, &distance);
+        double c_new = other_near->cost + distance;
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        if (c_new < c_min && (other_x_new.loc - x_new.loc).norm() <= 1e-4)
+        {
+          if (CollisionFree(other_near->state, curvature, distance, points))
+          {
+            x_min = other_near;
+            c_min = c_new;
+            curvature_min = curvature;
+            distance_min = distance;
+          }
+        }
+      }
+      TreeNode* added_x_new = x_min->AddNewChild(x_new, c_min, std::make_pair(curvature_min, distance_min));
+      node_ptrs_.push_back(added_x_new);
+      for(auto other_near: x_near)
+      {
+        double c_near = other_near->cost;
+        // Check kinematic feasibility of going from other_near to x_new
+        State other_x_new = Steer(other_near->state, added_x_new->state.loc, &curvature, &distance);
+        double c_new = other_near->cost + distance;
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        if (c_new < c_near && (other_x_new.loc - added_x_new->state.loc).norm() <= 1e-4)
+        {
+          if (CollisionFree(other_near->state, curvature, distance, points))
+          {
+            TreeNode* old_parent = other_near->parent;
+            old_parent->RemoveChild(other_near);
+            other_near->parent = added_x_new;
+            added_x_new->AddExistingChild(other_near, std::make_pair(curvature, distance));
+          }
+        }
+      }
+      if ((added_x_new->state.loc-x_goal_).norm() <= 0.5)
+      {
+        goalNodes[added_x_new] = (added_x_new->state.loc-x_goal_).norm();
+      }
+    }
+  }
+
+  // Create waypoints with the neccessarry curvatures to reach them
+  std::vector<std::pair<double, Vector2f>> output;
+  while (x_best->parent != nullptr)
+  {
+    output.push_back(std::make_pair(x_best->parent->children[x_best].first, x_best->state.loc));
+    x_best = x_best->parent;
+  }
+  std::reverse(output.begin(), output.end());
+  return output;
+}
+
 
 }  // namespace rrt

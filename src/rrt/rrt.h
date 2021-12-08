@@ -6,6 +6,7 @@
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
+#include "vector_map/vector_map.h"
 
 namespace rrt {
 
@@ -31,13 +32,14 @@ struct TreeNode
 {
   TreeNode();
   TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent=NULL);
-  std::unique_ptr<TreeNode> parent;
+  TreeNode* parent;
   State state;
-  std::map<std::pair<double, double>, std::unique_ptr<TreeNode>> children;
+  std::map<TreeNode*, std::pair<double, double>> children;
   double cost; 
 
-  void AddChild(TreeNode* child, std::pair<double, double> control);
-  void RemoveChild(std::pair<double, double> control);
+  TreeNode* AddNewChild(State& child, double cost, std::pair<double, double> control);
+  void AddExistingChild(TreeNode*, std::pair<double, double> control);
+  void RemoveChild(TreeNode*);
 };
 
 class RRT {
@@ -45,10 +47,11 @@ class RRT {
   // RRT();
   // RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_);
 
+  ~RRT();
   Eigen::Vector2f Sample(double c_max);
 
   // Given a randdom point, find the  nearest node that exists in the tree
-  Eigen::Vector2f Nearest(Eigen::Vector2f& x_rand);
+  TreeNode* Nearest(Eigen::Vector2f& x_rand);
 
   // Given the nearest node on the tree, and the sampled point, this goes through a bunch
   // of steering options to find which one brings us the closest to the goal.
@@ -56,9 +59,12 @@ class RRT {
   State Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, double* travel);
 
   // Given the point that can be steered to, returns list of points within some radius
-  std::vector<TreeNode*> Near(TreeNode* x_new, double neighborhood_radius);
+  std::vector<TreeNode*> Near(State& x_new, double neighborhood_radius);
 
-  bool CollisionFree(State& x_nearest, State& x_new);
+  bool CollisionFree(State& x_nearest, double curvature, double distance, std::vector<Eigen::Vector2f> obsevation_points);
+
+  // Run the informed RRT* algorithm
+  std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=10000);
 
 
  private:
@@ -76,6 +82,9 @@ class RRT {
   std::pair<double, double> x_bounds_;
   std::pair<double, double> y_bounds_;
 
+  // World Map
+  vector_map::VectorMap map_;
+
   // Save the problem ellipse here
   Ellipse ellipse_;
 
@@ -84,6 +93,9 @@ class RRT {
 
   // Tree Root
   TreeNode root_;
+
+  //TreeNode pointers to store and clean up preventing memory leaks
+  std::vector<TreeNode*> node_ptrs_;
 };
 
 } // namespace rrt

@@ -58,6 +58,10 @@ class RRT {
   // It returns the state (tree node) resulting from that move, and sets the curvature and travel of the move
   State Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, double* travel);
 
+  // Steers without kinematic constraints.
+  // Draws line to goal, and truncates at some distance
+  State SteerLinear(State& x_nearest, Eigen::Vector2f& x_rand);
+
   // Given the point that can be steered to, returns list of points within some radius
   std::vector<TreeNode*> Near(State& x_new, double neighborhood_radius);
 

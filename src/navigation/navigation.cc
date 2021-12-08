@@ -445,6 +445,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   // Visualize plan
   for (int i=rrt_plan_.size()-1; i >= 0; --i) {
     auto p = rrt_plan_[i];
+    visualization::DrawCross(p.second, 3, 0x203ee8, global_viz_msg_);
     if (i > 0) {
       auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
       if (p.first < 1e-4) {
@@ -467,14 +468,15 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
       }
     }
   }
+  visualization::DrawCross(robot_loc_, 0.2, 0x203ee8, global_viz_msg_);
   auto next_move = rrt_plan_.back();
-  auto chord_distance = (initialLoc - next_move.second).norm();
+  auto chord_distance = (robot_loc_ - next_move.second).norm();
   printf("Steps left in rrt_plan %ld \n", rrt_plan_.size());
   cout << "Next way ppoint " << next_move.second << std::endl;
-  if (chord_distance < GOAL_RADIUS) {
+  if (chord_distance < 0.1) {
     rrt_plan_.pop_back();
     next_move = rrt_plan_.back();
-    chord_distance = (initialLoc - next_move.second).norm();
+    chord_distance = (robot_loc_ - next_move.second).norm();
   }
   if (next_move.first <= 1e-4)
   {

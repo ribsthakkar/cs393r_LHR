@@ -72,7 +72,7 @@ TreeNode::TreeNode(const Eigen::Vector2f& loc, double heading, TreeNode* parent)
   parent(parent),
   state(loc, heading),
   children(),
-  cost() {}
+  cost(0.0f) {}
 
 TreeNode* TreeNode::AddNewChild(State& child, double cost, std::pair<double, double> control_data)
 {
@@ -280,20 +280,18 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
       }
     }
 
-    printf("Started Sample\n");
     Vector2f x_rand = Sample(c_best);
-    printf("Finished Sample\n");
     TreeNode* x_nearest = Nearest(x_rand);
-    printf("Finished Nearest\n");
+    if (x_nearest == nullptr)
+      continue;
     double curvature;
     double distance;
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
-    printf("finished steer\n");
     if (CollisionFree(x_nearest->state, curvature, distance, points))
     {
       std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
       TreeNode* x_min = x_nearest;
-      double c_min = x_nearest->cost + distance;
+      double c_min = x_nearest->cost + fabs(distance);
       double curvature_min = curvature;
       double distance_min = distance;
       for(auto other_near: x_near)
@@ -352,7 +350,6 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     }
   }
   printf("HERE\n");
-  printf("x_best is %p\n", (void *)x_best);  
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<std::pair<double, Vector2f>> output;
   while (x_best != nullptr && x_best->parent != nullptr)
@@ -361,15 +358,6 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     x_best = x_best->parent;
   }
 
-  // Visualize plan
-  for (size_t i=output.size()-1; i > 0; --i) {
-    auto p = output[i];
-    auto chord_distance = (p.second - output[i-1].second).norm();
-    auto radius = 1/p.first;
-    auto angle = 2*std::asin(chord_distance/(2*radius));
-    Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
-    visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
-  }
   return output;
 }
 

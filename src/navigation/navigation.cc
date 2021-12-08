@@ -442,8 +442,14 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     // Don't move anywhere for this input
     return std::make_pair(0.0, 0.0);
   }
-  for (size_t i=rrt_plan_.size()-1 ; i >0 ; i--) {
-    visualization::DrawLine(rrt_plan_.at(i).second, rrt_plan_.at(i-1).second, 0x203ee8, global_viz_msg_);
+  // Visualize plan
+  for (size_t i=rrt_plan_.size()-1; i > 0; --i) {
+    auto p = rrt_plan_[i];
+    auto chord_distance = (p.second - rrt_plan_[i-1].second).norm();
+    auto radius = 1/p.first;
+    auto angle = 2*std::asin(chord_distance/(2*radius));
+    Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
+    visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
   }
   auto next_move = rrt_plan_.back();
   auto chord_distance = (initialLoc - next_move.second).norm();

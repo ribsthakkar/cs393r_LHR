@@ -8,6 +8,7 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "shared/math/math_util.h"
+#include "shared/math/line2d.h"
 #include "vector_map/vector_map.h"
 #include "visualization/visualization.h"
 #include "navigation/navigation.h"
@@ -19,6 +20,7 @@ using Eigen::Rotation2Df;
 using amrl_msgs::VisualizationMsg;
 using namespace ros_helpers;
 
+using geometry::line2f;
 
 namespace rrt {
 VisualizationMsg global_viz_msg_;
@@ -94,7 +96,7 @@ void TreeNode::RemoveChild(TreeNode* childToRemove)
 
 // RRT::RRT() {}
 
-RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds):
+RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map):
   x_start_(x_start_loc),
   x_start_heading_(x_start_heading),
   x_goal_(x_goal_loc),
@@ -258,6 +260,40 @@ std::vector<TreeNode*> RRT::Near(State& x_new, double neighborhood_radius) {
 
 bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std::vector<Vector2f> local_observation_points)
 {
+  // for (const auto point : local_observation_points) {
+
+  // }
+
+  Rotation2Df rot_matrix(x_nearest.heading);
+
+  // Check the map
+  // Check for special case: curvature = 0
+  if (fabs(curvature) < 1e-5) {
+    const float extra_distance = 0.04;
+    const Vector2f heading_line = x_nearest.loc + rot_matrix * Vector2f(distance + extra_distance, 0); // Map frame
+
+    for (const auto& line : map_.lines) {
+      if (geometry::MinDistanceLineLine(x_nearest.loc, heading_line, line.p0, line.p1) <= extra_distance) return false;
+    }
+    return true;
+  }
+
+  // For arcs
+  for (const auto& line : map_.lines) {
+    // Check if the arc touches this line
+
+    // Find turn center
+    const Vector2f radius_line = rot_matrix * Vector2f(0, 1/curvature); // In map frame
+    const Vector2f turn_center = x_nearest.loc + radius_line; // In map frame
+
+    // Find starting angle
+    const float start_angle = atan2(-radius_line.y(), -radius_line.x());
+    const float delta_angle = distance * curvature;
+    const float radius = 1/curvature;
+
+    const float distance_to_arc = geometry::MinDistanceLineArc(line.p0, line.p1, turn_center, radius, start_angle, start_angle + delta_angle, int(copysign(1, delta_angle)));
+    if (fabs(distance_to_arc) < 0.04) return false;
+  }
   return true;
 } 
 
@@ -265,6 +301,9 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   cout << "Planning with Informed RRT\n" << std::endl;
+  // Convert pointcloud to Map frame
+  getMapPointCloud(points);
+
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
@@ -287,7 +326,7 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     double curvature;
     double distance;
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
-    if (CollisionFree(x_nearest->state, curvature, distance, points))
+    if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
     {
       std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
       TreeNode* x_min = x_nearest;
@@ -303,7 +342,7 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
         // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
         if (c_new < c_min && (other_x_new.loc - x_new.loc).norm() <= 1e-4)
         {
-          if (CollisionFree(other_near->state, curvature, distance, points))
+          if (CollisionFree(other_near->state, curvature, distance, map_cloud_))
           {
             x_min = other_near;
             c_min = c_new;
@@ -330,7 +369,7 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
         // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
         if (c_new < c_near && (other_x_new.loc - added_x_new->state.loc).norm() <= 1e-4)
         {
-          if (CollisionFree(other_near->state, curvature, distance, points))
+          if (CollisionFree(other_near->state, curvature, distance, map_cloud_))
           {
             //printf("Updating other near\n");
             TreeNode* old_parent = other_near->parent;
@@ -361,5 +400,14 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
   return output;
 }
 
+void RRT::getMapPointCloud(const std::vector<Eigen::Vector2f>& points) {
+  map_cloud_.reserve(points.size());
+
+  const Rotation2Df rot_matrix(x_start_heading_);
+
+  for (const auto& point:points) {
+    map_cloud_.push_back(rot_matrix*point + x_start_);
+  }
+}
 
 }  // namespace rrt

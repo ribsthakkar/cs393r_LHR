@@ -317,7 +317,7 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
   return true;
 } 
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
@@ -329,6 +329,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   double c_best = std::numeric_limits<double>::infinity();
   for (int i = 0; i < max_iterations; ++i)
   {
+    if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
+      break;
     for(auto gn: goalNodes)
     {
       if (gn.second < c_best)
@@ -428,7 +430,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   return output;
 }
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
@@ -440,6 +442,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   double c_best = std::numeric_limits<double>::infinity();
   for (int i = 0; i < max_iterations; ++i)
   {
+    if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
+      break;
     for(auto gn: goalNodes)
     {
       if (gn.second < c_best)
@@ -539,7 +543,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   return output;
 }
 
-std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   cout << "Planning with Linear Informed RRT\n" << std::endl;
@@ -551,6 +555,8 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   double c_best = std::numeric_limits<double>::infinity();
   for (int i = 0; i < max_iterations; ++i)
   {
+    if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
+      break;
     for(auto gn: goalNodes)
     {
       if (gn.second < c_best)
@@ -631,7 +637,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   return output;
 }
 
-std::vector<Vector2f> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   cout << "Planning with Linear Informed RRT\n" << std::endl;
@@ -643,6 +649,8 @@ std::vector<Vector2f> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int
   double c_best = std::numeric_limits<double>::infinity();
   for (int i = 0; i < max_iterations; ++i)
   {
+    if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
+      break;
     for(auto gn: goalNodes)
     {
       if (gn.second < c_best)

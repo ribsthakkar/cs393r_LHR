@@ -135,6 +135,10 @@ std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2
 
 std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment3() {
   std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> output;
+
+  vector_map::VectorMap map("maps/EmptyMap.txt");
+  output.second = map;
+
   return output;
 }
 

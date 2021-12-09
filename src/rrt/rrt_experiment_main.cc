@@ -77,7 +77,7 @@ void SignalHandler(int) {
 
 enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
-void Experiment1(RRTVariant variant, const vector_map::VectorMap& map, const VisualizationMsg& map_viz_msg, int numExperiments=100) {
+void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
   double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
@@ -93,7 +93,7 @@ void Experiment1(RRTVariant variant, const vector_map::VectorMap& map, const Vis
       double max_y = (endLocation.y()) * scale + 1;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
-          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map, map_viz_msg);
+          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_, map_viz_msg);
           
           switch (variant)
           {
@@ -133,13 +133,78 @@ std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2
   return output;
 }
 
-std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment3() {
+std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment3(double wallHeight, double gapRatio) {
   std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> output;
+  double halfWallGap = (wallHeight * gapRatio)/2.0f;
+  geometry::line2f upperWallTop(-1.0, wallHeight/2 + halfWallGap, 1.0, wallHeight/2 + halfWallGap);
+  geometry::line2f upperWallBottom(-1.0, halfWallGap, 1.0, halfWallGap);
+  geometry::line2f upperWallLeft(-1.0, wallHeight/2 + halfWallGap, -1.0, halfWallGap);
+  geometry::line2f upperWallRight(1.0, wallHeight/2 + halfWallGap, 1.0, halfWallGap);
 
+  geometry::line2f lowerWallTop(-1.0, -halfWallGap, 1.0, -halfWallGap);
+  geometry::line2f lowerWallBottom(-1.0, -wallHeight/2 - halfWallGap, 1.0, -wallHeight/2 - halfWallGap);
+  geometry::line2f lowerWallLeft(-1.0, -wallHeight/2 - halfWallGap, -1.0, -halfWallGap);
+  geometry::line2f lowerWallRight(1.0, -wallHeight/2 - halfWallGap, 1.0, -halfWallGap);
+
+  output.first.push_back(upperWallTop);
+  output.first.push_back(upperWallBottom);
+  output.first.push_back(upperWallLeft);
+  output.first.push_back(upperWallRight);
+  output.first.push_back(lowerWallBottom);
+  output.first.push_back(lowerWallTop);
+  output.first.push_back(lowerWallLeft);
+  output.first.push_back(lowerWallRight);
   vector_map::VectorMap map("maps/EmptyMap.txt");
   output.second = map;
 
   return output;
+}
+
+
+void Experiment3(RRTVariant variant, VisualizationMsg& viz_msg, int numExperiments=50)
+{
+  std::vector<Eigen::Vector2f> emptyPointCloud;
+  std::vector<std::pair<double, Eigen::Vector2f>> koutput;
+  std::vector<Eigen::Vector2f> loutput;
+    double min_x = -6.0f;
+    double min_y = -15.0f;
+    double max_x = 6.0f;
+    double max_y = 15.0f;
+    Eigen::Vector2f startLocation(-5.0f, 0.0f);
+    Eigen::Vector2f endLocation(5.0f, 0.0f);
+    double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
+
+  for (int gap = 1; gap <= 5; gap++)
+  {
+      visualization::ClearVisualizationMsg(viz_msg);
+      auto lines_and_map = setupExperiment3(20.0f, 0.01f * gap);
+      addMapLines(lines_and_map.first, viz_msg, lines_and_map.second);
+      for (int i = 0; i < numExperiments; i++) {
+          auto initialTime = GetWallTime();
+          auto rr_tree = rrt::RRT(startLocation, 0.0f, endLocation, 0.0f, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), lines_and_map.second, viz_msg);
+          
+          switch (variant)
+          {
+            case RRTVariant::KIRRT:
+                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 100000, 0.01, minDistance);
+                break;
+            case RRTVariant::LIRRT:
+                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 100000, 0.01, minDistance);
+                break;
+            case RRTVariant::KRRT:
+                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 100000, 0.01, minDistance);
+                break;
+            case RRTVariant::LRRT:
+                loutput = rr_tree.LinearRRT(emptyPointCloud, 100000, 0.01, minDistance);
+                break;
+          }
+          if (koutput.size() == 0 && loutput.size() == 0)
+            printf("Could not find any path within iteration limit\n");
+          printf("Gap (%d), Experiment (%d): (%f)\n", gap, i, GetWallTime() - initialTime);
+          koutput.clear();
+          loutput.clear();
+      }
+  }
 }
 
 int main(int argc, char** argv) {
@@ -149,13 +214,11 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
   VisualizationMsg global_viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
-  auto lines_and_map = setupExperiment2();
-  addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
+  // Experiment1(RRTVariant::LIRRT, global_viz_msg);
+  // Experiment1(RRTVariant::LRRT, global_viz_msg);
 
-  Experiment1(RRTVariant::LIRRT, lines_and_map.second, global_viz_msg);
-  // Experiment1(RRTVariant::LRRT, map, global_viz_msg);
-  // Experiment1(RRTVariant::KIRRT, map, global_viz_msg, 1);
-  // Experiment1(RRTVariant::KRRT, map, global_viz_msg, 1);
+  Experiment3(RRTVariant::LIRRT, global_viz_msg);
+  Experiment3(RRTVariant::LRRT, global_viz_msg);
 
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {

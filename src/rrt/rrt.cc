@@ -315,13 +315,15 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
 {
   // Check the map
   for (const auto& line : map_.lines) {
-    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
   }
   // Check point cloud
   for (const auto& point: local_observation_points)
   {
     Eigen::Vector2f dpoint = point + Eigen::Vector2f(0.01, 0.01);
-    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
   }
   return true;
 } 
@@ -445,7 +447,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
-  cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
+  cout << "Planning with Kinodynamic RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
@@ -584,6 +586,10 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
     }
 
     Vector2f x_rand = Sample(c_best);
+    while (x_rand.x() > x_bounds_.second || x_rand.x() < x_bounds_.first || x_rand.y() > y_bounds_.second || x_rand.y() < y_bounds_.first ) {
+      // printf("X rand (%f, %f) is out of boundsd \n", x_rand.x(), x_rand.y());
+      x_rand = Sample(c_best);
+    }
     TreeNode* x_nearest = Nearest(x_rand);
     if (x_nearest == nullptr)
     {
@@ -656,7 +662,7 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
-  cout << "Planning with Linear Informed RRT\n" << std::endl;
+  cout << "Planning with Linear RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);

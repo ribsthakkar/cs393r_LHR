@@ -42,11 +42,12 @@
 #include "visualization_msgs/MarkerArray.h"
 #include "nav_msgs/Odometry.h"
 #include "ros/ros.h"
+#include "rrt/rrt.h"
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
 
-#include "navigation.h"
+#include "navigation/navigation.h"
 
 using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;
@@ -73,9 +74,9 @@ void SignalHandler(int) {
   run_ = false;
 }
 
-enum class RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
+enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
-void Experiment1(RRTVaraint variant, int numExperiments=100) {
+void Experiment1(RRTVariant variant, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
   double minDistance = (startLocation - endLocation).norm();
@@ -96,16 +97,16 @@ void Experiment1(RRTVaraint variant, int numExperiments=100) {
           switch (variant)
           {
             case KIRRT:
-                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case LIRRT:
-                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case KRRT:
-                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case LRRT:
-                loutput = rr_tree.LinearRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+                loutput = rr_tree.LinearRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
           }
           if (koutput.size() == 0 && loutput.size() == 0)
@@ -124,8 +125,8 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
   
-  Experiment1(RRTVaraint.LIRRT);
-  Experiment1(RRTVaraint.LRRT);
+  Experiment1(LIRRT);
+  Experiment1(LRRT);
 
 
   RateLoop loop(20.0);

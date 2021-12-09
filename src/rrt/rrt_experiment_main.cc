@@ -143,15 +143,10 @@ int main(int argc, char** argv) {
   signal(SIGINT, SignalHandler);
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
-  ros::NodeHandle nh;
-  ros::Publisher viz_pub = nh.advertise<VisualizationMsg>("visualization", 1);
   VisualizationMsg global_viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
   auto lines_and_map = setupExperiment2();
   addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
-
-  global_viz_msg.header.stamp = ros::Time::now();
-  viz_pub.publish(global_viz_msg);
 
   Experiment1(RRTVariant::LIRRT, lines_and_map.second, global_viz_msg);
   // Experiment1(RRTVariant::LRRT, map, global_viz_msg);
@@ -160,8 +155,6 @@ int main(int argc, char** argv) {
 
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
-    global_viz_msg.header.stamp = ros::Time::now();
-    viz_pub.publish(global_viz_msg);
     ros::spinOnce();
     loop.Sleep();
   }

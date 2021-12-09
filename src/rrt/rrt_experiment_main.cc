@@ -94,7 +94,7 @@ void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int nu
       double max_y = (endLocation.y()) * scale + 1;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
-          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map, map_viz_msg);
+          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map, visualization::NewVisualizationMessage("map", "map_lines"));
           
           switch (variant)
           {

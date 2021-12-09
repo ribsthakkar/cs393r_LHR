@@ -328,7 +328,7 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
   return true;
 } 
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
@@ -341,6 +341,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -350,10 +352,16 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
       }
     }
+
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
 
     Vector2f x_rand = Sample(c_best);
     TreeNode* x_nearest = Nearest(x_rand);
@@ -443,7 +451,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   return output;
 }
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
@@ -456,6 +464,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -465,10 +475,16 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
       }
     }
+
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
 
     Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
     TreeNode* x_nearest = Nearest(x_rand);
@@ -558,7 +574,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   return output;
 }
 
-std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
@@ -571,6 +587,8 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -580,10 +598,17 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
       }
     }
+
+    if (found_init_solution) {
+      num_improve_iter++;
+    }
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
 
     Vector2f x_rand = Sample(c_best);
     while (x_rand.x() > x_bounds_.second || x_rand.x() < x_bounds_.first || x_rand.y() > y_bounds_.second || x_rand.y() < y_bounds_.first ) {
@@ -658,7 +683,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   return output;
 }
 
-std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
@@ -671,6 +696,8 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -680,10 +707,15 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
       }
     }
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
     // Main difference is how we sample. In regular rrt* we just have uniform sampling
     Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
     TreeNode* x_nearest = Nearest(x_rand);

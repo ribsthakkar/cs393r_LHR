@@ -94,7 +94,7 @@ void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int nu
       double max_y = (endLocation.y()) * scale + 1;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
-          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map, map_viz_msg);
+          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_, map_viz_msg);
           
           switch (variant)
           {
@@ -288,8 +288,8 @@ int main(int argc, char** argv) {
   ros::Publisher viz_pub = nh.advertise<VisualizationMsg>("visualization", 1);
   VisualizationMsg global_viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
-  auto lines_and_map = setupExperiment2();
-  addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
+  // Experiment1(RRTVariant::LIRRT, global_viz_msg);
+  // Experiment1(RRTVariant::LRRT, global_viz_msg);
 
   global_viz_msg.header.stamp = ros::Time::now();
   viz_pub.publish(global_viz_msg);

@@ -315,15 +315,25 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
 {
   // Check the map
   for (const auto& line : map_.lines) {
+<<<<<<< HEAD
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
     // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
+=======
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
+>>>>>>> Added experiment 3 results and code
   }
   // Check point cloud
   for (const auto& point: local_observation_points)
   {
     Eigen::Vector2f dpoint = point + Eigen::Vector2f(0.01, 0.01);
+<<<<<<< HEAD
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
     // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
+=======
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
+>>>>>>> Added experiment 3 results and code
   }
   return true;
 } 

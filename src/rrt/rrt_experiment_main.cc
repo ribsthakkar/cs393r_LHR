@@ -47,12 +47,7 @@
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
-<<<<<<< HEAD
 #include "rrt.h"
-=======
-
-#include "navigation/navigation.h"
->>>>>>> f01569a43b187c6f83e901693c435969d8a9ab9a
 
 using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;

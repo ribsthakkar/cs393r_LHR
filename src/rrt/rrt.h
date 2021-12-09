@@ -73,10 +73,10 @@ class RRT {
   bool CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Eigen::Vector2f> obsevation_points);
 
   // Variants of RRT* algorithms
-  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<Eigen::Vector2f> LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<Eigen::Vector2f> LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
+  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<Eigen::Vector2f> LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<Eigen::Vector2f> LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
 
   // Sets the map_cloud_ variable to represent the pointcloud in the map frame
   void getMapPointCloud(const std::vector<Eigen::Vector2f>& points);

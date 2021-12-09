@@ -288,9 +288,8 @@ int main(int argc, char** argv) {
   ros::Publisher viz_pub = nh.advertise<VisualizationMsg>("visualization", 1);
   VisualizationMsg global_viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
-  auto obstacles = getExperiment2Lines();
-  vector_map::VectorMap map("maps/EmptyMap.txt");
-  addMapLines(obstacles, global_viz_msg, map);
+  auto lines_and_map = setupExperiment2();
+  addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
 
   global_viz_msg.header.stamp = ros::Time::now();
   viz_pub.publish(global_viz_msg);

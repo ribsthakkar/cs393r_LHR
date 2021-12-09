@@ -38,6 +38,7 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "sensor_msgs/LaserScan.h"
+#include "vector_map/vector_map.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
 #include "nav_msgs/Odometry.h"
@@ -45,13 +46,11 @@
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
-
-#include "navigation.h"
+#include "rrt.h"
 
 using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;
 using math_util::RadToDeg;
-using navigation::Navigation;
 using ros::Time;
 using ros_helpers::Eigen3DToRosPoint;
 using ros_helpers::Eigen2DToRosPoint;
@@ -75,11 +74,11 @@ void SignalHandler(int) {
 
 enum class RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
-void Experiment1(RRTVaraint variant, int numExperiments=100) {
+void Experiment1(RRTVariant variant, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
   double minDistance = (startLocation - endLocation).norm();
-  vector_map::VectorMap map("maps/EmptyMap.txt");
+  vector_map::VectorMap map_("maps/EmptyMap.txt");
   std::vector<Eigen::Vector2f> emptyPointCloud;
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   std::vector<Eigen::Vector2f> loutput;
@@ -91,26 +90,26 @@ void Experiment1(RRTVaraint variant, int numExperiments=100) {
       double max_y = endLocation.y() * scale;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
-          auto rr_tree = rrt::RRT(startLocation, M_PI/2, endLocation, M_PI/2, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map);
+          auto rr_tree = rrt::RRT(startLocation, M_PI/2, endLocation, M_PI/2, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_);
           
           switch (variant)
           {
-            case KIRRT:
-                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+            case RRTVariant::KIRRT:
+                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 1000000, 0.001, minDistance);
                 break;
-            case LIRRT:
-                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+            case RRTVariant::LIRRT:
+                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 1000000, 0.001, minDistance);
                 break;
-            case KRRT:
-                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+            case RRTVariant::KRRT:
+                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 1000000, 0.001, minDistance);
                 break;
-            case LRRT:
-                loutput = rr_tree.LinearRRT(emptyPointCloud, max_iterations=1000000, costGap=0.01, optimalCost=minDistance);
+            case RRTVariant::LRRT:
+                loutput = rr_tree.LinearRRT(emptyPointCloud, 1000000, 0.001, minDistance);
                 break;
           }
           if (koutput.size() == 0 && loutput.size() == 0)
-            printf("Could not find any path within iteration limit");
-          printf("Scale(%d), Experiment (%d): (%f)", scale, i, GetWallTime() - initialTime);
+            printf("Could not find any path within iteration limit\n");
+          printf("Scale(%d), Experiment (%d): (%f)\n", scale, i, GetWallTime() - initialTime);
           koutput.clear();
           loutput.clear();
       }
@@ -124,8 +123,8 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
   
-  Experiment1(RRTVaraint.LIRRT);
-  Experiment1(RRTVaraint.LRRT);
+  Experiment1(RRTVariant::LIRRT);
+  Experiment1(RRTVariant::LRRT);
 
 
   RateLoop loop(20.0);

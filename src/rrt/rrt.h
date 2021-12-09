@@ -66,7 +66,7 @@ class RRT {
   bool CollisionFree(State& x_nearest, double curvature, double distance, std::vector<Eigen::Vector2f> obsevation_points);
 
   // Run the informed RRT* algorithm
-  std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=1000);
+  std::vector<std::pair<double, Eigen::Vector2f>> InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=10000);
 
   // Sets the map_cloud_ variable to represent the pointcloud in the map frame
   void getMapPointCloud(const std::vector<Eigen::Vector2f>& points);

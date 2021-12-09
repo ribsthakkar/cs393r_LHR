@@ -485,7 +485,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     next_move = rrt_plan_.back();
     chord_distance = (robot_loc_ - next_move.second).norm();
   }
-  if (next_move.first <= 1e-4)
+  if (fabs(next_move.first) <= 1e-4)
   {
     Eigen::Vector2f h = geometry::Heading(robot_angle_);
     if ((robot_loc_ + h - next_move.second).norm() > ((robot_loc_ - h) - next_move.second).norm())

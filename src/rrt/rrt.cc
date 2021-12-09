@@ -138,21 +138,12 @@ TreeNode* RRT::Nearest(Eigen::Vector2f& x_rand) {
   // TODO
   double minDistance = 100000000.0;
   TreeNode* nearest = nullptr;
-  TreeNode* currentNode = root_;
-  std::stack<TreeNode*> s;
-  s.push(currentNode);
-  while (!s.empty())
+  for (auto currentNode: node_ptrs_)
   {
-    currentNode = s.top();
-    s.pop();
     if ((currentNode->state.loc - x_rand).norm() < minDistance)
     {
       minDistance = (currentNode->state.loc - x_rand).norm();
       nearest = currentNode;
-    }
-    for (auto& c: currentNode->children)
-    {
-      s.push(c.first);
     }
   }
   return nearest;
@@ -174,13 +165,13 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
     float curv = tan(theta)/WHEELBASE;
     float radius = fabs(curv) < 1e-5 ? INT_MAX: 1.0f/curv;
     // Check for r = infinity case
-    if (fabs(1/radius) < 1e-5) {
+    if (fabs(curv) < 1e-5) {
       // Find line to goal
       const Vector2f nearest_to_goal = rot_matrix.inverse() * (x_rand - x_nearest.loc); // x_nearest frame
 
       // Clamp travel distance to goal
       double travel_distance = nearest_to_goal.x();
-      math_util::Clamp(travel_distance, -1*max_dist, max_dist);
+      travel_distance = math_util::Clamp(travel_distance, -1*max_dist, max_dist);
 
       // Find next state
       State new_state;
@@ -206,7 +197,7 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
     const Vector2f turn_center = x_nearest.loc + radius_line; // In map frame
 
     // Calculate max alpha for max_dist
-    const double max_alpha = fabs(max_dist / radius);
+    const double max_alpha = fabs(max_dist * curv);
 
     // Calculate alpha to goal
     const Vector2f center_to_goal = x_rand - turn_center;
@@ -214,7 +205,7 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
     double alpha = copysign(acos((-1*radius_line.dot(center_to_goal))/(fabs(radius) * center_to_goal.norm())), goal_direction_sign); // Using dot product
 
     // Set alpha = min(max_alpha, alpha to goal)
-    math_util::Clamp(alpha, -1*max_alpha, max_alpha);
+    alpha = math_util::Clamp(alpha, -1*max_alpha, max_alpha);
 
     // Find State after following this radius for alpha
     State new_state;
@@ -228,7 +219,7 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
     if (dist_squared < best_goal_distance) {
       best_goal_distance = dist_squared;
       best_state = new_state;
-      *curvature = 1/radius;
+      *curvature = curv;
       *travel = radius*alpha;
     }
   }
@@ -239,20 +230,12 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
 std::vector<TreeNode*> RRT::Near(State& x_new, double neighborhood_radius) {
   std::vector<TreeNode*> neighborhood;
   std::stack<TreeNode*> s;
-  TreeNode* currentNode = root_;
-  s.push(currentNode);
-  while (!s.empty())
+  for (auto currentNode : node_ptrs_)
   {
-    currentNode = s.top();
-    s.pop();
     // Maybe we also needd to check if we can actually steer from this location to x_new
     if ((currentNode->state.loc - x_new.loc).norm() < neighborhood_radius)
     {
       neighborhood.push_back(currentNode);
-    }
-    for (auto& c: currentNode->children)
-    {
-      s.push(c.first);
     }
   }
   return neighborhood;
@@ -269,7 +252,7 @@ bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std
   // Check the map
   // Check for special case: curvature = 0
   if (fabs(curvature) < 1e-5) {
-    const float extra_distance = 0.04;
+    const float extra_distance = 0.4;
     const Vector2f heading_line = x_nearest.loc + rot_matrix * Vector2f(distance + extra_distance, 0); // Map frame
 
     for (const auto& line : map_.lines) {
@@ -292,7 +275,7 @@ bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std
     const float radius = 1/curvature;
 
     const float distance_to_arc = geometry::MinDistanceLineArc(line.p0, line.p1, turn_center, radius, start_angle, start_angle + delta_angle, int(copysign(1, delta_angle)));
-    if (fabs(distance_to_arc) < 0.04) return false;
+    if (fabs(distance_to_arc) < 0.4) return false;
   }
   return true;
 } 
@@ -322,13 +305,16 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     Vector2f x_rand = Sample(c_best);
     TreeNode* x_nearest = Nearest(x_rand);
     if (x_nearest == nullptr)
+    {
+      printf("xnearest is null\n");
       continue;
+    }
     double curvature;
     double distance;
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
     if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
       TreeNode* x_min = x_nearest;
       double c_min = x_nearest->cost + fabs(distance);
       double curvature_min = curvature;

@@ -103,6 +103,7 @@ RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, doub
   x_goal_heading_(x_goal_heading),
   x_bounds_(x_bounds),
   y_bounds_(y_bounds),
+  map_(map),
   ellipse_(x_start_loc, x_goal_loc),
   root_(new TreeNode(x_start_loc, x_start_heading)) {
       node_ptrs_.push_back(root_);
@@ -256,7 +257,7 @@ bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std
     const Vector2f heading_line = x_nearest.loc + rot_matrix * Vector2f(distance + extra_distance, 0); // Map frame
 
     for (const auto& line : map_.lines) {
-      if (geometry::MinDistanceLineLine(x_nearest.loc, heading_line, line.p0, line.p1) <= extra_distance) return false;
+      if (geometry::MinDistanceLineLine(x_nearest.loc, heading_line, line.p0, line.p1) <= 0.4) return false;
     }
     return true;
   }

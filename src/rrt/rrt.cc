@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <stack>
 #include <limits>
 #include <stdlib.h>
@@ -229,6 +230,20 @@ State RRT::Steer(State& x_nearest, Eigen::Vector2f& x_rand, double* curvature, d
   }
 
   return best_state;
+}
+
+State RRT::SteerLinear(State& x_nearest, Eigen::Vector2f& x_rand) {
+  const float max_dist = 0.5;
+
+  const Vector2f line_to_goal = x_rand - x_nearest.loc;
+
+  const double scale = std::min(max_dist, line_to_goal.norm());
+  const Vector2f scaled_line_to_goal = scale * line_to_goal / line_to_goal.norm();
+
+  State output;
+  output.loc = x_nearest.loc + scaled_line_to_goal;
+  output.heading = math_util::AngleMod(atan2(scaled_line_to_goal.y(), scaled_line_to_goal.x()));
+  return output;
 }
 
 std::vector<TreeNode*> RRT::Near(State& x_new, double neighborhood_radius) {

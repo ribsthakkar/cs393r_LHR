@@ -47,7 +47,6 @@
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
-#include "rrt.h"
 
 using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;

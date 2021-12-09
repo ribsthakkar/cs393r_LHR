@@ -82,7 +82,7 @@ void Experiment1(RRTVariant variant, int numExperiments=50) {
   std::vector<Eigen::Vector2f> emptyPointCloud;
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   std::vector<Eigen::Vector2f> loutput;
-  for (int scale = 1; scale <= 4; scale++)
+  for (int scale = 1; scale <= 5; scale++)
   {
       double min_x = (startLocation.x()) * scale - 1;
       double min_y = (startLocation.y()) * scale - 1;

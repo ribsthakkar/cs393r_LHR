@@ -7,7 +7,7 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "vector_map/vector_map.h"
-#define GOAL_RADIUS 0.5f
+#define GOAL_RADIUS 0.1f
 
 
 namespace rrt {

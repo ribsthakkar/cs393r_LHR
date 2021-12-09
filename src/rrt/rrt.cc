@@ -150,6 +150,13 @@ TreeNode* RRT::Nearest(Eigen::Vector2f& x_rand) {
       nearest = currentNode;
     }
   }
+  if (nearest == nullptr)
+  {
+    printf("Min Distance (%f) node count: (%ld) x_rand: \n", minDistance, node_ptrs_.size());
+    cout << x_rand << std::endl;
+    cout << ellipse_.centre << std::endl;
+    // cout << ellipse_.rotation << std::endl;
+  }
   return nearest;
 }
 
@@ -324,6 +331,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
 
+  visualization::DrawCross(x_start_, 1, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_goal_, 1, 0x0000FF, global_viz_msg_);
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();

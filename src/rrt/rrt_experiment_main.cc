@@ -77,17 +77,17 @@ enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 void Experiment1(RRTVariant variant, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
-  double minDistance = (startLocation - endLocation).norm();
+  double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
   vector_map::VectorMap map_("maps/EmptyMap.txt");
   std::vector<Eigen::Vector2f> emptyPointCloud;
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   std::vector<Eigen::Vector2f> loutput;
   for (int scale = 1; scale < 4; scale++)
   {
-      double min_x = startLocation.x() * scale;
-      double min_y = startLocation.y() * scale;
-      double max_x = endLocation.x() * scale;
-      double max_y = endLocation.y() * scale;
+      double min_x = (startLocation.x()-1) * scale;
+      double min_y = (startLocation.y()-1) * scale;
+      double max_x = (endLocation.x()+1) * scale;
+      double max_y = (endLocation.y()+1) * scale;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
           auto rr_tree = rrt::RRT(startLocation, M_PI/2, endLocation, M_PI/2, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_);
@@ -95,16 +95,16 @@ void Experiment1(RRTVariant variant, int numExperiments=100) {
           switch (variant)
           {
             case RRTVariant::KIRRT:
-                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 1000000, 0.001, minDistance);
+                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case RRTVariant::LIRRT:
-                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 1000000, 0.001, minDistance);
+                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case RRTVariant::KRRT:
-                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 1000000, 0.001, minDistance);
+                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
             case RRTVariant::LRRT:
-                loutput = rr_tree.LinearRRT(emptyPointCloud, 1000000, 0.001, minDistance);
+                loutput = rr_tree.LinearRRT(emptyPointCloud, 1000000, 0.01, minDistance);
                 break;
           }
           if (koutput.size() == 0 && loutput.size() == 0)

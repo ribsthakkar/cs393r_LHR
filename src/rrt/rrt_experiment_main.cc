@@ -86,7 +86,7 @@ void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int nu
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   vector_map::VectorMap map("maps/EmptyMap.txt");
   std::vector<Eigen::Vector2f> loutput;
-  for (int scale = 1; scale < 4; scale++)
+  for (int scale = 1; scale <= 4; scale++)
   {
       double min_x = (startLocation.x()) * scale - 1;
       double min_y = (startLocation.y()) * scale - 1;

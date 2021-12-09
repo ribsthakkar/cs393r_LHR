@@ -288,7 +288,7 @@ int main(int argc, char** argv) {
   ros::Publisher viz_pub = nh.advertise<VisualizationMsg>("visualization", 1);
   VisualizationMsg global_viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
-  std::vector<geometry::line2d> obstacles;
+  auto obstacles = getExperiment2Lines();
   vector_map::VectorMap map("maps/EmptyMap.txt");
   addMapLines(obstacles, global_viz_msg, map);
 

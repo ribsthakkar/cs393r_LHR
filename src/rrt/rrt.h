@@ -7,6 +7,7 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "vector_map/vector_map.h"
+#include "visualization/visualization.h"
 #define GOAL_RADIUS 0.25f
 
 
@@ -47,7 +48,7 @@ struct TreeNode
 class RRT {
  public:
   // RRT();
-  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_, const vector_map::VectorMap& map);
+  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_, const vector_map::VectorMap& map, const amrl_msgs::VisualizationMsg& map_viz_msg);
 
   ~RRT();
   Eigen::Vector2f Sample(double c_max);
@@ -112,6 +113,9 @@ class RRT {
 
   // Point cloud in map frame
   std::vector<Eigen::Vector2f> map_cloud_;
+
+  // Map visualization
+  amrl_msgs::VisualizationMsg map_viz_msg_;
 };
 
 } // namespace rrt

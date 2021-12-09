@@ -99,7 +99,7 @@ void TreeNode::RemoveChild(TreeNode* childToRemove)
 }
 
 
-RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map):
+RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map, const VisualizationMsg& map_viz_msg):
   x_start_(x_start_loc),
   x_start_heading_(x_start_heading),
   x_goal_(x_goal_loc),
@@ -109,7 +109,8 @@ RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, doub
   y_bounds_(y_bounds),
   map_(map),
   ellipse_(x_start_loc, x_goal_loc),
-  root_(new TreeNode(x_start_loc, x_start_heading)) {
+  root_(new TreeNode(x_start_loc, x_start_heading)),
+  map_viz_msg_(map_viz_msg) {
       node_ptrs_.push_back(root_);
       ros::NodeHandle n;
       global_viz_msg_ = visualization::NewVisualizationMessage(
@@ -328,6 +329,7 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
 std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
@@ -442,6 +444,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
 std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
@@ -556,6 +559,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
 std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
@@ -651,6 +655,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
 std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);

@@ -475,7 +475,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   auto chord_distance = (robot_loc_ - next_move.second).norm();
   printf("Steps left in rrt_plan %ld \n", rrt_plan_.size());
   cout << "Next way ppoint " << next_move.second << std::endl;
-  if (chord_distance < 0.2) {
+  while (chord_distance < GOAL_RADIUS) {
     rrt_plan_.pop_back();
     if (rrt_plan_.size() == 0)
     {

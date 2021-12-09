@@ -328,7 +328,7 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
     if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
       TreeNode* x_min = x_nearest;
       double c_min = x_nearest->cost + fabs(distance);
       double curvature_min = curvature;
@@ -367,7 +367,7 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
         State other_x_new = Steer(added_x_new->state, other_near->state.loc, &curvature, &distance);
         double c_new = added_x_new->cost + fabs(distance);
         // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
-        if (c_new < c_near && (other_x_new.loc - added_x_new->state.loc).norm() <= 1e-4)
+        if (c_new < c_near && (other_x_new.loc - other_near->state.loc).norm() <= 1e-4)
         {
           if (CollisionFree(other_near->state, curvature, distance, map_cloud_))
           {

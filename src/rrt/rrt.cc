@@ -97,7 +97,6 @@ void TreeNode::RemoveChild(TreeNode* childToRemove)
   children.erase(childToRemove);
 }
 
-// RRT::RRT() {}
 
 RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map):
   x_start_(x_start_loc),
@@ -303,10 +302,25 @@ bool RRT::CollisionFree(State& x_nearest, double curvature, double distance, std
   return true;
 } 
 
-std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector2f> local_observation_points)
+{
+  // Check the map
+  for (const auto& line : map_.lines) {
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
+  }
+  // Check point cloud
+  for (const auto& point: local_observation_points)
+  {
+    Eigen::Vector2f dpoint = point + Eigen::Vector2f(0.01, 0.01);
+    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
+  }
+  return true;
+} 
+
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
-  cout << "Planning with Informed RRT\n" << std::endl;
+  cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
 
@@ -402,12 +416,313 @@ std::vector<std::pair<double, Vector2f>> RRT::InformedRRT(std::vector<Eigen::Vec
   std::vector<std::pair<double, Vector2f>> output;
   while (x_best != nullptr && x_best->parent != nullptr)
   {
-    output.push_back(std::make_pair(x_best->parent->children[x_best].first, x_best->state.loc));
+    if(!output.empty() && output.back().first == x_best->parent->children[x_best].first) {
+      output.back().second = x_best->state.loc;
+    }
+    else {
+      output.push_back(std::make_pair(x_best->parent->children[x_best].first, x_best->state.loc));
+    }
     x_best = x_best->parent;
   }
 
   return output;
 }
+
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+{
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+  cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
+  // Convert pointcloud to Map frame
+  getMapPointCloud(points);
+
+  std::map<TreeNode*, double> goalNodes;
+  TreeNode* x_best = nullptr;
+  double c_best = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < max_iterations; ++i)
+  {
+    for(auto gn: goalNodes)
+    {
+      if (gn.second < c_best)
+      {
+        printf("new c_best (%f)\n", gn.second);
+        c_best = gn.second;
+        x_best = gn.first;
+      }
+    }
+
+    Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
+    TreeNode* x_nearest = Nearest(x_rand);
+    if (x_nearest == nullptr)
+    {
+      printf("xnearest is null\n");
+      continue;
+    }
+    double curvature;
+    double distance;
+    State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
+    if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
+    {
+      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      TreeNode* x_min = x_nearest;
+      double c_min = x_nearest->cost + fabs(distance);
+      double curvature_min = curvature;
+      double distance_min = distance;
+      for(auto other_near: x_near)
+      {
+        //printf("Other near %p\n", other_near);
+        // Check kinematic feasibility of going from other_near to x_new
+        State other_x_new = Steer(other_near->state, x_new.loc, &curvature, &distance);
+        double c_new = other_near->cost + fabs(distance);
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        if (c_new < c_min && (other_x_new.loc - x_new.loc).norm() <= 1e-4)
+        {
+          if (CollisionFree(other_near->state, curvature, distance, map_cloud_))
+          {
+            x_min = other_near;
+            c_min = c_new;
+            curvature_min = curvature;
+            distance_min = distance;
+          }
+        }
+      }
+      TreeNode* added_x_new = x_min->AddNewChild(x_new, c_min, std::make_pair(curvature_min, distance_min));
+      //printf("Addded x_new coordinates (%d) (%f, %f) \n", i, added_x_new->state.loc.x(), added_x_new->state.loc.y());
+      visualization::DrawPoint(added_x_new->state.loc, 0xFF0000, global_viz_msg_);
+      viz_pub_.publish(global_viz_msg_);
+      node_ptrs_.push_back(added_x_new);
+      for(auto other_near: x_near)
+      {
+        //printf("Other near %p\n", other_near);
+        if (other_near == root_)
+          continue;
+        //printf("Looking at other near %d, (%f, %f) \n", i, other_near->state.loc.x(), other_near->state.loc.y());
+        double c_near = other_near->cost;
+        // Check kinematic feasibility of going from other_near to x_new
+        State other_x_new = Steer(added_x_new->state, other_near->state.loc, &curvature, &distance);
+        double c_new = added_x_new->cost + fabs(distance);
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
+        if (c_new < c_near && (other_x_new.loc - other_near->state.loc).norm() <= 1e-4)
+        {
+          if (CollisionFree(other_near->state, curvature, distance, map_cloud_))
+          {
+            //printf("Updating other near\n");
+            TreeNode* old_parent = other_near->parent;
+            //printf("Other near parent %p\n", old_parent);
+            old_parent->RemoveChild(other_near);
+            other_near->parent = added_x_new;
+            added_x_new->AddExistingChild(other_near, std::make_pair(curvature, distance));
+            other_near->cost = c_new;
+            // printf("Finished updating other near\n");
+          }
+        }
+      }
+      if ((added_x_new->state.loc-x_goal_).norm() <= GOAL_RADIUS)
+      {
+        goalNodes[added_x_new] = added_x_new->cost;
+      }
+    }
+  }
+  printf("HERE\n");
+  // Create waypoints with the neccessarry curvatures to reach them
+  std::vector<std::pair<double, Vector2f>> output;
+  while (x_best != nullptr && x_best->parent != nullptr)
+  {
+    if(!output.empty() && output.back().first == x_best->parent->children[x_best].first) {
+      output.back().second = x_best->state.loc;
+    }
+    else {
+      output.push_back(std::make_pair(x_best->parent->children[x_best].first, x_best->state.loc));
+    }
+    x_best = x_best->parent;
+  }
+
+  return output;
+}
+
+std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+{
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+  cout << "Planning with Linear Informed RRT\n" << std::endl;
+  // Convert pointcloud to Map frame
+  getMapPointCloud(points);
+
+  std::map<TreeNode*, double> goalNodes;
+  TreeNode* x_best = nullptr;
+  double c_best = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < max_iterations; ++i)
+  {
+    for(auto gn: goalNodes)
+    {
+      if (gn.second < c_best)
+      {
+        printf("new c_best (%f)\n", gn.second);
+        c_best = gn.second;
+        x_best = gn.first;
+      }
+    }
+
+    Vector2f x_rand = Sample(c_best);
+    TreeNode* x_nearest = Nearest(x_rand);
+    if (x_nearest == nullptr)
+    {
+      printf("xnearest is null\n");
+      continue;
+    }
+    State x_new = SteerLinear(x_nearest->state, x_rand);
+    if (CollisionFreeLinear(x_nearest->state, x_new, map_cloud_))
+    {
+      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      TreeNode* x_min = x_nearest;
+      double distance_min = (x_nearest->state.loc - x_new.loc).norm();
+      double c_min = x_nearest->cost + (x_nearest->state.loc - x_new.loc).norm();
+      for(auto other_near: x_near)
+      {
+        double c_new = other_near->cost + (other_near->state.loc - x_new.loc).norm();
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        if (c_new < c_min)
+        {
+          if (CollisionFreeLinear(other_near->state, x_new, map_cloud_))
+          {
+            x_min = other_near;
+            c_min = c_new;
+            distance_min = (other_near->state.loc - x_new.loc).norm();
+          }
+        }
+      }
+      TreeNode* added_x_new = x_min->AddNewChild(x_new, c_min, std::make_pair(distance_min, distance_min));
+      //printf("Addded x_new coordinates (%d) (%f, %f) \n", i, added_x_new->state.loc.x(), added_x_new->state.loc.y());
+      visualization::DrawPoint(added_x_new->state.loc, 0xFF0000, global_viz_msg_);
+      viz_pub_.publish(global_viz_msg_);
+      node_ptrs_.push_back(added_x_new);
+      for(auto other_near: x_near)
+      {
+        if (other_near == root_)
+          continue;
+        double c_near = other_near->cost;
+        double distance = (added_x_new->state.loc - other_near->state.loc).norm();
+        double c_new = added_x_new->cost + fabs(distance);
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
+        if (c_new < c_near)
+        {
+          if (CollisionFreeLinear(other_near->state, added_x_new->state, map_cloud_))
+          {
+            TreeNode* old_parent = other_near->parent;
+            old_parent->RemoveChild(other_near);
+            other_near->parent = added_x_new;
+            added_x_new->AddExistingChild(other_near, std::make_pair(distance, distance));
+            other_near->cost = c_new;
+          }
+        }
+      }
+      if ((added_x_new->state.loc-x_goal_).norm() <= GOAL_RADIUS)
+      {
+        goalNodes[added_x_new] = added_x_new->cost;
+      }
+    }
+  }
+  printf("HERE\n");
+  // Create waypoints with the neccessarry curvatures to reach them
+  std::vector<Vector2f> output;
+  while (x_best != nullptr && x_best->parent != nullptr)
+  {
+    output.push_back(x_best->state.loc);
+    x_best = x_best->parent;
+  }
+  return output;
+}
+
+std::vector<Vector2f> RRT::InformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations)
+{
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+  cout << "Planning with Linear Informed RRT\n" << std::endl;
+  // Convert pointcloud to Map frame
+  getMapPointCloud(points);
+
+  std::map<TreeNode*, double> goalNodes;
+  TreeNode* x_best = nullptr;
+  double c_best = std::numeric_limits<double>::infinity();
+  for (int i = 0; i < max_iterations; ++i)
+  {
+    for(auto gn: goalNodes)
+    {
+      if (gn.second < c_best)
+      {
+        printf("new c_best (%f)\n", gn.second);
+        c_best = gn.second;
+        x_best = gn.first;
+      }
+    }
+    // Main difference is how we sample. In regular rrt* we just have uniform sampling
+    Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
+    TreeNode* x_nearest = Nearest(x_rand);
+    if (x_nearest == nullptr)
+    {
+      printf("xnearest is null\n");
+      continue;
+    }
+    State x_new = SteerLinear(x_nearest->state, x_rand);
+    if (CollisionFreeLinear(x_nearest->state, x_new, map_cloud_))
+    {
+      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      TreeNode* x_min = x_nearest;
+      double distance_min = (x_nearest->state.loc - x_new.loc).norm();
+      double c_min = x_nearest->cost + (x_nearest->state.loc - x_new.loc).norm();
+      for(auto other_near: x_near)
+      {
+        double c_new = other_near->cost + (other_near->state.loc - x_new.loc).norm();
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new
+        if (c_new < c_min)
+        {
+          if (CollisionFreeLinear(other_near->state, x_new, map_cloud_))
+          {
+            x_min = other_near;
+            c_min = c_new;
+            distance_min = (other_near->state.loc - x_new.loc).norm();
+          }
+        }
+      }
+      TreeNode* added_x_new = x_min->AddNewChild(x_new, c_min, std::make_pair(distance_min, distance_min));
+      //printf("Addded x_new coordinates (%d) (%f, %f) \n", i, added_x_new->state.loc.x(), added_x_new->state.loc.y());
+      visualization::DrawPoint(added_x_new->state.loc, 0xFF0000, global_viz_msg_);
+      viz_pub_.publish(global_viz_msg_);
+      node_ptrs_.push_back(added_x_new);
+      for(auto other_near: x_near)
+      {
+        if (other_near == root_)
+          continue;
+        double c_near = other_near->cost;
+        double distance = (added_x_new->state.loc - other_near->state.loc).norm();
+        double c_new = added_x_new->cost + fabs(distance);
+        // check if new cost is smaller and the closest steering input is actuall close to the desired x_new      
+        if (c_new < c_near)
+        {
+          if (CollisionFreeLinear(other_near->state, added_x_new->state, map_cloud_))
+          {
+            TreeNode* old_parent = other_near->parent;
+            old_parent->RemoveChild(other_near);
+            other_near->parent = added_x_new;
+            added_x_new->AddExistingChild(other_near, std::make_pair(distance, distance));
+            other_near->cost = c_new;
+          }
+        }
+      }
+      if ((added_x_new->state.loc-x_goal_).norm() <= GOAL_RADIUS)
+      {
+        goalNodes[added_x_new] = added_x_new->cost;
+      }
+    }
+  }
+  printf("HERE\n");
+  // Create waypoints with the neccessarry curvatures to reach them
+  std::vector<Vector2f> output;
+  while (x_best != nullptr && x_best->parent != nullptr)
+  {
+    output.push_back(x_best->state.loc);
+    x_best = x_best->parent;
+  }
+  return output;
+}
+
 
 void RRT::getMapPointCloud(const std::vector<Eigen::Vector2f>& points) {
   map_cloud_.reserve(points.size());

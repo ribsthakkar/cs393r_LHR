@@ -440,7 +440,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     // auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(robot_loc_.x()-5.0, robot_loc_.x()+5.0), std::make_pair(robot_loc_.y()-5.0, robot_loc_.y()+5.0), map_);
     auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 25.0), map_);
     // POINT COULD IS IN ROBOT's LOCAL FRAME
-    rrt_plan_ = rr_tree.InformedRRT(point_cloud_);
+    rrt_plan_ = rr_tree.KinodynamicInformedRRT(point_cloud_);
     // Don't move anywhere for this input
     return std::make_pair(0.0, 0.0);
   }
@@ -491,7 +491,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     Eigen::Vector2f h = geometry::Heading(robot_angle_);
     if ((robot_loc_ + h - next_move.second).norm() > ((robot_loc_ - h) - next_move.second).norm())
       chord_distance *= -1;
-    return std::make_pair(next_move.first, chord_distance);
+    return std::make_pair(0.0f, chord_distance);
   }
   else {
     auto radius = 1/next_move.first;

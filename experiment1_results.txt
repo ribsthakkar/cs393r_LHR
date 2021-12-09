@@ -3238,3 +3238,361 @@ new c_best (14.008420)
 Scale(4), Experiment (49): (41.169724)
 Planning with Kinodynamic Informed RRT
 
+Planning with Linear Informed RRT
+
+new c_best (17.988408)
+new c_best (14.116412)
+new c_best (13.978776)
+Scale(5), Experiment (0): (0.251608)
+Planning with Linear Informed RRT
+
+new c_best (15.284581)
+new c_best (14.325921)
+new c_best (14.210242)
+new c_best (14.108423)
+new c_best (14.105724)
+new c_best (13.957105)
+Scale(5), Experiment (1): (0.437351)
+Planning with Linear Informed RRT
+
+new c_best (15.473368)
+new c_best (14.467150)
+new c_best (14.408503)
+new c_best (14.232475)
+new c_best (14.132990)
+new c_best (14.021237)
+Scale(5), Experiment (2): (0.351519)
+Planning with Linear Informed RRT
+
+new c_best (15.884114)
+new c_best (14.498027)
+new c_best (14.159621)
+new c_best (14.016482)
+Scale(5), Experiment (3): (1.708519)
+Planning with Linear Informed RRT
+
+new c_best (20.706132)
+new c_best (14.097148)
+new c_best (13.923435)
+Scale(5), Experiment (4): (0.393013)
+Planning with Linear Informed RRT
+
+new c_best (14.447464)
+new c_best (14.203455)
+new c_best (13.992806)
+Scale(5), Experiment (5): (3.469669)
+Planning with Linear Informed RRT
+
+new c_best (15.265916)
+new c_best (14.103326)
+new c_best (14.028425)
+Scale(5), Experiment (6): (0.767989)
+Planning with Linear Informed RRT
+
+new c_best (14.569754)
+new c_best (14.335670)
+new c_best (14.089532)
+new c_best (14.019502)
+Scale(5), Experiment (7): (3.275973)
+Planning with Linear Informed RRT
+
+new c_best (14.442525)
+new c_best (14.222260)
+new c_best (14.036704)
+new c_best (13.950734)
+Scale(5), Experiment (8): (2.618245)
+Planning with Linear Informed RRT
+
+new c_best (14.872195)
+new c_best (14.364131)
+new c_best (14.239288)
+new c_best (13.984516)
+Scale(5), Experiment (9): (1.791445)
+Planning with Linear Informed RRT
+
+new c_best (15.611799)
+new c_best (14.426763)
+new c_best (14.226700)
+new c_best (13.933445)
+Scale(5), Experiment (10): (0.068246)
+Planning with Linear Informed RRT
+
+new c_best (16.091163)
+new c_best (15.170782)
+new c_best (15.041915)
+new c_best (14.146698)
+new c_best (14.002786)
+Scale(5), Experiment (11): (0.185742)
+Planning with Linear Informed RRT
+
+new c_best (18.420831)
+new c_best (14.590315)
+new c_best (14.206724)
+new c_best (14.169329)
+new c_best (14.091657)
+new c_best (14.032976)
+new c_best (13.966730)
+Scale(5), Experiment (12): (0.357392)
+Planning with Linear Informed RRT
+
+new c_best (15.784409)
+new c_best (14.064187)
+new c_best (13.965582)
+Scale(5), Experiment (13): (0.192105)
+Planning with Linear Informed RRT
+
+new c_best (17.251349)
+new c_best (14.930224)
+new c_best (14.269500)
+new c_best (13.985164)
+Scale(5), Experiment (14): (0.593807)
+Planning with Linear Informed RRT
+
+new c_best (17.003578)
+new c_best (14.044921)
+new c_best (13.975278)
+Scale(5), Experiment (15): (0.042462)
+Planning with Linear Informed RRT
+
+new c_best (15.162524)
+new c_best (13.976005)
+Scale(5), Experiment (16): (2.405624)
+Planning with Linear Informed RRT
+
+new c_best (20.949439)
+new c_best (14.259480)
+new c_best (13.992867)
+Scale(5), Experiment (17): (0.214393)
+Planning with Linear Informed RRT
+
+new c_best (17.454601)
+new c_best (14.436138)
+new c_best (14.094982)
+new c_best (14.001974)
+Scale(5), Experiment (18): (0.049694)
+Planning with Linear Informed RRT
+
+new c_best (19.013017)
+new c_best (16.340414)
+new c_best (14.627366)
+new c_best (14.239672)
+new c_best (14.048201)
+new c_best (14.007257)
+Scale(5), Experiment (19): (0.106116)
+Planning with Linear Informed RRT
+
+new c_best (16.505860)
+new c_best (16.436749)
+new c_best (14.340085)
+new c_best (14.223847)
+new c_best (14.068261)
+new c_best (14.064630)
+new c_best (13.961483)
+Scale(5), Experiment (20): (0.513239)
+Planning with Linear Informed RRT
+
+new c_best (15.475756)
+new c_best (15.107530)
+new c_best (14.753301)
+new c_best (14.445290)
+new c_best (14.289346)
+new c_best (14.188680)
+new c_best (13.927086)
+Scale(5), Experiment (21): (1.352827)
+Planning with Linear Informed RRT
+
+new c_best (16.978562)
+new c_best (14.534342)
+new c_best (14.205573)
+new c_best (14.005604)
+Scale(5), Experiment (22): (0.391756)
+Planning with Linear Informed RRT
+
+new c_best (14.892036)
+new c_best (14.790624)
+new c_best (14.096920)
+new c_best (13.967046)
+Scale(5), Experiment (23): (0.994642)
+Planning with Linear Informed RRT
+
+new c_best (26.137972)
+new c_best (14.089768)
+new c_best (14.052920)
+new c_best (13.970793)
+Scale(5), Experiment (24): (0.419116)
+Planning with Linear Informed RRT
+
+new c_best (14.726495)
+new c_best (14.003868)
+Scale(5), Experiment (25): (0.010163)
+Planning with Linear Informed RRT
+
+new c_best (15.938731)
+new c_best (14.081989)
+new c_best (14.029057)
+Scale(5), Experiment (26): (0.228228)
+Planning with Linear Informed RRT
+
+new c_best (14.731652)
+new c_best (14.304584)
+new c_best (14.126911)
+new c_best (14.026269)
+Scale(5), Experiment (27): (2.701863)
+Planning with Linear Informed RRT
+
+new c_best (16.700688)
+new c_best (14.741622)
+new c_best (14.356314)
+new c_best (14.279503)
+new c_best (14.103551)
+new c_best (14.063991)
+new c_best (14.006997)
+Scale(5), Experiment (28): (0.265067)
+Planning with Linear Informed RRT
+
+new c_best (15.847587)
+new c_best (15.725907)
+new c_best (14.127775)
+new c_best (14.093448)
+new c_best (14.082592)
+new c_best (14.014429)
+Scale(5), Experiment (29): (0.084720)
+Planning with Linear Informed RRT
+
+new c_best (19.781879)
+new c_best (14.321557)
+new c_best (14.046723)
+new c_best (14.043074)
+new c_best (14.013187)
+Scale(5), Experiment (30): (0.299288)
+Planning with Linear Informed RRT
+
+new c_best (14.092527)
+new c_best (14.054722)
+new c_best (13.984310)
+Scale(5), Experiment (31): (1.989021)
+Planning with Linear Informed RRT
+
+new c_best (16.037933)
+new c_best (14.208826)
+new c_best (14.050122)
+new c_best (13.990239)
+Scale(5), Experiment (32): (1.171953)
+Planning with Linear Informed RRT
+
+new c_best (16.394504)
+new c_best (14.431705)
+new c_best (13.985121)
+Scale(5), Experiment (33): (0.749237)
+Planning with Linear Informed RRT
+
+new c_best (21.002436)
+new c_best (14.307971)
+new c_best (14.032480)
+new c_best (13.920044)
+Scale(5), Experiment (34): (0.453119)
+Planning with Linear Informed RRT
+
+new c_best (19.639685)
+new c_best (14.356921)
+new c_best (14.082382)
+new c_best (13.999807)
+Scale(5), Experiment (35): (0.580239)
+Planning with Linear Informed RRT
+
+new c_best (20.145438)
+new c_best (14.996055)
+new c_best (14.537953)
+new c_best (14.338656)
+new c_best (14.111605)
+new c_best (14.101964)
+new c_best (14.046309)
+new c_best (14.024956)
+Scale(5), Experiment (36): (0.232409)
+Planning with Linear Informed RRT
+
+new c_best (19.124317)
+new c_best (14.355373)
+new c_best (14.256688)
+new c_best (14.135143)
+new c_best (13.916201)
+Scale(5), Experiment (37): (0.748032)
+Planning with Linear Informed RRT
+
+new c_best (18.289844)
+new c_best (14.519043)
+new c_best (14.412450)
+new c_best (13.937192)
+Scale(5), Experiment (38): (0.228035)
+Planning with Linear Informed RRT
+
+new c_best (18.456762)
+new c_best (14.386764)
+new c_best (14.165199)
+new c_best (13.940716)
+Scale(5), Experiment (39): (0.637380)
+Planning with Linear Informed RRT
+
+new c_best (14.659220)
+new c_best (14.191925)
+new c_best (13.965237)
+Scale(5), Experiment (40): (1.268439)
+Planning with Linear Informed RRT
+
+new c_best (14.128596)
+new c_best (13.991358)
+Scale(5), Experiment (41): (7.726204)
+Planning with Linear Informed RRT
+
+new c_best (18.101975)
+new c_best (14.115903)
+new c_best (13.933988)
+Scale(5), Experiment (42): (0.522924)
+Planning with Linear Informed RRT
+
+new c_best (14.596784)
+new c_best (14.126255)
+new c_best (14.027962)
+Scale(5), Experiment (43): (3.828314)
+Planning with Linear Informed RRT
+
+new c_best (15.553595)
+new c_best (14.156261)
+new c_best (13.936524)
+Scale(5), Experiment (44): (0.507212)
+Planning with Linear Informed RRT
+
+new c_best (14.332627)
+new c_best (14.074801)
+new c_best (13.938238)
+Scale(5), Experiment (45): (13.278352)
+Planning with Linear Informed RRT
+
+new c_best (14.128135)
+new c_best (14.088413)
+new c_best (13.926640)
+Scale(5), Experiment (46): (11.052223)
+Planning with Linear Informed RRT
+
+new c_best (15.036752)
+new c_best (14.253428)
+new c_best (14.144299)
+new c_best (14.050407)
+new c_best (13.987930)
+Scale(5), Experiment (47): (0.696509)
+Planning with Linear Informed RRT
+
+new c_best (25.465232)
+new c_best (21.824357)
+new c_best (14.371003)
+new c_best (14.012173)
+Scale(5), Experiment (48): (0.385769)
+Planning with Linear Informed RRT
+
+new c_best (18.574288)
+new c_best (14.189153)
+new c_best (14.148924)
+new c_best (14.132428)
+new c_best (13.936416)
+Scale(5), Experiment (49): (0.795498)
+Planning with Linear RRT

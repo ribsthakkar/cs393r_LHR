@@ -86,7 +86,7 @@ void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int nu
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   vector_map::VectorMap map("maps/EmptyMap.txt");
   std::vector<Eigen::Vector2f> loutput;
-  for (int scale = 1; scale <= 4; scale++)
+  for (int scale = 1; scale <= 5; scale++)
   {
       double min_x = (startLocation.x()) * scale - 1;
       double min_y = (startLocation.y()) * scale - 1;
@@ -284,11 +284,13 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
 
-  Experiment2(RRTVariant::LIRRT, 3);
-  Experiment2(RRTVariant::LRRT, 3);
   // Experiment1(RRTVariant::KIRRT, map, global_viz_msg, 1);
   // Experiment1(RRTVariant::KRRT, map, global_viz_msg, 1);
+  Experiment2(RRTVariant::LIRRT, 3);
+  Experiment2(RRTVariant::LRRT, 3);
 
+
+  printf("Finished experiments\n");
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
     ros::spinOnce();

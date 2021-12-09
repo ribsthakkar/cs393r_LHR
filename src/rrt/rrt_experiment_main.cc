@@ -74,7 +74,7 @@ void SignalHandler(int) {
 
 enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
-void Experiment1(RRTVariant variant, int numExperiments=100) {
+void Experiment1(RRTVariant variant, int numExperiments=50) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
   double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
@@ -82,7 +82,7 @@ void Experiment1(RRTVariant variant, int numExperiments=100) {
   std::vector<Eigen::Vector2f> emptyPointCloud;
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
   std::vector<Eigen::Vector2f> loutput;
-  for (int scale = 1; scale < 4; scale++)
+  for (int scale = 1; scale <= 4; scale++)
   {
       double min_x = (startLocation.x()) * scale - 1;
       double min_y = (startLocation.y()) * scale - 1;
@@ -126,9 +126,9 @@ int main(int argc, char** argv) {
 
   Experiment1(RRTVariant::LIRRT);
   Experiment1(RRTVariant::LRRT);
-  Experiment1(RRTVariant::KIRRT, 1);
-  Experiment1(RRTVariant::KRRT, 1);
-
+//   Experiment1(RRTVariant::KIRRT, 1);
+//   Experiment1(RRTVariant::KRRT, 1);
+  printf("Finished experiments\n");
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
     ros::spinOnce();

@@ -315,25 +315,15 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
 {
   // Check the map
   for (const auto& line : map_.lines) {
-<<<<<<< HEAD
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
     // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
-=======
-    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
-    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
->>>>>>> Added experiment 3 results and code
   }
   // Check point cloud
   for (const auto& point: local_observation_points)
   {
     Eigen::Vector2f dpoint = point + Eigen::Vector2f(0.01, 0.01);
-<<<<<<< HEAD
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
     // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
-=======
-    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
-    if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
->>>>>>> Added experiment 3 results and code
   }
   return true;
 } 
@@ -365,6 +355,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
         found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
 
@@ -488,6 +479,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
         found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
 
@@ -611,6 +603,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
         found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
 
@@ -720,6 +713,7 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
         found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
     if (found_init_solution)

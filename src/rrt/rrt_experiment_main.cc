@@ -129,7 +129,7 @@ void addMapLines(const std::vector<geometry::line2f>& lines, VisualizationMsg& v
   }
 }
 
-std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2(float num_obstacles, const Vector2f& start, const Vector2f& end) {
+std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2(int num_obstacles, const Vector2f& start, const Vector2f& end) {
   std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> output;
 
   vector_map::VectorMap map("maps/GDC1.txt");
@@ -142,7 +142,7 @@ std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2
   util_random::Random rng(GetWallTime());
 
   output.first.reserve(num_obstacles);
-  for (size_t i=0 ; i < num_obstacles; ++i) {
+  for (int i=0 ; i < num_obstacles; ++i) {
     const float heading = rng.UniformRandom(0, M_2PI);
     const Vector2f first_point(rng.UniformRandom(x_bounds.first, x_bounds.second), rng.UniformRandom(y_bounds.first, y_bounds.second));
     const Vector2f second_point = first_point + length * geometry::Heading(heading);
@@ -168,7 +168,7 @@ void Experiment2(RRTVariant variant, int numExperiments=100) {
   std::vector<Eigen::Vector2f> loutput;
   for (int obs = 0; obs < 4; obs++)
   {
-      const double num_obs = 50 * obs;
+      const int num_obs = 50 * obs;
 
       for (int i = 0; i < numExperiments; i++) {
 
@@ -177,7 +177,6 @@ void Experiment2(RRTVariant variant, int numExperiments=100) {
           visualization::ClearVisualizationMsg(global_viz_msg);
           addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
 
-          auto initialTime = GetWallTime();
           auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, x_bounds, y_bounds, lines_and_map.second, global_viz_msg);
           
           switch (variant)
@@ -197,7 +196,7 @@ void Experiment2(RRTVariant variant, int numExperiments=100) {
           }
           if (koutput.size() == 0 && loutput.size() == 0)
             printf("Could not find any path within iteration limit\n");
-          printf("Scale(%d), Experiment (%d): (%f)\n", 1, i, GetWallTime() - initialTime);
+          printf("Obstacles(%d), Experiment (%d): (%f)\n", num_obs, i, rr_tree.c_best_overall);
           koutput.clear();
           loutput.clear();
       }
@@ -284,15 +283,14 @@ int main(int argc, char** argv) {
   signal(SIGINT, SignalHandler);
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
-  Experiment2(RRTVariant::LIRRT, 10);
-  // Experiment1(RRTVariant::LRRT, map, global_viz_msg);
+
+  Experiment2(RRTVariant::LIRRT, 3);
+  Experiment2(RRTVariant::LRRT, 3);
   // Experiment1(RRTVariant::KIRRT, map, global_viz_msg, 1);
   // Experiment1(RRTVariant::KRRT, map, global_viz_msg, 1);
 
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {
-    global_viz_msg.header.stamp = ros::Time::now();
-    viz_pub.publish(global_viz_msg);
     ros::spinOnce();
     loop.Sleep();
   }

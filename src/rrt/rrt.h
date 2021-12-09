@@ -81,6 +81,8 @@ class RRT {
   // Sets the map_cloud_ variable to represent the pointcloud in the map frame
   void getMapPointCloud(const std::vector<Eigen::Vector2f>& points);
 
+  double c_best_overall;
+
  private:
   // Initial State
   Eigen::Vector2f x_start_;

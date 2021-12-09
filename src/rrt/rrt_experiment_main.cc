@@ -43,10 +43,16 @@
 #include "visualization_msgs/MarkerArray.h"
 #include "nav_msgs/Odometry.h"
 #include "ros/ros.h"
+#include "rrt/rrt.h"
 #include "shared/math/math_util.h"
 #include "shared/util/timer.h"
 #include "shared/ros/ros_helpers.h"
+<<<<<<< HEAD
 #include "rrt.h"
+=======
+
+#include "navigation/navigation.h"
+>>>>>>> f01569a43b187c6f83e901693c435969d8a9ab9a
 
 using amrl_msgs::Localization2DMsg;
 using math_util::DegToRad;
@@ -72,7 +78,7 @@ void SignalHandler(int) {
   run_ = false;
 }
 
-enum class RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
+enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
 void Experiment1(RRTVariant variant, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);

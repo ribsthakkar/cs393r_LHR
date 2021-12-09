@@ -84,13 +84,13 @@ void Experiment1(RRTVariant variant, int numExperiments=100) {
   std::vector<Eigen::Vector2f> loutput;
   for (int scale = 1; scale < 4; scale++)
   {
-      double min_x = (startLocation.x()-1) * scale;
-      double min_y = (startLocation.y()-1) * scale;
-      double max_x = (endLocation.x()+1) * scale;
-      double max_y = (endLocation.y()+1) * scale;
+      double min_x = (startLocation.x()) * scale - 1;
+      double min_y = (startLocation.y()) * scale - 1;
+      double max_x = (endLocation.x()) * scale + 1;
+      double max_y = (endLocation.y()) * scale + 1;
       for (int i = 0; i < numExperiments; i++) {
           auto initialTime = GetWallTime();
-          auto rr_tree = rrt::RRT(startLocation, M_PI/2, endLocation, M_PI/2, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_);
+          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, std::make_pair(min_x, max_x), std::make_pair(min_y, max_y), map_);
           
           switch (variant)
           {
@@ -122,10 +122,12 @@ int main(int argc, char** argv) {
   signal(SIGINT, SignalHandler);
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
-  
+    
+
   Experiment1(RRTVariant::LIRRT);
   Experiment1(RRTVariant::LRRT);
-
+  Experiment1(RRTVariant::KIRRT, 1);
+  Experiment1(RRTVariant::KRRT, 1);
 
   RateLoop loop(20.0);
   while (run_ && ros::ok()) {

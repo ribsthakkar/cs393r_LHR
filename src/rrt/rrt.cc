@@ -61,8 +61,8 @@ Ellipse::Ellipse(const Eigen::Vector2f& start_point, const Eigen::Vector2f& goal
 
   // Do all math for ellipses once
   const Vector2f distance = goal - start;
-  cout << "start " << start << std::endl;
-  cout << "goal " << goal << std::endl;
+  // cout << "start " << start << std::endl;
+  // cout << "goal " << goal << std::endl;
   c_min = distance.norm() - GOAL_RADIUS;
   centre = start + 0.5*(distance);
   const float theta = atan2(distance.y(), distance.x());
@@ -332,8 +332,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
 
-  visualization::DrawCross(x_start_, 1, 0x0000FF, global_viz_msg_);
-  visualization::DrawCross(x_goal_, 1, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_goal_, 0.3, 0x0000FF, global_viz_msg_);
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
@@ -363,7 +363,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
     if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
       TreeNode* x_min = x_nearest;
       double c_min = x_nearest->cost + fabs(distance);
       double curvature_min = curvature;
@@ -423,7 +423,6 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
       }
     }
   }
-  printf("HERE\n");
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<std::pair<double, Vector2f>> output;
   while (x_best != nullptr && x_best->parent != nullptr)
@@ -446,6 +445,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
+  visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_goal_, 0.3, 0x0000FF, global_viz_msg_);
 
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
@@ -476,7 +477,7 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
     State x_new = Steer(x_nearest->state, x_rand, &curvature, &distance);
     if (CollisionFree(x_nearest->state, curvature, distance, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
       TreeNode* x_min = x_nearest;
       double c_min = x_nearest->cost + fabs(distance);
       double curvature_min = curvature;
@@ -536,7 +537,6 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
       }
     }
   }
-  printf("HERE\n");
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<std::pair<double, Vector2f>> output;
   while (x_best != nullptr && x_best->parent != nullptr)
@@ -559,6 +559,8 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   cout << "Planning with Linear Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
+  visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_goal_, 0.3, 0x0000FF, global_viz_msg_);
 
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
@@ -587,7 +589,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
     State x_new = SteerLinear(x_nearest->state, x_rand);
     if (CollisionFreeLinear(x_nearest->state, x_new, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
       TreeNode* x_min = x_nearest;
       double distance_min = (x_nearest->state.loc - x_new.loc).norm();
       double c_min = x_nearest->cost + (x_nearest->state.loc - x_new.loc).norm();
@@ -636,7 +638,6 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
       }
     }
   }
-  printf("HERE\n");
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<Vector2f> output;
   while (x_best != nullptr && x_best->parent != nullptr)
@@ -653,6 +654,8 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
   cout << "Planning with Linear Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
+  visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
+  visualization::DrawCross(x_goal_, 0.3, 0x0000FF, global_viz_msg_);
 
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
@@ -681,7 +684,7 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
     State x_new = SteerLinear(x_nearest->state, x_rand);
     if (CollisionFreeLinear(x_nearest->state, x_new, map_cloud_))
     {
-      std::vector<TreeNode*> x_near = Near(x_new, 5.0f);
+      std::vector<TreeNode*> x_near = Near(x_new, 1.0f);
       TreeNode* x_min = x_nearest;
       double distance_min = (x_nearest->state.loc - x_new.loc).norm();
       double c_min = x_nearest->cost + (x_nearest->state.loc - x_new.loc).norm();
@@ -730,7 +733,6 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
       }
     }
   }
-  printf("HERE\n");
   // Create waypoints with the neccessarry curvatures to reach them
   std::vector<Vector2f> output;
   while (x_best != nullptr && x_best->parent != nullptr)

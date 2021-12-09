@@ -45,7 +45,8 @@ Vector2f sampleEllipse(util_random::Random& rng, Ellipse& ellipse, double c_best
   }
 
   // See paper, construct L matrix from ellipse axes
-  const auto L = (Vector2f(0.5*c_best, 0.5*sqrt(c_best*c_best - ellipse.c_min*ellipse.c_min))).asDiagonal();
+  Eigen::Matrix2f L;
+  L << 0.5*c_best, 0, 0, 0.5*sqrt(c_best*c_best - ellipse.c_min*ellipse.c_min);
 
   // Sample from unit ball
   const Vector2f x_ball = sampleCircle(rng, 1.0);

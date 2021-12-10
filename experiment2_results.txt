@@ -1,0 +1,2437 @@
+Planning with Linear Informed RRT
+
+new c_best (36.191336)
+new c_best (32.737969)
+new c_best (31.226914)
+new c_best (28.724237)
+new c_best (28.647953)
+Obstacles(0), Experiment (0): (28.647953)
+Planning with Linear RRT
+
+new c_best (37.284248)
+Obstacles(0), Experiment (0): (37.284248)
+Planning with Linear Informed RRT
+
+new c_best (32.131078)
+new c_best (31.970966)
+new c_best (30.065632)
+new c_best (29.299793)
+new c_best (28.741107)
+new c_best (28.513422)
+new c_best (28.272702)
+new c_best (28.136471)
+Obstacles(0), Experiment (1): (28.136471)
+Planning with Linear RRT
+
+new c_best (41.479403)
+new c_best (41.195311)
+new c_best (41.097787)
+new c_best (40.758919)
+new c_best (31.917174)
+new c_best (30.231905)
+Obstacles(0), Experiment (1): (30.231905)
+Planning with Linear Informed RRT
+
+new c_best (33.807958)
+new c_best (28.545013)
+new c_best (28.169779)
+Obstacles(0), Experiment (2): (28.169779)
+Planning with Linear RRT
+
+new c_best (32.991267)
+new c_best (31.919695)
+new c_best (31.854702)
+new c_best (30.441049)
+Obstacles(0), Experiment (2): (30.441049)
+Planning with Linear Informed RRT
+
+new c_best (35.438177)
+new c_best (29.725435)
+new c_best (29.466864)
+new c_best (28.768586)
+Obstacles(0), Experiment (3): (28.768586)
+Planning with Linear RRT
+
+new c_best (35.554001)
+new c_best (33.522725)
+Obstacles(0), Experiment (3): (33.522725)
+Planning with Linear Informed RRT
+
+new c_best (31.658077)
+new c_best (31.415120)
+new c_best (30.983374)
+new c_best (30.065328)
+new c_best (29.631655)
+new c_best (29.597793)
+new c_best (28.600131)
+new c_best (28.317892)
+Obstacles(0), Experiment (4): (28.317892)
+Planning with Linear RRT
+
+new c_best (39.370339)
+new c_best (36.265458)
+Obstacles(0), Experiment (4): (36.265458)
+Planning with Linear Informed RRT
+
+new c_best (37.774946)
+new c_best (36.692829)
+new c_best (29.794926)
+new c_best (28.983525)
+new c_best (28.885859)
+new c_best (28.313392)
+new c_best (28.134946)
+Obstacles(0), Experiment (5): (28.134946)
+Planning with Linear RRT
+
+new c_best (31.653505)
+new c_best (28.853791)
+Obstacles(0), Experiment (5): (28.853791)
+Planning with Linear Informed RRT
+
+new c_best (36.499481)
+Obstacles(0), Experiment (6): (36.499481)
+Planning with Linear RRT
+
+new c_best (30.435949)
+new c_best (29.991622)
+new c_best (29.397092)
+new c_best (28.925598)
+Obstacles(0), Experiment (6): (28.925598)
+Planning with Linear Informed RRT
+
+new c_best (30.191775)
+new c_best (29.091436)
+new c_best (28.815469)
+new c_best (28.681451)
+new c_best (28.372992)
+new c_best (28.247253)
+new c_best (28.121759)
+new c_best (28.076904)
+Obstacles(0), Experiment (7): (28.076904)
+Planning with Linear RRT
+
+new c_best (30.838784)
+new c_best (30.670819)
+new c_best (30.615984)
+Obstacles(0), Experiment (7): (30.615984)
+Planning with Linear Informed RRT
+
+new c_best (31.260626)
+new c_best (31.142490)
+new c_best (29.096483)
+new c_best (28.503443)
+new c_best (28.338289)
+new c_best (28.276728)
+Obstacles(0), Experiment (8): (28.276728)
+Planning with Linear RRT
+
+new c_best (32.130676)
+new c_best (30.866470)
+Obstacles(0), Experiment (8): (30.866470)
+Planning with Linear Informed RRT
+
+new c_best (34.789097)
+Obstacles(0), Experiment (9): (34.789097)
+Planning with Linear RRT
+
+new c_best (29.041036)
+new c_best (28.894824)
+Obstacles(0), Experiment (9): (28.894824)
+Planning with Linear Informed RRT
+
+new c_best (31.098502)
+new c_best (28.959185)
+new c_best (28.505061)
+new c_best (28.311855)
+new c_best (28.225962)
+Obstacles(0), Experiment (10): (28.225962)
+Planning with Linear RRT
+
+new c_best (34.120173)
+new c_best (29.462274)
+new c_best (29.051421)
+Obstacles(0), Experiment (10): (29.051421)
+Planning with Linear Informed RRT
+
+new c_best (39.159594)
+new c_best (38.636345)
+new c_best (29.672749)
+new c_best (28.602526)
+new c_best (28.439965)
+Obstacles(0), Experiment (11): (28.439965)
+Planning with Linear RRT
+
+new c_best (40.153824)
+new c_best (38.963429)
+new c_best (38.789590)
+Obstacles(0), Experiment (11): (38.789590)
+Planning with Linear Informed RRT
+
+new c_best (38.818807)
+new c_best (38.238194)
+new c_best (28.841314)
+Obstacles(0), Experiment (12): (28.841314)
+Planning with Linear RRT
+
+new c_best (30.295080)
+Obstacles(0), Experiment (12): (30.295080)
+Planning with Linear Informed RRT
+
+new c_best (31.681514)
+new c_best (30.086440)
+new c_best (29.214415)
+new c_best (28.946059)
+new c_best (28.345431)
+new c_best (28.229317)
+Obstacles(0), Experiment (13): (28.229317)
+Planning with Linear RRT
+
+new c_best (30.103173)
+Obstacles(0), Experiment (13): (30.103173)
+Planning with Linear Informed RRT
+
+new c_best (33.522948)
+new c_best (28.822851)
+new c_best (28.762258)
+Obstacles(0), Experiment (14): (28.762258)
+Planning with Linear RRT
+
+new c_best (35.450241)
+Obstacles(0), Experiment (14): (35.450241)
+Planning with Linear Informed RRT
+
+new c_best (35.456394)
+new c_best (35.386174)
+new c_best (33.874641)
+new c_best (29.229619)
+new c_best (28.406083)
+new c_best (28.159118)
+Obstacles(0), Experiment (15): (28.159118)
+Planning with Linear RRT
+
+new c_best (29.631849)
+new c_best (28.573837)
+Obstacles(0), Experiment (15): (28.573837)
+Planning with Linear Informed RRT
+
+new c_best (33.838368)
+new c_best (28.583531)
+new c_best (28.244387)
+Obstacles(0), Experiment (16): (28.244387)
+Planning with Linear RRT
+
+new c_best (35.651158)
+new c_best (34.294452)
+new c_best (33.787126)
+new c_best (33.261460)
+Obstacles(0), Experiment (16): (33.261460)
+Planning with Linear Informed RRT
+
+new c_best (35.433577)
+new c_best (35.406432)
+new c_best (30.745235)
+new c_best (29.399492)
+new c_best (28.701557)
+new c_best (28.518991)
+new c_best (28.318576)
+new c_best (28.177836)
+Obstacles(0), Experiment (17): (28.177836)
+Planning with Linear RRT
+
+new c_best (38.277679)
+new c_best (37.908230)
+new c_best (37.629258)
+Obstacles(0), Experiment (17): (37.629258)
+Planning with Linear Informed RRT
+
+new c_best (29.932536)
+new c_best (29.838649)
+new c_best (29.505841)
+new c_best (28.487448)
+new c_best (28.458659)
+new c_best (28.402801)
+new c_best (28.151785)
+new c_best (28.125769)
+Obstacles(0), Experiment (18): (28.125769)
+Planning with Linear RRT
+
+new c_best (32.830507)
+new c_best (31.990044)
+new c_best (31.102604)
+new c_best (29.400417)
+Obstacles(0), Experiment (18): (29.400417)
+Planning with Linear Informed RRT
+
+new c_best (34.630440)
+new c_best (31.014524)
+new c_best (29.731916)
+new c_best (28.903521)
+new c_best (28.479002)
+new c_best (28.284415)
+new c_best (28.277371)
+Obstacles(0), Experiment (19): (28.277371)
+Planning with Linear RRT
+
+new c_best (37.929256)
+new c_best (36.647843)
+new c_best (34.265199)
+Obstacles(0), Experiment (19): (34.265199)
+Planning with Linear Informed RRT
+
+new c_best (30.340819)
+new c_best (28.411446)
+new c_best (28.093713)
+Obstacles(0), Experiment (20): (28.093713)
+Planning with Linear RRT
+
+new c_best (35.562293)
+new c_best (34.630505)
+new c_best (32.019664)
+Obstacles(0), Experiment (20): (32.019664)
+Planning with Linear Informed RRT
+
+new c_best (29.559152)
+new c_best (28.926663)
+new c_best (28.757619)
+new c_best (28.440593)
+new c_best (28.162056)
+new c_best (28.074159)
+Obstacles(0), Experiment (21): (28.074159)
+Planning with Linear RRT
+
+new c_best (33.879928)
+new c_best (30.764731)
+Obstacles(0), Experiment (21): (30.764731)
+Planning with Linear Informed RRT
+
+new c_best (34.640270)
+new c_best (29.792909)
+new c_best (28.680391)
+new c_best (28.496626)
+new c_best (28.412701)
+new c_best (28.222601)
+Obstacles(0), Experiment (22): (28.222601)
+Planning with Linear RRT
+
+new c_best (31.916974)
+new c_best (31.618456)
+new c_best (28.609132)
+Obstacles(0), Experiment (22): (28.609132)
+Planning with Linear Informed RRT
+
+new c_best (35.706868)
+new c_best (31.683844)
+new c_best (29.758240)
+new c_best (29.524875)
+new c_best (29.425352)
+new c_best (28.974159)
+new c_best (28.657938)
+Obstacles(0), Experiment (23): (28.657938)
+Planning with Linear RRT
+
+new c_best (33.534526)
+new c_best (30.298889)
+Obstacles(0), Experiment (23): (30.298889)
+Planning with Linear Informed RRT
+
+new c_best (32.339488)
+new c_best (28.760070)
+new c_best (28.428610)
+Obstacles(0), Experiment (24): (28.428610)
+Planning with Linear RRT
+
+new c_best (37.187592)
+Obstacles(0), Experiment (24): (37.187592)
+Planning with Linear Informed RRT
+
+new c_best (35.992164)
+new c_best (35.891956)
+new c_best (35.883678)
+Obstacles(0), Experiment (25): (35.883678)
+Planning with Linear RRT
+
+new c_best (36.171024)
+Obstacles(0), Experiment (25): (36.171024)
+Planning with Linear Informed RRT
+
+new c_best (34.151541)
+new c_best (28.954599)
+new c_best (28.860933)
+new c_best (28.618438)
+Obstacles(0), Experiment (26): (28.618438)
+Planning with Linear RRT
+
+new c_best (32.341714)
+new c_best (31.087049)
+new c_best (30.943006)
+Obstacles(0), Experiment (26): (30.943006)
+Planning with Linear Informed RRT
+
+new c_best (43.723957)
+new c_best (28.579906)
+Obstacles(0), Experiment (27): (28.579906)
+Planning with Linear RRT
+
+new c_best (34.826270)
+new c_best (33.547355)
+new c_best (31.684845)
+Obstacles(0), Experiment (27): (31.684845)
+Planning with Linear Informed RRT
+
+new c_best (30.076411)
+new c_best (28.455984)
+new c_best (28.300848)
+Obstacles(0), Experiment (28): (28.300848)
+Planning with Linear RRT
+
+new c_best (29.858779)
+new c_best (29.659292)
+new c_best (29.291030)
+new c_best (29.128446)
+new c_best (28.639568)
+new c_best (28.470037)
+Obstacles(0), Experiment (28): (28.470037)
+Planning with Linear Informed RRT
+
+new c_best (31.190906)
+new c_best (28.630145)
+new c_best (28.370526)
+Obstacles(0), Experiment (29): (28.370526)
+Planning with Linear RRT
+
+new c_best (41.141337)
+new c_best (30.639015)
+new c_best (30.599954)
+new c_best (30.513401)
+Obstacles(0), Experiment (29): (30.513401)
+Planning with Linear Informed RRT
+
+new c_best (40.004449)
+new c_best (28.685467)
+new c_best (28.372018)
+new c_best (28.238452)
+Obstacles(0), Experiment (30): (28.238452)
+Planning with Linear RRT
+
+new c_best (37.100408)
+new c_best (36.620825)
+new c_best (29.816614)
+Obstacles(0), Experiment (30): (29.816614)
+Planning with Linear Informed RRT
+
+new c_best (32.302746)
+new c_best (28.809458)
+new c_best (28.572381)
+Obstacles(0), Experiment (31): (28.572381)
+Planning with Linear RRT
+
+new c_best (38.213853)
+new c_best (35.764814)
+new c_best (34.465766)
+new c_best (33.459148)
+Obstacles(0), Experiment (31): (33.459148)
+Planning with Linear Informed RRT
+
+new c_best (38.789357)
+new c_best (29.452105)
+new c_best (28.520050)
+Obstacles(0), Experiment (32): (28.520050)
+Planning with Linear RRT
+
+new c_best (34.007305)
+new c_best (31.799925)
+new c_best (29.980657)
+new c_best (29.880391)
+Obstacles(0), Experiment (32): (29.880391)
+Planning with Linear Informed RRT
+
+new c_best (33.351620)
+new c_best (29.182060)
+new c_best (28.321498)
+Obstacles(0), Experiment (33): (28.321498)
+Planning with Linear RRT
+
+new c_best (30.015435)
+new c_best (29.416259)
+Obstacles(0), Experiment (33): (29.416259)
+Planning with Linear Informed RRT
+
+new c_best (32.602124)
+new c_best (28.947939)
+new c_best (28.684907)
+new c_best (28.676662)
+new c_best (28.500740)
+Obstacles(0), Experiment (34): (28.500740)
+Planning with Linear RRT
+
+new c_best (34.876312)
+new c_best (31.613285)
+new c_best (31.052300)
+Obstacles(0), Experiment (34): (31.052300)
+Planning with Linear Informed RRT
+
+new c_best (39.594978)
+new c_best (29.376604)
+new c_best (29.034985)
+Obstacles(0), Experiment (35): (29.034985)
+Planning with Linear RRT
+
+new c_best (35.369261)
+new c_best (34.430378)
+new c_best (34.154393)
+new c_best (31.666385)
+Obstacles(0), Experiment (35): (31.666385)
+Planning with Linear Informed RRT
+
+new c_best (40.527917)
+new c_best (40.480148)
+new c_best (28.639582)
+new c_best (28.340283)
+Obstacles(0), Experiment (36): (28.340283)
+Planning with Linear RRT
+
+new c_best (32.868121)
+new c_best (32.856970)
+Obstacles(0), Experiment (36): (32.856970)
+Planning with Linear Informed RRT
+
+new c_best (34.604337)
+new c_best (34.382438)
+new c_best (28.932354)
+new c_best (28.630805)
+new c_best (28.623569)
+Obstacles(0), Experiment (37): (28.623569)
+Planning with Linear RRT
+
+new c_best (31.578065)
+Obstacles(0), Experiment (37): (31.578065)
+Planning with Linear Informed RRT
+
+new c_best (30.212696)
+new c_best (28.789029)
+new c_best (28.465991)
+new c_best (28.345248)
+new c_best (28.100138)
+new c_best (28.091769)
+Obstacles(0), Experiment (38): (28.091769)
+Planning with Linear RRT
+
+new c_best (42.022363)
+new c_best (34.707515)
+new c_best (33.281306)
+Obstacles(0), Experiment (38): (33.281306)
+Planning with Linear Informed RRT
+
+new c_best (36.767157)
+new c_best (36.154370)
+new c_best (35.481269)
+new c_best (28.831601)
+new c_best (28.547596)
+new c_best (28.433366)
+Obstacles(0), Experiment (39): (28.433366)
+Planning with Linear RRT
+
+new c_best (33.576694)
+new c_best (32.559256)
+Obstacles(0), Experiment (39): (32.559256)
+Planning with Linear Informed RRT
+
+new c_best (35.565653)
+new c_best (35.137760)
+new c_best (29.191045)
+Obstacles(0), Experiment (40): (29.191045)
+Planning with Linear RRT
+
+new c_best (38.515889)
+new c_best (36.080666)
+new c_best (30.328034)
+new c_best (29.293739)
+Obstacles(0), Experiment (40): (29.293739)
+Planning with Linear Informed RRT
+
+new c_best (29.061534)
+new c_best (28.990437)
+new c_best (28.675275)
+new c_best (28.504118)
+new c_best (28.487519)
+new c_best (28.392863)
+new c_best (28.275473)
+new c_best (28.209591)
+new c_best (28.153249)
+Obstacles(0), Experiment (41): (28.153249)
+Planning with Linear RRT
+
+new c_best (31.978876)
+new c_best (31.868198)
+new c_best (31.539810)
+new c_best (29.366093)
+Obstacles(0), Experiment (41): (29.366093)
+Planning with Linear Informed RRT
+
+new c_best (29.526122)
+new c_best (28.583144)
+new c_best (28.490936)
+new c_best (28.284246)
+Obstacles(0), Experiment (42): (28.284246)
+Planning with Linear RRT
+
+new c_best (37.903905)
+new c_best (29.901361)
+new c_best (29.716427)
+Obstacles(0), Experiment (42): (29.716427)
+Planning with Linear Informed RRT
+
+new c_best (28.570434)
+new c_best (28.479931)
+new c_best (28.346811)
+new c_best (28.240326)
+new c_best (28.095481)
+new c_best (28.089436)
+Obstacles(0), Experiment (43): (28.089436)
+Planning with Linear RRT
+
+new c_best (29.912757)
+new c_best (29.358375)
+new c_best (28.716766)
+Obstacles(0), Experiment (43): (28.716766)
+Planning with Linear Informed RRT
+
+new c_best (28.540616)
+new c_best (28.477388)
+new c_best (28.473304)
+Obstacles(0), Experiment (44): (28.473304)
+Planning with Linear RRT
+
+new c_best (41.066515)
+new c_best (35.883739)
+new c_best (29.851349)
+new c_best (29.822465)
+Obstacles(0), Experiment (44): (29.822465)
+Planning with Linear Informed RRT
+
+new c_best (28.432718)
+Obstacles(0), Experiment (45): (28.432718)
+Planning with Linear RRT
+
+new c_best (30.389999)
+new c_best (29.916049)
+Obstacles(0), Experiment (45): (29.916049)
+Planning with Linear Informed RRT
+
+new c_best (30.496161)
+new c_best (30.452780)
+new c_best (28.945938)
+new c_best (28.565289)
+new c_best (28.448843)
+Obstacles(0), Experiment (46): (28.448843)
+Planning with Linear RRT
+
+new c_best (41.758160)
+new c_best (36.449680)
+Obstacles(0), Experiment (46): (36.449680)
+Planning with Linear Informed RRT
+
+new c_best (34.802794)
+Obstacles(0), Experiment (47): (34.802794)
+Planning with Linear RRT
+
+new c_best (35.490612)
+new c_best (33.589169)
+new c_best (29.799886)
+Obstacles(0), Experiment (47): (29.799886)
+Planning with Linear Informed RRT
+
+new c_best (30.905232)
+new c_best (28.359087)
+Obstacles(0), Experiment (48): (28.359087)
+Planning with Linear RRT
+
+new c_best (38.340132)
+new c_best (38.222207)
+new c_best (33.199459)
+Obstacles(0), Experiment (48): (33.199459)
+Planning with Linear Informed RRT
+
+new c_best (37.832104)
+new c_best (29.254027)
+new c_best (29.193436)
+new c_best (28.465029)
+new c_best (28.262265)
+Obstacles(0), Experiment (49): (28.262265)
+Planning with Linear RRT
+
+new c_best (33.855589)
+Obstacles(0), Experiment (49): (33.855589)
+Planning with Linear Informed RRT
+
+new c_best (40.691359)
+new c_best (30.021602)
+new c_best (29.093309)
+new c_best (28.696816)
+Obstacles(50), Experiment (0): (28.696816)
+Planning with Linear RRT
+
+new c_best (34.317246)
+new c_best (31.296956)
+Obstacles(50), Experiment (0): (31.296956)
+Planning with Linear Informed RRT
+
+new c_best (34.325618)
+new c_best (30.610721)
+new c_best (30.333652)
+new c_best (29.686501)
+new c_best (29.438133)
+Obstacles(50), Experiment (1): (29.438133)
+Planning with Linear RRT
+
+new c_best (33.387152)
+new c_best (30.148781)
+Obstacles(50), Experiment (1): (30.148781)
+Planning with Linear Informed RRT
+
+new c_best (40.195801)
+Obstacles(50), Experiment (2): (40.195801)
+Planning with Linear RRT
+
+new c_best (38.818850)
+Obstacles(50), Experiment (2): (38.818850)
+Planning with Linear Informed RRT
+
+new c_best (40.525083)
+new c_best (39.063545)
+Obstacles(50), Experiment (3): (39.063545)
+Planning with Linear RRT
+
+new c_best (36.091731)
+new c_best (35.875193)
+Obstacles(50), Experiment (3): (35.875193)
+Planning with Linear Informed RRT
+
+new c_best (34.312305)
+new c_best (28.991278)
+new c_best (28.837965)
+Obstacles(50), Experiment (4): (28.837965)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(50), Experiment (4): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (33.273838)
+new c_best (28.724283)
+new c_best (28.300662)
+Obstacles(50), Experiment (5): (28.300662)
+Planning with Linear RRT
+
+new c_best (38.364320)
+new c_best (34.646525)
+new c_best (34.482298)
+Obstacles(50), Experiment (5): (34.482298)
+Planning with Linear Informed RRT
+
+new c_best (39.389092)
+Obstacles(50), Experiment (6): (39.389092)
+Planning with Linear RRT
+
+new c_best (34.540835)
+new c_best (34.056941)
+new c_best (33.777436)
+Obstacles(50), Experiment (6): (33.777436)
+Planning with Linear Informed RRT
+
+new c_best (34.875663)
+new c_best (33.153710)
+new c_best (28.931608)
+new c_best (28.645382)
+new c_best (28.503448)
+Obstacles(50), Experiment (7): (28.503448)
+Planning with Linear RRT
+
+new c_best (38.048435)
+new c_best (36.343954)
+new c_best (35.541741)
+Obstacles(50), Experiment (7): (35.541741)
+Planning with Linear Informed RRT
+
+new c_best (32.771002)
+new c_best (29.307402)
+new c_best (28.769781)
+new c_best (28.740103)
+Obstacles(50), Experiment (8): (28.740103)
+Planning with Linear RRT
+
+new c_best (34.928446)
+new c_best (32.818124)
+new c_best (30.556259)
+Obstacles(50), Experiment (8): (30.556259)
+Planning with Linear Informed RRT
+
+new c_best (37.530312)
+Obstacles(50), Experiment (9): (37.530312)
+Planning with Linear RRT
+
+new c_best (34.692407)
+new c_best (30.623302)
+Obstacles(50), Experiment (9): (30.623302)
+Planning with Linear Informed RRT
+
+new c_best (32.810720)
+new c_best (32.780298)
+new c_best (32.741361)
+new c_best (32.675237)
+new c_best (32.470913)
+Obstacles(50), Experiment (10): (32.470913)
+Planning with Linear RRT
+
+new c_best (40.070183)
+new c_best (36.431029)
+Obstacles(50), Experiment (10): (36.431029)
+Planning with Linear Informed RRT
+
+new c_best (33.309476)
+new c_best (33.207301)
+new c_best (31.316479)
+Obstacles(50), Experiment (11): (31.316479)
+Planning with Linear RRT
+
+new c_best (30.377812)
+new c_best (29.513153)
+new c_best (29.114746)
+new c_best (28.667880)
+Obstacles(50), Experiment (11): (28.667880)
+Planning with Linear Informed RRT
+
+new c_best (36.114222)
+new c_best (32.516369)
+new c_best (29.427880)
+new c_best (29.370206)
+new c_best (28.652805)
+Obstacles(50), Experiment (12): (28.652805)
+Planning with Linear RRT
+
+new c_best (36.467332)
+new c_best (35.775238)
+new c_best (35.632031)
+new c_best (35.181532)
+new c_best (34.266534)
+Obstacles(50), Experiment (12): (34.266534)
+Planning with Linear Informed RRT
+
+new c_best (32.473642)
+new c_best (29.326773)
+Obstacles(50), Experiment (13): (29.326773)
+Planning with Linear RRT
+
+new c_best (35.948403)
+new c_best (34.292094)
+Obstacles(50), Experiment (13): (34.292094)
+Planning with Linear Informed RRT
+
+new c_best (38.086111)
+new c_best (29.623759)
+new c_best (29.140141)
+Obstacles(50), Experiment (14): (29.140141)
+Planning with Linear RRT
+
+new c_best (35.813503)
+new c_best (34.984932)
+new c_best (34.760830)
+Obstacles(50), Experiment (14): (34.760830)
+Planning with Linear Informed RRT
+
+new c_best (32.891133)
+new c_best (32.502421)
+new c_best (32.500368)
+Obstacles(50), Experiment (15): (32.500368)
+Planning with Linear RRT
+
+new c_best (38.917558)
+new c_best (38.165041)
+new c_best (37.337905)
+Obstacles(50), Experiment (15): (37.337905)
+Planning with Linear Informed RRT
+
+new c_best (28.512123)
+new c_best (28.298968)
+new c_best (28.170059)
+new c_best (28.170047)
+new c_best (28.164582)
+Obstacles(50), Experiment (16): (28.164582)
+Planning with Linear RRT
+
+new c_best (33.538912)
+new c_best (30.686640)
+new c_best (29.495589)
+Obstacles(50), Experiment (16): (29.495589)
+Planning with Linear Informed RRT
+
+new c_best (38.360087)
+new c_best (30.087174)
+new c_best (29.360394)
+new c_best (29.070212)
+Obstacles(50), Experiment (17): (29.070212)
+Planning with Linear RRT
+
+new c_best (38.135371)
+new c_best (34.683205)
+new c_best (34.095687)
+new c_best (34.033976)
+Obstacles(50), Experiment (17): (34.033976)
+Planning with Linear Informed RRT
+
+new c_best (33.455573)
+new c_best (29.478437)
+new c_best (29.163313)
+Obstacles(50), Experiment (18): (29.163313)
+Planning with Linear RRT
+
+new c_best (35.691058)
+new c_best (34.457177)
+new c_best (34.200626)
+Obstacles(50), Experiment (18): (34.200626)
+Planning with Linear Informed RRT
+
+new c_best (28.862225)
+new c_best (28.747906)
+new c_best (28.590107)
+Obstacles(50), Experiment (19): (28.590107)
+Planning with Linear RRT
+
+new c_best (29.090217)
+Obstacles(50), Experiment (19): (29.090217)
+Planning with Linear Informed RRT
+
+new c_best (30.493634)
+new c_best (29.285546)
+new c_best (28.662250)
+new c_best (28.627537)
+Obstacles(50), Experiment (20): (28.627537)
+Planning with Linear RRT
+
+new c_best (32.245759)
+new c_best (30.261986)
+new c_best (29.875352)
+new c_best (29.673954)
+Obstacles(50), Experiment (20): (29.673954)
+Planning with Linear Informed RRT
+
+new c_best (42.588862)
+new c_best (41.581769)
+Obstacles(50), Experiment (21): (41.581769)
+Planning with Linear RRT
+
+new c_best (36.951704)
+Obstacles(50), Experiment (21): (36.951704)
+Planning with Linear Informed RRT
+
+new c_best (38.492375)
+new c_best (37.300491)
+new c_best (29.876835)
+new c_best (29.363867)
+Obstacles(50), Experiment (22): (29.363867)
+Planning with Linear RRT
+
+new c_best (43.777488)
+new c_best (39.847452)
+new c_best (39.577370)
+new c_best (39.314546)
+new c_best (38.109301)
+Obstacles(50), Experiment (22): (38.109301)
+Planning with Linear Informed RRT
+
+new c_best (35.057486)
+new c_best (29.058020)
+Obstacles(50), Experiment (23): (29.058020)
+Planning with Linear RRT
+
+new c_best (34.927094)
+Obstacles(50), Experiment (23): (34.927094)
+Planning with Linear Informed RRT
+
+new c_best (35.931101)
+Obstacles(50), Experiment (24): (35.931101)
+Planning with Linear RRT
+
+new c_best (28.411054)
+Obstacles(50), Experiment (24): (28.411054)
+Planning with Linear Informed RRT
+
+new c_best (37.097808)
+new c_best (29.986795)
+new c_best (28.747767)
+new c_best (28.694571)
+Obstacles(50), Experiment (25): (28.694571)
+Planning with Linear RRT
+
+new c_best (36.547031)
+new c_best (34.092926)
+new c_best (32.954810)
+Obstacles(50), Experiment (25): (32.954810)
+Planning with Linear Informed RRT
+
+new c_best (33.697091)
+new c_best (30.794004)
+new c_best (30.519287)
+new c_best (29.362511)
+new c_best (29.267298)
+new c_best (29.170482)
+new c_best (28.796013)
+Obstacles(50), Experiment (26): (28.796013)
+Planning with Linear RRT
+
+new c_best (36.192864)
+new c_best (33.327879)
+new c_best (32.869060)
+Obstacles(50), Experiment (26): (32.869060)
+Planning with Linear Informed RRT
+
+new c_best (38.276051)
+Obstacles(50), Experiment (27): (38.276051)
+Planning with Linear RRT
+
+new c_best (28.763550)
+new c_best (28.450840)
+Obstacles(50), Experiment (27): (28.450840)
+Planning with Linear Informed RRT
+
+new c_best (34.864758)
+new c_best (33.592030)
+new c_best (30.058968)
+Obstacles(50), Experiment (28): (30.058968)
+Planning with Linear RRT
+
+new c_best (30.773607)
+new c_best (30.497762)
+Obstacles(50), Experiment (28): (30.497762)
+Planning with Linear Informed RRT
+
+new c_best (37.201042)
+new c_best (29.925419)
+new c_best (28.667510)
+new c_best (28.469433)
+new c_best (28.417526)
+Obstacles(50), Experiment (29): (28.417526)
+Planning with Linear RRT
+
+new c_best (30.901597)
+Obstacles(50), Experiment (29): (30.901597)
+Planning with Linear Informed RRT
+
+new c_best (35.609788)
+new c_best (33.109909)
+Obstacles(50), Experiment (30): (33.109909)
+Planning with Linear RRT
+
+new c_best (40.880955)
+new c_best (37.148765)
+new c_best (37.011668)
+new c_best (34.129770)
+new c_best (33.367592)
+Obstacles(50), Experiment (30): (33.367592)
+Planning with Linear Informed RRT
+
+new c_best (40.102878)
+new c_best (29.167750)
+Obstacles(50), Experiment (31): (29.167750)
+Planning with Linear RRT
+
+new c_best (36.154123)
+Obstacles(50), Experiment (31): (36.154123)
+Planning with Linear Informed RRT
+
+new c_best (37.785968)
+new c_best (37.130983)
+new c_best (29.516738)
+Obstacles(50), Experiment (32): (29.516738)
+Planning with Linear RRT
+
+new c_best (30.848340)
+new c_best (30.776111)
+new c_best (30.296791)
+new c_best (29.981701)
+Obstacles(50), Experiment (32): (29.981701)
+Planning with Linear Informed RRT
+
+new c_best (34.795204)
+new c_best (32.601502)
+new c_best (29.711328)
+new c_best (28.979179)
+Obstacles(50), Experiment (33): (28.979179)
+Planning with Linear RRT
+
+new c_best (29.701769)
+new c_best (29.333792)
+new c_best (29.288393)
+Obstacles(50), Experiment (33): (29.288393)
+Planning with Linear Informed RRT
+
+new c_best (42.413394)
+new c_best (30.667743)
+new c_best (30.627880)
+Obstacles(50), Experiment (34): (30.627880)
+Planning with Linear RRT
+
+new c_best (37.095957)
+Obstacles(50), Experiment (34): (37.095957)
+Planning with Linear Informed RRT
+
+new c_best (30.754517)
+new c_best (28.852751)
+new c_best (28.228839)
+new c_best (28.215101)
+Obstacles(50), Experiment (35): (28.215101)
+Planning with Linear RRT
+
+new c_best (39.858842)
+new c_best (38.686516)
+Obstacles(50), Experiment (35): (38.686516)
+Planning with Linear Informed RRT
+
+new c_best (32.967355)
+new c_best (28.977754)
+new c_best (28.945359)
+new c_best (28.848767)
+Obstacles(50), Experiment (36): (28.848767)
+Planning with Linear RRT
+
+new c_best (48.169100)
+new c_best (41.795780)
+new c_best (41.566804)
+Obstacles(50), Experiment (36): (41.566804)
+Planning with Linear Informed RRT
+
+new c_best (37.165374)
+new c_best (36.369019)
+new c_best (32.377960)
+new c_best (32.355266)
+new c_best (30.793432)
+new c_best (30.643657)
+Obstacles(50), Experiment (37): (30.643657)
+Planning with Linear RRT
+
+new c_best (42.055974)
+new c_best (37.132680)
+new c_best (35.855556)
+new c_best (35.805065)
+new c_best (35.692390)
+new c_best (34.942393)
+Obstacles(50), Experiment (37): (34.942393)
+Planning with Linear Informed RRT
+
+new c_best (33.257779)
+new c_best (29.685026)
+new c_best (29.543259)
+new c_best (29.499698)
+new c_best (29.339557)
+new c_best (29.208012)
+Obstacles(50), Experiment (38): (29.208012)
+Planning with Linear RRT
+
+new c_best (35.872150)
+new c_best (35.658374)
+new c_best (34.914428)
+new c_best (34.243345)
+new c_best (33.264013)
+Obstacles(50), Experiment (38): (33.264013)
+Planning with Linear Informed RRT
+
+new c_best (34.493243)
+new c_best (29.943203)
+Obstacles(50), Experiment (39): (29.943203)
+Planning with Linear RRT
+
+new c_best (37.059579)
+new c_best (35.802047)
+new c_best (32.821068)
+new c_best (32.239940)
+Obstacles(50), Experiment (39): (32.239940)
+Planning with Linear Informed RRT
+
+new c_best (32.690287)
+new c_best (32.512818)
+Obstacles(50), Experiment (40): (32.512818)
+Planning with Linear RRT
+
+new c_best (39.400538)
+new c_best (37.054548)
+new c_best (36.572515)
+Obstacles(50), Experiment (40): (36.572515)
+Planning with Linear Informed RRT
+
+new c_best (36.085489)
+new c_best (34.450503)
+new c_best (34.209140)
+Obstacles(50), Experiment (41): (34.209140)
+Planning with Linear RRT
+
+new c_best (34.546623)
+new c_best (33.266074)
+new c_best (29.900496)
+new c_best (29.397094)
+Obstacles(50), Experiment (41): (29.397094)
+Planning with Linear Informed RRT
+
+new c_best (32.531666)
+new c_best (32.275649)
+Obstacles(50), Experiment (42): (32.275649)
+Planning with Linear RRT
+
+new c_best (35.629264)
+new c_best (35.514937)
+new c_best (33.082679)
+Obstacles(50), Experiment (42): (33.082679)
+Planning with Linear Informed RRT
+
+new c_best (37.568104)
+new c_best (37.110229)
+new c_best (36.129783)
+new c_best (30.654487)
+Obstacles(50), Experiment (43): (30.654487)
+Planning with Linear RRT
+
+new c_best (31.350765)
+new c_best (30.746202)
+new c_best (30.647568)
+new c_best (29.472477)
+Obstacles(50), Experiment (43): (29.472477)
+Planning with Linear Informed RRT
+
+new c_best (40.045933)
+new c_best (30.142591)
+new c_best (28.540843)
+Obstacles(50), Experiment (44): (28.540843)
+Planning with Linear RRT
+
+new c_best (32.203810)
+new c_best (31.025873)
+new c_best (30.091399)
+new c_best (30.012566)
+Obstacles(50), Experiment (44): (30.012566)
+Planning with Linear Informed RRT
+
+new c_best (29.591712)
+new c_best (28.573655)
+new c_best (28.355311)
+new c_best (28.241565)
+Obstacles(50), Experiment (45): (28.241565)
+Planning with Linear RRT
+
+new c_best (37.432156)
+new c_best (29.671112)
+Obstacles(50), Experiment (45): (29.671112)
+Planning with Linear Informed RRT
+
+new c_best (36.024804)
+new c_best (29.623904)
+new c_best (28.712728)
+new c_best (28.641101)
+Obstacles(50), Experiment (46): (28.641101)
+Planning with Linear RRT
+
+new c_best (30.134097)
+new c_best (29.665866)
+new c_best (29.394642)
+Obstacles(50), Experiment (46): (29.394642)
+Planning with Linear Informed RRT
+
+new c_best (36.635064)
+new c_best (36.510866)
+new c_best (29.490737)
+new c_best (28.885310)
+new c_best (28.623601)
+new c_best (28.523912)
+new c_best (28.523581)
+Obstacles(50), Experiment (47): (28.523581)
+Planning with Linear RRT
+
+new c_best (37.365312)
+new c_best (35.807089)
+new c_best (35.094064)
+Obstacles(50), Experiment (47): (35.094064)
+Planning with Linear Informed RRT
+
+new c_best (35.725349)
+new c_best (33.716595)
+Obstacles(50), Experiment (48): (33.716595)
+Planning with Linear RRT
+
+new c_best (37.253871)
+new c_best (36.636026)
+new c_best (36.176480)
+Obstacles(50), Experiment (48): (36.176480)
+Planning with Linear Informed RRT
+
+new c_best (38.064641)
+new c_best (36.869004)
+new c_best (36.707053)
+Obstacles(50), Experiment (49): (36.707053)
+Planning with Linear RRT
+
+new c_best (35.758474)
+new c_best (34.454935)
+Obstacles(50), Experiment (49): (34.454935)
+Planning with Linear Informed RRT
+
+new c_best (35.123417)
+new c_best (34.464137)
+Obstacles(100), Experiment (0): (34.464137)
+Planning with Linear RRT
+
+new c_best (36.923451)
+new c_best (35.689766)
+new c_best (35.575652)
+new c_best (35.481473)
+new c_best (30.652168)
+Obstacles(100), Experiment (0): (30.652168)
+Planning with Linear Informed RRT
+
+new c_best (37.078868)
+new c_best (36.869676)
+new c_best (36.820832)
+new c_best (36.099204)
+new c_best (31.756225)
+new c_best (29.787128)
+Obstacles(100), Experiment (1): (29.787128)
+Planning with Linear RRT
+
+new c_best (41.610187)
+Obstacles(100), Experiment (1): (41.610187)
+Planning with Linear Informed RRT
+
+new c_best (43.239007)
+new c_best (29.065802)
+Obstacles(100), Experiment (2): (29.065802)
+Planning with Linear RRT
+
+new c_best (38.884565)
+new c_best (38.001068)
+new c_best (34.411850)
+new c_best (33.898203)
+Obstacles(100), Experiment (2): (33.898203)
+Planning with Linear Informed RRT
+
+new c_best (37.711671)
+new c_best (34.099856)
+Obstacles(100), Experiment (3): (34.099856)
+Planning with Linear RRT
+
+new c_best (37.867781)
+new c_best (36.063305)
+new c_best (35.242619)
+new c_best (34.318838)
+Obstacles(100), Experiment (3): (34.318838)
+Planning with Linear Informed RRT
+
+new c_best (40.031011)
+new c_best (36.686508)
+new c_best (29.292175)
+new c_best (29.133424)
+new c_best (28.815395)
+new c_best (28.706696)
+Obstacles(100), Experiment (4): (28.706696)
+Planning with Linear RRT
+
+new c_best (31.779938)
+new c_best (30.133785)
+new c_best (30.064532)
+Obstacles(100), Experiment (4): (30.064532)
+Planning with Linear Informed RRT
+
+new c_best (37.448128)
+new c_best (33.221350)
+new c_best (29.622216)
+Obstacles(100), Experiment (5): (29.622216)
+Planning with Linear RRT
+
+new c_best (31.980800)
+new c_best (31.774098)
+Obstacles(100), Experiment (5): (31.774098)
+Planning with Linear Informed RRT
+
+new c_best (36.404865)
+new c_best (33.530180)
+new c_best (33.231097)
+new c_best (30.463683)
+new c_best (29.840753)
+Obstacles(100), Experiment (6): (29.840753)
+Planning with Linear RRT
+
+new c_best (38.987402)
+new c_best (38.873143)
+Obstacles(100), Experiment (6): (38.873143)
+Planning with Linear Informed RRT
+
+new c_best (29.276673)
+new c_best (28.982326)
+new c_best (28.973225)
+new c_best (28.867030)
+new c_best (28.638473)
+new c_best (28.420161)
+Obstacles(100), Experiment (7): (28.420161)
+Planning with Linear RRT
+
+new c_best (32.150650)
+Obstacles(100), Experiment (7): (32.150650)
+Planning with Linear Informed RRT
+
+new c_best (38.081530)
+new c_best (37.723732)
+Obstacles(100), Experiment (8): (37.723732)
+Planning with Linear RRT
+
+new c_best (33.412304)
+new c_best (33.292066)
+new c_best (32.950705)
+Obstacles(100), Experiment (8): (32.950705)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (9): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (9): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (34.998830)
+Obstacles(100), Experiment (10): (34.998830)
+Planning with Linear RRT
+
+new c_best (33.367367)
+new c_best (30.546803)
+Obstacles(100), Experiment (10): (30.546803)
+Planning with Linear Informed RRT
+
+new c_best (36.344148)
+new c_best (35.889517)
+new c_best (35.862676)
+Obstacles(100), Experiment (11): (35.862676)
+Planning with Linear RRT
+
+new c_best (36.860171)
+new c_best (35.205569)
+new c_best (35.088512)
+Obstacles(100), Experiment (11): (35.088512)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (12): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (12): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (35.549918)
+new c_best (32.668196)
+Obstacles(100), Experiment (13): (32.668196)
+Planning with Linear RRT
+
+new c_best (31.300608)
+new c_best (31.034581)
+new c_best (29.476448)
+Obstacles(100), Experiment (13): (29.476448)
+Planning with Linear Informed RRT
+
+new c_best (42.790066)
+new c_best (30.786838)
+Obstacles(100), Experiment (14): (30.786838)
+Planning with Linear RRT
+
+new c_best (41.250283)
+new c_best (39.060495)
+new c_best (37.898298)
+Obstacles(100), Experiment (14): (37.898298)
+Planning with Linear Informed RRT
+
+new c_best (33.756940)
+new c_best (33.247314)
+new c_best (32.991497)
+Obstacles(100), Experiment (15): (32.991497)
+Planning with Linear RRT
+
+new c_best (40.152922)
+new c_best (38.465151)
+Obstacles(100), Experiment (15): (38.465151)
+Planning with Linear Informed RRT
+
+new c_best (30.370839)
+new c_best (30.103325)
+new c_best (29.654266)
+new c_best (28.876123)
+new c_best (28.593078)
+Obstacles(100), Experiment (16): (28.593078)
+Planning with Linear RRT
+
+new c_best (36.642199)
+new c_best (36.513359)
+new c_best (32.960933)
+Obstacles(100), Experiment (16): (32.960933)
+Planning with Linear Informed RRT
+
+new c_best (30.937115)
+new c_best (30.529135)
+new c_best (29.996014)
+new c_best (29.684026)
+new c_best (29.466152)
+Obstacles(100), Experiment (17): (29.466152)
+Planning with Linear RRT
+
+new c_best (40.521289)
+new c_best (40.489071)
+Obstacles(100), Experiment (17): (40.489071)
+Planning with Linear Informed RRT
+
+new c_best (33.019599)
+new c_best (32.797551)
+new c_best (30.062475)
+new c_best (29.746878)
+new c_best (29.527862)
+Obstacles(100), Experiment (18): (29.527862)
+Planning with Linear RRT
+
+new c_best (35.689871)
+new c_best (30.932653)
+new c_best (30.856124)
+Obstacles(100), Experiment (18): (30.856124)
+Planning with Linear Informed RRT
+
+new c_best (33.632187)
+new c_best (33.352605)
+new c_best (33.207507)
+Obstacles(100), Experiment (19): (33.207507)
+Planning with Linear RRT
+
+new c_best (46.561577)
+new c_best (41.373691)
+new c_best (39.745373)
+new c_best (34.826197)
+Obstacles(100), Experiment (19): (34.826197)
+Planning with Linear Informed RRT
+
+new c_best (43.906387)
+new c_best (36.629436)
+Obstacles(100), Experiment (20): (36.629436)
+Planning with Linear RRT
+
+new c_best (39.041623)
+new c_best (36.361601)
+Obstacles(100), Experiment (20): (36.361601)
+Planning with Linear Informed RRT
+
+new c_best (31.456201)
+new c_best (30.241118)
+Obstacles(100), Experiment (21): (30.241118)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (21): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (28.743362)
+new c_best (28.713594)
+new c_best (28.454295)
+new c_best (28.429461)
+new c_best (28.401230)
+Obstacles(100), Experiment (22): (28.401230)
+Planning with Linear RRT
+
+new c_best (38.696940)
+new c_best (38.054097)
+new c_best (37.519174)
+Obstacles(100), Experiment (22): (37.519174)
+Planning with Linear Informed RRT
+
+new c_best (44.432977)
+new c_best (37.064965)
+Obstacles(100), Experiment (23): (37.064965)
+Planning with Linear RRT
+
+new c_best (36.660170)
+Obstacles(100), Experiment (23): (36.660170)
+Planning with Linear Informed RRT
+
+new c_best (41.462108)
+new c_best (33.964430)
+Obstacles(100), Experiment (24): (33.964430)
+Planning with Linear RRT
+
+new c_best (43.412081)
+new c_best (42.516566)
+new c_best (42.468224)
+Obstacles(100), Experiment (24): (42.468224)
+Planning with Linear Informed RRT
+
+new c_best (35.342918)
+new c_best (35.201037)
+new c_best (33.831009)
+new c_best (30.834461)
+Obstacles(100), Experiment (25): (30.834461)
+Planning with Linear RRT
+
+new c_best (41.803362)
+new c_best (39.797867)
+new c_best (39.337305)
+Obstacles(100), Experiment (25): (39.337305)
+Planning with Linear Informed RRT
+
+new c_best (37.171878)
+new c_best (32.545820)
+new c_best (30.014133)
+new c_best (29.800255)
+Obstacles(100), Experiment (26): (29.800255)
+Planning with Linear RRT
+
+new c_best (34.252048)
+new c_best (31.128372)
+new c_best (30.043870)
+Obstacles(100), Experiment (26): (30.043870)
+Planning with Linear Informed RRT
+
+new c_best (35.852934)
+new c_best (35.570153)
+new c_best (31.696240)
+new c_best (29.591951)
+new c_best (29.227657)
+Obstacles(100), Experiment (27): (29.227657)
+Planning with Linear RRT
+
+new c_best (33.160151)
+new c_best (32.520518)
+Obstacles(100), Experiment (27): (32.520518)
+Planning with Linear Informed RRT
+
+new c_best (29.936912)
+new c_best (29.235793)
+new c_best (29.026981)
+new c_best (28.915511)
+Obstacles(100), Experiment (28): (28.915511)
+Planning with Linear RRT
+
+new c_best (42.780732)
+new c_best (42.506117)
+Obstacles(100), Experiment (28): (42.506117)
+Planning with Linear Informed RRT
+
+new c_best (34.939985)
+new c_best (34.140162)
+Obstacles(100), Experiment (29): (34.140162)
+Planning with Linear RRT
+
+new c_best (31.838788)
+new c_best (29.535392)
+Obstacles(100), Experiment (29): (29.535392)
+Planning with Linear Informed RRT
+
+new c_best (38.257863)
+new c_best (34.224551)
+Obstacles(100), Experiment (30): (34.224551)
+Planning with Linear RRT
+
+new c_best (44.896923)
+new c_best (44.719566)
+new c_best (38.017516)
+new c_best (37.842744)
+new c_best (37.220414)
+Obstacles(100), Experiment (30): (37.220414)
+Planning with Linear Informed RRT
+
+new c_best (49.355038)
+new c_best (37.798585)
+new c_best (35.440368)
+new c_best (34.278373)
+Obstacles(100), Experiment (31): (34.278373)
+Planning with Linear RRT
+
+new c_best (52.361771)
+new c_best (38.250247)
+new c_best (33.991738)
+Obstacles(100), Experiment (31): (33.991738)
+Planning with Linear Informed RRT
+
+new c_best (33.015676)
+new c_best (32.443187)
+new c_best (28.798240)
+Obstacles(100), Experiment (32): (28.798240)
+Planning with Linear RRT
+
+new c_best (36.872922)
+new c_best (35.296593)
+Obstacles(100), Experiment (32): (35.296593)
+Planning with Linear Informed RRT
+
+new c_best (32.670522)
+Obstacles(100), Experiment (33): (32.670522)
+Planning with Linear RRT
+
+new c_best (29.774256)
+new c_best (29.480236)
+Obstacles(100), Experiment (33): (29.480236)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (34): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (34): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (34.875062)
+Obstacles(100), Experiment (35): (34.875062)
+Planning with Linear RRT
+
+new c_best (37.189395)
+new c_best (34.678866)
+new c_best (34.314567)
+new c_best (33.692026)
+Obstacles(100), Experiment (35): (33.692026)
+Planning with Linear Informed RRT
+
+new c_best (33.565744)
+new c_best (32.560331)
+new c_best (32.109510)
+new c_best (30.938341)
+new c_best (29.112700)
+new c_best (29.016814)
+new c_best (28.609420)
+Obstacles(100), Experiment (36): (28.609420)
+Planning with Linear RRT
+
+new c_best (29.615736)
+new c_best (29.470695)
+new c_best (29.035253)
+new c_best (29.026704)
+Obstacles(100), Experiment (36): (29.026704)
+Planning with Linear Informed RRT
+
+new c_best (38.345721)
+new c_best (30.027822)
+new c_best (29.924835)
+new c_best (29.684721)
+new c_best (29.239945)
+Obstacles(100), Experiment (37): (29.239945)
+Planning with Linear RRT
+
+new c_best (42.230813)
+new c_best (42.157784)
+new c_best (40.336868)
+new c_best (36.612899)
+new c_best (36.178003)
+Obstacles(100), Experiment (37): (36.178003)
+Planning with Linear Informed RRT
+
+new c_best (30.650494)
+new c_best (29.560419)
+new c_best (29.067985)
+Obstacles(100), Experiment (38): (29.067985)
+Planning with Linear RRT
+
+new c_best (34.770953)
+new c_best (33.301145)
+new c_best (31.262261)
+Obstacles(100), Experiment (38): (31.262261)
+Planning with Linear Informed RRT
+
+new c_best (34.854015)
+Obstacles(100), Experiment (39): (34.854015)
+Planning with Linear RRT
+
+new c_best (35.986599)
+new c_best (35.122824)
+new c_best (33.317713)
+Obstacles(100), Experiment (39): (33.317713)
+Planning with Linear Informed RRT
+
+new c_best (43.848530)
+new c_best (43.079896)
+new c_best (42.829781)
+new c_best (39.989234)
+new c_best (39.671577)
+Obstacles(100), Experiment (40): (39.671577)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(100), Experiment (40): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (38.989728)
+new c_best (37.879813)
+new c_best (36.211086)
+Obstacles(100), Experiment (41): (36.211086)
+Planning with Linear RRT
+
+new c_best (37.867005)
+new c_best (37.509671)
+new c_best (36.995175)
+new c_best (36.513803)
+Obstacles(100), Experiment (41): (36.513803)
+Planning with Linear Informed RRT
+
+new c_best (39.672387)
+new c_best (29.040300)
+new c_best (28.747753)
+Obstacles(100), Experiment (42): (28.747753)
+Planning with Linear RRT
+
+new c_best (38.209946)
+new c_best (37.054971)
+Obstacles(100), Experiment (42): (37.054971)
+Planning with Linear Informed RRT
+
+new c_best (34.534284)
+new c_best (32.142813)
+new c_best (29.163309)
+new c_best (29.028633)
+Obstacles(100), Experiment (43): (29.028633)
+Planning with Linear RRT
+
+new c_best (38.099474)
+new c_best (36.149791)
+Obstacles(100), Experiment (43): (36.149791)
+Planning with Linear Informed RRT
+
+new c_best (31.518906)
+new c_best (31.457158)
+new c_best (30.031319)
+new c_best (28.767571)
+new c_best (28.491506)
+Obstacles(100), Experiment (44): (28.491506)
+Planning with Linear RRT
+
+new c_best (41.073976)
+new c_best (37.848890)
+new c_best (35.007242)
+Obstacles(100), Experiment (44): (35.007242)
+Planning with Linear Informed RRT
+
+new c_best (35.404736)
+new c_best (28.866397)
+Obstacles(100), Experiment (45): (28.866397)
+Planning with Linear RRT
+
+new c_best (34.988371)
+new c_best (30.370941)
+Obstacles(100), Experiment (45): (30.370941)
+Planning with Linear Informed RRT
+
+new c_best (42.176534)
+new c_best (30.521307)
+Obstacles(100), Experiment (46): (30.521307)
+Planning with Linear RRT
+
+new c_best (30.138151)
+new c_best (29.831984)
+new c_best (29.805437)
+new c_best (29.558578)
+Obstacles(100), Experiment (46): (29.558578)
+Planning with Linear Informed RRT
+
+new c_best (32.824744)
+new c_best (30.466229)
+new c_best (29.463772)
+new c_best (28.726574)
+Obstacles(100), Experiment (47): (28.726574)
+Planning with Linear RRT
+
+new c_best (34.358990)
+new c_best (33.592324)
+Obstacles(100), Experiment (47): (33.592324)
+Planning with Linear Informed RRT
+
+new c_best (43.778477)
+new c_best (41.023186)
+Obstacles(100), Experiment (48): (41.023186)
+Planning with Linear RRT
+
+new c_best (35.250536)
+new c_best (34.943092)
+new c_best (34.450998)
+new c_best (33.735423)
+Obstacles(100), Experiment (48): (33.735423)
+Planning with Linear Informed RRT
+
+new c_best (32.266635)
+Obstacles(100), Experiment (49): (32.266635)
+Planning with Linear RRT
+
+new c_best (32.295562)
+new c_best (31.916781)
+new c_best (31.331616)
+Obstacles(100), Experiment (49): (31.331616)
+Planning with Linear Informed RRT
+
+new c_best (36.000004)
+new c_best (35.763632)
+new c_best (32.415950)
+new c_best (31.479919)
+new c_best (30.971343)
+Obstacles(150), Experiment (0): (30.971343)
+Planning with Linear RRT
+
+new c_best (47.917688)
+new c_best (35.249488)
+Obstacles(150), Experiment (0): (35.249488)
+Planning with Linear Informed RRT
+
+new c_best (30.314222)
+new c_best (29.989357)
+new c_best (29.663526)
+new c_best (29.303001)
+Obstacles(150), Experiment (1): (29.303001)
+Planning with Linear RRT
+
+new c_best (34.291315)
+new c_best (32.932636)
+Obstacles(150), Experiment (1): (32.932636)
+Planning with Linear Informed RRT
+
+new c_best (37.628736)
+new c_best (36.135702)
+new c_best (30.025378)
+Obstacles(150), Experiment (2): (30.025378)
+Planning with Linear RRT
+
+new c_best (34.619965)
+new c_best (33.798849)
+new c_best (31.930725)
+Obstacles(150), Experiment (2): (31.930725)
+Planning with Linear Informed RRT
+
+new c_best (34.941121)
+Obstacles(150), Experiment (3): (34.941121)
+Planning with Linear RRT
+
+new c_best (30.310166)
+new c_best (30.069105)
+new c_best (29.761465)
+Obstacles(150), Experiment (3): (29.761465)
+Planning with Linear Informed RRT
+
+new c_best (32.073942)
+new c_best (30.176073)
+new c_best (30.022122)
+new c_best (29.661435)
+new c_best (29.126981)
+Obstacles(150), Experiment (4): (29.126981)
+Planning with Linear RRT
+
+new c_best (37.007262)
+new c_best (30.598227)
+Obstacles(150), Experiment (4): (30.598227)
+Planning with Linear Informed RRT
+
+new c_best (32.102963)
+new c_best (28.960984)
+Obstacles(150), Experiment (5): (28.960984)
+Planning with Linear RRT
+
+new c_best (35.672271)
+new c_best (34.806225)
+Obstacles(150), Experiment (5): (34.806225)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (6): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (6): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (37.947967)
+new c_best (35.856138)
+Obstacles(150), Experiment (7): (35.856138)
+Planning with Linear RRT
+
+new c_best (36.477248)
+new c_best (36.135593)
+new c_best (36.110645)
+Obstacles(150), Experiment (7): (36.110645)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (8): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (8): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (35.341261)
+Obstacles(150), Experiment (9): (35.341261)
+Planning with Linear RRT
+
+new c_best (35.076139)
+new c_best (32.519823)
+new c_best (31.749361)
+Obstacles(150), Experiment (9): (31.749361)
+Planning with Linear Informed RRT
+
+new c_best (30.963667)
+new c_best (30.463370)
+new c_best (28.942993)
+new c_best (28.940532)
+Obstacles(150), Experiment (10): (28.940532)
+Planning with Linear RRT
+
+new c_best (29.994778)
+Obstacles(150), Experiment (10): (29.994778)
+Planning with Linear Informed RRT
+
+new c_best (37.338645)
+new c_best (37.063442)
+new c_best (36.002280)
+new c_best (35.069876)
+new c_best (34.895862)
+Obstacles(150), Experiment (11): (34.895862)
+Planning with Linear RRT
+
+new c_best (34.842760)
+new c_best (33.879518)
+Obstacles(150), Experiment (11): (33.879518)
+Planning with Linear Informed RRT
+
+new c_best (36.769800)
+new c_best (36.010723)
+new c_best (34.867412)
+new c_best (34.367958)
+new c_best (33.799658)
+Obstacles(150), Experiment (12): (33.799658)
+Planning with Linear RRT
+
+new c_best (35.991187)
+new c_best (34.978256)
+new c_best (34.759015)
+new c_best (34.417507)
+Obstacles(150), Experiment (12): (34.417507)
+Planning with Linear Informed RRT
+
+new c_best (36.087694)
+new c_best (33.042749)
+new c_best (33.002502)
+Obstacles(150), Experiment (13): (33.002502)
+Planning with Linear RRT
+
+new c_best (33.330162)
+new c_best (32.991310)
+new c_best (32.976220)
+new c_best (32.725537)
+Obstacles(150), Experiment (13): (32.725537)
+Planning with Linear Informed RRT
+
+new c_best (39.698184)
+new c_best (32.084963)
+new c_best (30.660704)
+Obstacles(150), Experiment (14): (30.660704)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (14): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (46.455893)
+new c_best (46.449761)
+new c_best (46.228416)
+Obstacles(150), Experiment (15): (46.228416)
+Planning with Linear RRT
+
+new c_best (39.268822)
+new c_best (38.721733)
+new c_best (37.244472)
+new c_best (36.827448)
+Obstacles(150), Experiment (15): (36.827448)
+Planning with Linear Informed RRT
+
+new c_best (37.937384)
+new c_best (37.546774)
+Obstacles(150), Experiment (16): (37.546774)
+Planning with Linear RRT
+
+new c_best (41.766006)
+new c_best (40.042452)
+Obstacles(150), Experiment (16): (40.042452)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (17): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (17): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (35.141711)
+new c_best (34.331131)
+Obstacles(150), Experiment (18): (34.331131)
+Planning with Linear RRT
+
+new c_best (34.261571)
+new c_best (33.787832)
+Obstacles(150), Experiment (18): (33.787832)
+Planning with Linear Informed RRT
+
+new c_best (37.054294)
+new c_best (32.120359)
+new c_best (31.467688)
+Obstacles(150), Experiment (19): (31.467688)
+Planning with Linear RRT
+
+new c_best (34.585498)
+new c_best (33.218998)
+Obstacles(150), Experiment (19): (33.218998)
+Planning with Linear Informed RRT
+
+new c_best (36.492716)
+new c_best (36.443227)
+new c_best (30.451755)
+Obstacles(150), Experiment (20): (30.451755)
+Planning with Linear RRT
+
+new c_best (36.048771)
+new c_best (32.184864)
+Obstacles(150), Experiment (20): (32.184864)
+Planning with Linear Informed RRT
+
+new c_best (39.019004)
+new c_best (38.081662)
+new c_best (35.274586)
+new c_best (35.244708)
+Obstacles(150), Experiment (21): (35.244708)
+Planning with Linear RRT
+
+new c_best (38.100553)
+new c_best (38.069673)
+new c_best (38.026672)
+Obstacles(150), Experiment (21): (38.026672)
+Planning with Linear Informed RRT
+
+new c_best (37.717627)
+new c_best (37.679378)
+new c_best (36.895776)
+Obstacles(150), Experiment (22): (36.895776)
+Planning with Linear RRT
+
+new c_best (35.913170)
+new c_best (35.167707)
+new c_best (35.089510)
+Obstacles(150), Experiment (22): (35.089510)
+Planning with Linear Informed RRT
+
+new c_best (37.849006)
+new c_best (36.452032)
+new c_best (34.708464)
+Obstacles(150), Experiment (23): (34.708464)
+Planning with Linear RRT
+
+new c_best (35.646176)
+new c_best (34.655556)
+new c_best (34.590043)
+Obstacles(150), Experiment (23): (34.590043)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (24): (0.000000)
+Planning with Linear RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (24): (0.000000)
+Planning with Linear Informed RRT
+
+new c_best (33.401659)
+new c_best (29.693260)
+new c_best (28.574151)
+new c_best (28.280178)
+Obstacles(150), Experiment (25): (28.280178)
+Planning with Linear RRT
+
+new c_best (34.679855)
+new c_best (30.237466)
+new c_best (30.144233)
+Obstacles(150), Experiment (25): (30.144233)
+Planning with Linear Informed RRT
+
+new c_best (36.667189)
+new c_best (36.474566)
+new c_best (35.300737)
+Obstacles(150), Experiment (26): (35.300737)
+Planning with Linear RRT
+
+new c_best (34.476937)
+new c_best (33.794950)
+new c_best (33.501667)
+Obstacles(150), Experiment (26): (33.501667)
+Planning with Linear Informed RRT
+
+new c_best (34.335345)
+Obstacles(150), Experiment (27): (34.335345)
+Planning with Linear RRT
+
+new c_best (43.202334)
+new c_best (41.750782)
+new c_best (41.713768)
+Obstacles(150), Experiment (27): (41.713768)
+Planning with Linear Informed RRT
+
+new c_best (37.539286)
+new c_best (30.918034)
+new c_best (29.657664)
+Obstacles(150), Experiment (28): (29.657664)
+Planning with Linear RRT
+
+new c_best (34.020736)
+new c_best (31.869962)
+new c_best (31.672727)
+new c_best (31.162478)
+new c_best (31.093753)
+new c_best (30.286967)
+Obstacles(150), Experiment (28): (30.286967)
+Planning with Linear Informed RRT
+
+new c_best (41.052483)
+new c_best (40.660739)
+new c_best (38.073063)
+Obstacles(150), Experiment (29): (38.073063)
+Planning with Linear RRT
+
+new c_best (34.735039)
+new c_best (34.307249)
+new c_best (34.210550)
+new c_best (34.109295)
+Obstacles(150), Experiment (29): (34.109295)
+Planning with Linear Informed RRT
+
+new c_best (39.199314)
+new c_best (38.763855)
+new c_best (35.188954)
+Obstacles(150), Experiment (30): (35.188954)
+Planning with Linear RRT
+
+new c_best (45.160703)
+new c_best (45.010474)
+new c_best (44.738805)
+new c_best (39.940579)
+Obstacles(150), Experiment (30): (39.940579)
+Planning with Linear Informed RRT
+
+new c_best (43.731756)
+new c_best (43.504687)
+Obstacles(150), Experiment (31): (43.504687)
+Planning with Linear RRT
+
+new c_best (31.502640)
+new c_best (30.883575)
+Obstacles(150), Experiment (31): (30.883575)
+Planning with Linear Informed RRT
+
+new c_best (34.473564)
+new c_best (33.697654)
+Obstacles(150), Experiment (32): (33.697654)
+Planning with Linear RRT
+
+new c_best (38.108667)
+new c_best (38.086873)
+new c_best (38.070582)
+new c_best (37.865633)
+Obstacles(150), Experiment (32): (37.865633)
+Planning with Linear Informed RRT
+
+new c_best (31.369077)
+new c_best (30.487819)
+Obstacles(150), Experiment (33): (30.487819)
+Planning with Linear RRT
+
+new c_best (33.548356)
+new c_best (33.413194)
+new c_best (33.396693)
+new c_best (33.015423)
+Obstacles(150), Experiment (33): (33.015423)
+Planning with Linear Informed RRT
+
+new c_best (35.475089)
+new c_best (28.846243)
+new c_best (28.844704)
+Obstacles(150), Experiment (34): (28.844704)
+Planning with Linear RRT
+
+new c_best (29.331229)
+new c_best (29.306544)
+new c_best (29.214141)
+Obstacles(150), Experiment (34): (29.214141)
+Planning with Linear Informed RRT
+
+new c_best (37.526316)
+new c_best (37.343914)
+new c_best (31.194132)
+new c_best (31.112645)
+Obstacles(150), Experiment (35): (31.112645)
+Planning with Linear RRT
+
+new c_best (37.534472)
+new c_best (36.205120)
+new c_best (36.119631)
+new c_best (35.801713)
+Obstacles(150), Experiment (35): (35.801713)
+Planning with Linear Informed RRT
+
+new c_best (41.904411)
+new c_best (41.245848)
+new c_best (38.461519)
+new c_best (38.309529)
+Obstacles(150), Experiment (36): (38.309529)
+Planning with Linear RRT
+
+new c_best (47.144312)
+new c_best (46.548846)
+new c_best (46.225178)
+Obstacles(150), Experiment (36): (46.225178)
+Planning with Linear Informed RRT
+
+new c_best (35.269964)
+new c_best (34.520304)
+new c_best (34.143357)
+new c_best (33.305350)
+new c_best (33.005031)
+new c_best (29.844888)
+new c_best (28.913146)
+Obstacles(150), Experiment (37): (28.913146)
+Planning with Linear RRT
+
+new c_best (31.825035)
+new c_best (29.829076)
+new c_best (29.671754)
+new c_best (29.495666)
+Obstacles(150), Experiment (37): (29.495666)
+Planning with Linear Informed RRT
+
+new c_best (38.020297)
+new c_best (37.872880)
+new c_best (36.567926)
+new c_best (36.041675)
+new c_best (35.658377)
+new c_best (34.265748)
+Obstacles(150), Experiment (38): (34.265748)
+Planning with Linear RRT
+
+new c_best (38.180434)
+new c_best (33.783677)
+Obstacles(150), Experiment (38): (33.783677)
+Planning with Linear Informed RRT
+
+new c_best (35.563916)
+new c_best (34.510916)
+Obstacles(150), Experiment (39): (34.510916)
+Planning with Linear RRT
+
+new c_best (37.904847)
+new c_best (34.044817)
+Obstacles(150), Experiment (39): (34.044817)
+Planning with Linear Informed RRT
+
+new c_best (31.932410)
+new c_best (31.808441)
+new c_best (30.896962)
+Obstacles(150), Experiment (40): (30.896962)
+Planning with Linear RRT
+
+new c_best (32.824470)
+new c_best (30.842933)
+Obstacles(150), Experiment (40): (30.842933)
+Planning with Linear Informed RRT
+
+new c_best (32.943993)
+new c_best (29.558053)
+new c_best (28.941530)
+Obstacles(150), Experiment (41): (28.941530)
+Planning with Linear RRT
+
+new c_best (32.098398)
+new c_best (29.572286)
+Obstacles(150), Experiment (41): (29.572286)
+Planning with Linear Informed RRT
+
+new c_best (40.659364)
+new c_best (35.877822)
+Obstacles(150), Experiment (42): (35.877822)
+Planning with Linear RRT
+
+new c_best (45.794968)
+new c_best (45.150648)
+new c_best (35.500868)
+new c_best (35.266346)
+new c_best (35.141919)
+Obstacles(150), Experiment (42): (35.141919)
+Planning with Linear Informed RRT
+
+new c_best (39.965657)
+new c_best (39.950950)
+new c_best (33.120801)
+new c_best (31.113177)
+new c_best (30.758553)
+new c_best (30.538771)
+Obstacles(150), Experiment (43): (30.538771)
+Planning with Linear RRT
+
+new c_best (35.279827)
+new c_best (33.851402)
+Obstacles(150), Experiment (43): (33.851402)
+Planning with Linear Informed RRT
+
+new c_best (37.098162)
+new c_best (36.739777)
+new c_best (36.032415)
+Obstacles(150), Experiment (44): (36.032415)
+Planning with Linear RRT
+
+new c_best (36.949097)
+new c_best (36.753632)
+Obstacles(150), Experiment (44): (36.753632)
+Planning with Linear Informed RRT
+
+new c_best (43.239268)
+Obstacles(150), Experiment (45): (43.239268)
+Planning with Linear RRT
+
+new c_best (36.397201)
+new c_best (33.840197)
+Obstacles(150), Experiment (45): (33.840197)
+Planning with Linear Informed RRT
+
+new c_best (34.479844)
+new c_best (31.036324)
+new c_best (29.897837)
+new c_best (29.821942)
+Obstacles(150), Experiment (46): (29.821942)
+Planning with Linear RRT
+
+new c_best (46.789556)
+new c_best (46.345374)
+new c_best (30.893709)
+Obstacles(150), Experiment (46): (30.893709)
+Planning with Linear Informed RRT
+
+new c_best (38.864653)
+Obstacles(150), Experiment (47): (38.864653)
+Planning with Linear RRT
+
+new c_best (39.132096)
+new c_best (38.924541)
+Obstacles(150), Experiment (47): (38.924541)
+Planning with Linear Informed RRT
+
+new c_best (36.673216)
+new c_best (28.561157)
+new c_best (28.476916)
+new c_best (28.473475)
+Obstacles(150), Experiment (48): (28.473475)
+Planning with Linear RRT
+
+new c_best (36.346498)
+new c_best (36.269093)
+Obstacles(150), Experiment (48): (36.269093)
+Planning with Linear Informed RRT
+
+Could not find any path within iteration limit
+Obstacles(150), Experiment (49): (0.000000)
+Planning with Linear RRT
+

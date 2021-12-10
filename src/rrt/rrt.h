@@ -7,6 +7,7 @@
 #include "eigen3/Eigen/Geometry"
 #include "shared/util/random.h"
 #include "vector_map/vector_map.h"
+#include "visualization/visualization.h"
 #define GOAL_RADIUS 0.25f
 
 
@@ -47,7 +48,7 @@ struct TreeNode
 class RRT {
  public:
   // RRT();
-  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_, const vector_map::VectorMap& map);
+  RRT(Eigen::Vector2f x_start, double x_start_heading, Eigen::Vector2f x_goal, double x_goal_heading, std::pair<double, double> x_bounds_, std::pair<double, double> y_bounds_, const vector_map::VectorMap& map, const amrl_msgs::VisualizationMsg& map_viz_msg);
 
   ~RRT();
   Eigen::Vector2f Sample(double c_max);
@@ -72,13 +73,15 @@ class RRT {
   bool CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Eigen::Vector2f> obsevation_points);
 
   // Variants of RRT* algorithms
-  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<Eigen::Vector2f> LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
-  std::vector<Eigen::Vector2f> LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0);
+  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<std::pair<double, Eigen::Vector2f>> KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<Eigen::Vector2f> LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
+  std::vector<Eigen::Vector2f> LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations=100000, double costGap=-1.0, double optimalCost=-100.0, double improvement_iterations=-100.0);
 
   // Sets the map_cloud_ variable to represent the pointcloud in the map frame
   void getMapPointCloud(const std::vector<Eigen::Vector2f>& points);
+
+  double c_best_overall;
 
  private:
   // Initial State
@@ -112,6 +115,9 @@ class RRT {
 
   // Point cloud in map frame
   std::vector<Eigen::Vector2f> map_cloud_;
+
+  // Map visualization
+  amrl_msgs::VisualizationMsg map_viz_msg_;
 };
 
 } // namespace rrt

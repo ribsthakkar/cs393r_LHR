@@ -99,7 +99,7 @@ void TreeNode::RemoveChild(TreeNode* childToRemove)
 }
 
 
-RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map):
+RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, double x_goal_heading, std::pair<double, double> x_bounds, std::pair<double, double> y_bounds, const vector_map::VectorMap& map, const VisualizationMsg& map_viz_msg):
   x_start_(x_start_loc),
   x_start_heading_(x_start_heading),
   x_goal_(x_goal_loc),
@@ -109,7 +109,8 @@ RRT::RRT(Vector2f x_start_loc, double x_start_heading, Vector2f x_goal_loc, doub
   y_bounds_(y_bounds),
   map_(map),
   ellipse_(x_start_loc, x_goal_loc),
-  root_(new TreeNode(x_start_loc, x_start_heading)) {
+  root_(new TreeNode(x_start_loc, x_start_heading)),
+  map_viz_msg_(map_viz_msg) {
       node_ptrs_.push_back(root_);
       ros::NodeHandle n;
       global_viz_msg_ = visualization::NewVisualizationMessage(
@@ -315,19 +316,22 @@ bool RRT::CollisionFreeLinear(State& x_nearest, State& x_new, std::vector<Vector
   // Check the map
   for (const auto& line : map_.lines) {
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.4) return false;
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, line.p0, line.p1) <= 0.05) return false;
   }
   // Check point cloud
   for (const auto& point: local_observation_points)
   {
     Eigen::Vector2f dpoint = point + Eigen::Vector2f(0.01, 0.01);
     if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.4) return false;
+    // if (geometry::MinDistanceLineLine(x_nearest.loc, x_new.loc, point, dpoint) <= 0.05) return false;
   }
   return true;
 } 
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Kinodynamic Informed RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
@@ -337,6 +341,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -346,10 +352,17 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
+
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
 
     Vector2f x_rand = Sample(c_best);
     TreeNode* x_nearest = Nearest(x_rand);
@@ -439,9 +452,10 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicInformedRRT(std::vector
   return output;
 }
 
-std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Kinodynamic RRT\n" << std::endl;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
@@ -451,6 +465,8 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -460,10 +476,17 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
+
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
 
     Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
     TreeNode* x_nearest = Nearest(x_rand);
@@ -553,10 +576,12 @@ std::vector<std::pair<double, Vector2f>> RRT::KinodynamicRRT(std::vector<Eigen::
   return output;
 }
 
-std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear Informed RRT\n" << std::endl;
+  c_best_overall = 0;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
@@ -565,6 +590,8 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -574,12 +601,24 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
 
+    if (found_init_solution) {
+      num_improve_iter++;
+    }
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
+
     Vector2f x_rand = Sample(c_best);
+    while (x_rand.x() > x_bounds_.second || x_rand.x() < x_bounds_.first || x_rand.y() > y_bounds_.second || x_rand.y() < y_bounds_.first ) {
+      // printf("X rand (%f, %f) is out of boundsd \n", x_rand.x(), x_rand.y());
+      x_rand = Sample(c_best);
+    }
     TreeNode* x_nearest = Nearest(x_rand);
     if (x_nearest == nullptr)
     {
@@ -648,10 +687,12 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   return output;
 }
 
-std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost)
+std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int max_iterations, double costGap, double optimalCost, double improvement_iterations)
 {
   visualization::ClearVisualizationMsg(global_viz_msg_);
+  global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear RRT\n" << std::endl;
+  c_best_overall = 0;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
@@ -660,6 +701,8 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
   std::map<TreeNode*, double> goalNodes;
   TreeNode* x_best = nullptr;
   double c_best = std::numeric_limits<double>::infinity();
+  bool found_init_solution = false;
+  int num_improve_iter = 0;
   for (int i = 0; i < max_iterations; ++i)
   {
     if (costGap > 0 && (c_best-optimalCost)/optimalCost < costGap)
@@ -669,10 +712,16 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
       if (gn.second < c_best)
       {
         printf("new c_best (%f)\n", gn.second);
+        found_init_solution = true;
         c_best = gn.second;
         x_best = gn.first;
+        c_best_overall = c_best;
       }
     }
+    if (found_init_solution)
+      num_improve_iter++;
+    if (improvement_iterations > 0 && improvement_iterations < num_improve_iter)
+      break;
     // Main difference is how we sample. In regular rrt* we just have uniform sampling
     Vector2f x_rand = Sample(std::numeric_limits<double>::infinity());
     TreeNode* x_nearest = Nearest(x_rand);

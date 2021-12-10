@@ -3596,4 +3596,3 @@ new c_best (14.132428)
 new c_best (13.936416)
 Scale(5), Experiment (49): (0.795498)
 Planning with Linear RRT
-

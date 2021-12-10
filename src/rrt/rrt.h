@@ -8,7 +8,7 @@
 #include "shared/util/random.h"
 #include "vector_map/vector_map.h"
 #include "visualization/visualization.h"
-#define GOAL_RADIUS 0.25f
+#define GOAL_RADIUS 0.5f
 
 
 namespace rrt {

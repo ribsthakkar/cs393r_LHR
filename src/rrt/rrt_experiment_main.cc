@@ -78,7 +78,7 @@ void SignalHandler(int) {
 
 enum RRTVariant {KIRRT, LIRRT, KRRT, LRRT};
 
-void Experiment1(RRTVariant variant, const VisualizationMsg& map_viz_msg, int numExperiments=100) {
+void Experiment1(RRTVariant variant, int numExperiments=100) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-5,-5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(5, 5);
   double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
@@ -225,7 +225,7 @@ std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment3
 }
 
 
-void Experiment3(RRTVariant variant, VisualizationMsg& viz_msg, int numExperiments=50)
+void Experiment3(RRTVariant variant, int numExperiments=50)
 {
   std::vector<Eigen::Vector2f> emptyPointCloud;
   std::vector<std::pair<double, Eigen::Vector2f>> koutput;
@@ -237,6 +237,7 @@ void Experiment3(RRTVariant variant, VisualizationMsg& viz_msg, int numExperimen
     Eigen::Vector2f startLocation(-5.0f, 0.0f);
     Eigen::Vector2f endLocation(5.0f, 0.0f);
     double minDistance = (startLocation - endLocation).norm() - GOAL_RADIUS;
+    VisualizationMsg viz_msg = visualization::NewVisualizationMessage("map", "map_lines");
 
   for (int gap = 1; gap <= 5; gap++)
   {

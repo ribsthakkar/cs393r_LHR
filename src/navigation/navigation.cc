@@ -49,7 +49,7 @@ using namespace ros_helpers;
 
 DEFINE_double(safety_margin, 0.15, "Safety margin around robot, in meters");
 DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
-DEFINE_double(fpl_weight, 0.001, "Free path length weight");
+DEFINE_double(fpl_weight, 0.01, "Free path length weight");
 DEFINE_double(clearance_weight, 0.05, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 DEFINE_double(carrot_radius, 3.0, "Max distance for local goal");

@@ -286,9 +286,8 @@ int main(int argc, char** argv) {
 
   // Experiment1(RRTVariant::KIRRT, map, global_viz_msg, 1);
   // Experiment1(RRTVariant::KRRT, map, global_viz_msg, 1);
-  Experiment2(RRTVariant::LIRRT, 3);
-  Experiment2(RRTVariant::LRRT, 3);
-
+  Experiment2(RRTVariant::LIRRT, 50);
+  Experiment2(RRTVariant::LRRT, 50);
 
   printf("Finished experiments\n");
   RateLoop loop(20.0);

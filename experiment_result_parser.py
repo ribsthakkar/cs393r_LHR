@@ -37,12 +37,13 @@ with open("experiment2_results.txt", 'r') as results:
             time = float(time)
             if obs not in data[last_experiment]:
                 data[last_experiment][obs] = []
-            data[last_experiment][obs].append(time)
+            if time > 10:
+                data[last_experiment][obs].append(time)
 
 for exp, obss in data.items():
     print("For variant ", exp)
     for o in obss:
-        print(f"\t Obstacles {o} average time: {sum(obss[o])/len(obss[o])}")
+        print(f"\t Obstacles {o} average cost: {sum(obss[o])/len(obss[o])}")
 
 
 print("Experiment 3 Results")

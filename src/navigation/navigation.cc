@@ -18,7 +18,7 @@
 \author  Joydeep Biswas, (C) 2019
 */
 //========================================================================
-
+#include <cmath>
 #include "gflags/gflags.h"
 #include "eigen3/Eigen/Dense"
 #include "eigen3/Eigen/Geometry"
@@ -35,6 +35,7 @@
 #include "visualization/visualization.h"
 #include "vector_map/vector_map.h"
 #include "graph/graph.h"
+#include "rrt/rrt.h"
 
 using Eigen::Vector2f;
 using Eigen::Rotation2Df;
@@ -51,7 +52,8 @@ DEFINE_double(d2g_weight, 0.05, "Distance to goal weight");
 DEFINE_double(fpl_weight, 0.01, "Free path length weight");
 DEFINE_double(clearance_weight, 0.05, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
-DEFINE_double(carrot_radius, 5.0, "Max distance for local goal");
+DEFINE_double(carrot_radius, 3.0, "Max distance for local goal");
+DEFINE_bool(rrt_planner, false, "Use RRT integrated planner for autonomous navigation");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -116,7 +118,8 @@ Navigation::Navigation(const string& map_file, ros::NodeHandle* n, float system_
     act_latency_((ac_to_obs/(ac_to_obs+1.0))*system_latency),
     obs_latency_((1.0/(ac_to_obs+1.0))*system_latency),
     map_(map_file),
-    graph_(map_) {
+    graph_(map_),
+    done(false) {
   
   uint history_length = static_cast<uint>(CONTROL_FREQUENCY * system_latency) + 1;
   vel_history_ = std::deque<float>(history_length, 0.0);
@@ -139,6 +142,7 @@ void Navigation::GlobalPlan() {
   for(auto& p: global_plan_) {
     printf("(%f, %f)\n", p.x(), p.y());
   }
+  //rrt_plan_.clear();
 }
 
 void Navigation::SetNavGoal(const Vector2f& loc, float angle) {
@@ -153,8 +157,9 @@ void Navigation::UpdateLocation(const Eigen::Vector2f& loc, float angle) {
   robot_loc_ = loc;
   robot_angle_ = angle;
   // printf("%d\n", nav_set_);
-  if (nav_set_) {
+  if (nav_set_ && !done) {
     GlobalPlan();
+    done = true;
   }
 }
 
@@ -203,22 +208,23 @@ void Navigation::estimate_latency_compensated_odometry(Eigen::Vector2f* projecte
 }
 
 float Navigation::compute_toc(float distance_to_target, float init_v) {
+  float dtt = fabs(distance_to_target);
   float t1 = (MAX_VELOCITY-init_v)/MAX_ACCELERATION;
   float x1 = 0.5*(init_v+MAX_VELOCITY)*t1;
   float x3 = (MAX_VELOCITY*MAX_VELOCITY)/(2*MAX_DECELERATION);
-  float x2 = distance_to_target - x1 - x3;
+  float x2 = dtt - x1 - x3;
   float t2 = x2/MAX_VELOCITY;
   if (t2 < DT) { // Not enough time to accelerate to cruising speed
     float new_x3 = (init_v*init_v)/(2*MAX_DECELERATION);
-    float new_x1 = distance_to_target - new_x3;
+    float new_x1 = dtt - new_x3;
     if (new_x1 < 0) { // Not enough distance to brake
       return 0.0; 
     }
     float target_v = std::min(MAX_VELOCITY, sqrt(2*MAX_ACCELERATION*new_x1));
-    return target_v;
+    return copysignf(target_v, distance_to_target);
   } else { // Enough time to accelerate to cruising speed
     float target_v = std::min(MAX_VELOCITY, init_v+MAX_ACCELERATION*DT);
-    return target_v;
+    return copysignf(target_v, distance_to_target);
   }
 }
 
@@ -252,60 +258,7 @@ float Navigation::compute_arc_distance_to_goal(float arc_radius, Eigen::Vector2f
   }
 }
 
-void Navigation::Run() {
-  // This function gets called 20 times a second to form the control loop.
-  
-  // Clear previous visualizations.
-  visualization::ClearVisualizationMsg(local_viz_msg_);
-  visualization::ClearVisualizationMsg(global_viz_msg_);
-
-  // If odometry has not been initialized, we can't do anything.
-  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
-
-  // Always publish the car visualization
-  DrawCar(0xff0000, local_viz_msg_);
-  local_viz_msg_.header.stamp = ros::Time::now();
-
-  // The control iteration goes here. 
-
-  // STEP 1: Latency compensation-odometry  
-  // Project our position to estimated position actuation latency from now.
-  // Use history of actuations 1 system latency ago
-  Vector2f projected_loc = odom_loc_;
-  float projected_angle = odom_angle_;
-  Vector2f projected_velocity = robot_vel_;
-  float projected_dist_traversed = odom_dist_traversed_;
-  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
-
-  // If there is no plan or we finished it, don't do anything
-  // Note: this assumes the last element of the global plan is the goal
-  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
-    nav_complete_ = true;
-    return;
-  }
-
-  // Check if we need to replan
-  std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
-  if (!local_goal.first) {
-    GlobalPlan();
-    return;
-  }
-  auto goal = local_goal.second;
-  visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
-  viz_pub_.publish(local_viz_msg_);
-
-  // Visualize global plan
-  for (size_t i=0 ; i < global_plan_.size()-1; i++) {
-    visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
-  }
-
-
-  // STEP 2: Latency compensation-point_cloud/vehicle landmarks
-  // The latest observed point cloud is accessible via "point_cloud_"
-  float dangle = odom_angle_ - projected_angle;
-  Vector2f dloc = odom_loc_ - projected_loc;
-  apply_latency_compensated_odometry(dloc, dangle);
-
+std::pair<double, double> Navigation::BasicLocalPlan(Eigen::Vector2f& goal) {
   // STEP 3,4: Do obstacle avoidance calculations to determine target steering angle/curvature
   // For every steering angle
   drive_msg_.curvature = 0.0;
@@ -467,22 +420,7 @@ void Navigation::Run() {
   }
 
   visualization::DrawPathOption(chosen_curvature, chosen_free_path_length, 0.0, local_viz_msg_);
-  drive_msg_.curvature = chosen_curvature;
-  // (void) chosen_curvature;
-  // drive_msg_.curvature = 1.0;
-  // STEP 5: Apply 1D TOC to determine velocity 
-// STEP 5: Apply 1D TOC to determine velocity 
-  // STEP 5: Apply 1D TOC to determine velocity 
-  drive_msg_.velocity = compute_toc(chosen_free_path_length, projected_velocity.norm());
-  // drive_msg_.velocity = 0.3;
-
-
-  // STEP 6: Update History
-  vel_history_.pop_front();
-  steer_history_.pop_front();
-  vel_history_.push_back(drive_msg_.velocity);
-  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
-
+  
   if (FLAGS_verbose) {
     std::cout << "velocity history: " << vel_history_ << '\n';
     std::cout << "steering history: " << steer_history_ << '\n';
@@ -492,6 +430,128 @@ void Navigation::Run() {
     std::cout << "Max weighted score: " << max_weighted_score << std::endl;
     std::cout << "chosen distance to target: " << chosen_distance_to_goal << std::endl;
   }
+  
+  return std::make_pair(chosen_curvature, chosen_free_path_length);
+}
+
+std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, double initial_angle, Eigen::Vector2f& local_goal) {
+  // TODO
+  if (global_plan_.empty())
+    return std::make_pair(0.0, 0.0);
+  
+  // Condition for when to replan
+  if (rrt_plan_.empty()) {
+    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, robot_loc_ + Eigen::Rotation2Df(robot_angle_)*local_goal, nav_goal_angle_, std::make_pair(robot_loc_.x()-FLAGS_carrot_radius, robot_loc_.x()+FLAGS_carrot_radius), std::make_pair(robot_loc_.y()-FLAGS_carrot_radius, robot_loc_.y()+FLAGS_carrot_radius), map_, visualization::NewVisualizationMessage("map", "navigation_global"));
+    // auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, local_goal, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 25.0), map_, visualization::NewVisualizationMessage("map", "navigation_global"));
+    // POINT COULD IS IN ROBOT's LOCAL FRAME
+    auto rrt_plan_2 = rr_tree.KinodynamicInformedRRT(point_cloud_, 3000, -1.0, -1.0, 100);
+    for (auto p: rrt_plan_2) {
+      rrt_plan_.push_back(p.second);
+    }
+    // Don't move anywhere for this input
+    return std::make_pair(0.0, 0.0);
+  }
+  // Visualize plan
+  for (size_t i=rrt_plan_.size()-1; i > 0; --i) {
+    auto p = rrt_plan_[i];
+    visualization::DrawCross(p, 0.2, 0x203ee8, global_viz_msg_);
+    //auto chord_distance = (p - rrt_plan_[i-1]).norm();
+      visualization::DrawLine(p, rrt_plan_[i-1], 0x203ee8, global_viz_msg_);
+  }
+  visualization::DrawCross(rrt_plan_[0], 0.2, 0x203ee8, global_viz_msg_);
+  visualization::DrawCross(robot_loc_, 0.2, 0x203ee8, global_viz_msg_);
+  auto next_move = rrt_plan_.back();
+  auto chord_distance = (robot_loc_ - next_move).norm();
+  printf("Steps left in rrt_plan %ld \n", rrt_plan_.size());
+  cout << "Next way ppoint " << next_move << std::endl;
+  while (chord_distance < 0.5) {
+    rrt_plan_.pop_back();
+    if (rrt_plan_.size() == 0)
+    {
+      return std::make_pair(0.0, 0.0);
+    }
+    next_move = rrt_plan_.back();
+    chord_distance = (robot_loc_ - next_move).norm();
+  }
+  auto new_local_goal = Eigen::Rotation2Df(-robot_angle_) * (next_move - robot_loc_);
+  return BasicLocalPlan(new_local_goal);
+}
+
+void Navigation::Run() {
+  // This function gets called 20 times a second to form the control loop.
+  
+  // Clear previous visualizations.
+  visualization::ClearVisualizationMsg(local_viz_msg_);
+  visualization::ClearVisualizationMsg(global_viz_msg_);
+
+  // If odometry has not been initialized, we can't do anything.
+  if (!odom_initialized_ || !localization_initialized_ || nav_complete_) return;
+
+  // Always publish the car visualization
+  DrawCar(0xff0000, local_viz_msg_);
+  local_viz_msg_.header.stamp = ros::Time::now();
+
+  // The control iteration goes here. 
+
+  // STEP 1: Latency compensation-odometry  
+  // Project our position to estimated position actuation latency from now.
+  // Use history of actuations 1 system latency ago
+  Vector2f projected_loc = odom_loc_;
+  float projected_angle = odom_angle_;
+  Vector2f projected_velocity = robot_vel_;
+  float projected_dist_traversed = odom_dist_traversed_;
+  estimate_latency_compensated_odometry(&projected_loc, &projected_angle, &projected_velocity, &projected_dist_traversed);
+
+  if (global_plan_.empty() || checkGoalReached(global_plan_.back(), robot_loc_ + (Eigen::Rotation2Df(projected_angle - odom_angle_) * (projected_loc - odom_loc_)), 0.5)) {
+      nav_complete_ = true;
+      return;
+  }
+  // Check if we need to replan
+  std::pair<bool, Eigen::Vector2f> local_goal = getLocalGoal();
+  if (!local_goal.first) {
+    GlobalPlan();
+    return;
+  }
+  auto goal = local_goal.second;
+  visualization::DrawCross(goal, 1.5, 0x34eb49, local_viz_msg_);
+  viz_pub_.publish(local_viz_msg_);
+
+  // Visualize global plan
+  for (size_t i=0 ; i < global_plan_.size()-1; i++) {
+    visualization::DrawLine(global_plan_.at(i), global_plan_.at(i+1), 0x203ee8, global_viz_msg_);
+  }
+
+  // STEP 2: Latency compensation-point_cloud/vehicle landmarks
+  // The latest observed point cloud is accessible via "point_cloud_"
+  float dangle = odom_angle_ - projected_angle;
+  Vector2f dloc = odom_loc_ - projected_loc;
+  apply_latency_compensated_odometry(dloc, dangle);
+
+  std::pair<double, double> local_plan_results;
+  if (!FLAGS_rrt_planner)
+  {
+    // If there is no plan or we finished it, don't do anything
+    // Note: this assumes the last element of the global plan is the goal
+    local_plan_results = BasicLocalPlan(goal);
+  } else {
+    local_plan_results = RRTLocalPlan(projected_loc, projected_angle, goal);
+  }
+  
+  drive_msg_.curvature = local_plan_results.first;
+  // (void) chosen_curvature;
+  // drive_msg_.curvature = 1.0;
+  // STEP 5: Apply 1D TOC to determine velocity 
+// STEP 5: Apply 1D TOC to determine velocity 
+  // STEP 5: Apply 1D TOC to determine velocity 
+  drive_msg_.velocity = compute_toc(local_plan_results.second, projected_velocity.norm());
+  // drive_msg_.velocity = 0.3;
+
+
+  // STEP 6: Update History
+  vel_history_.pop_front();
+  steer_history_.pop_front();
+  vel_history_.push_back(drive_msg_.velocity);
+  steer_history_.push_back(atan(drive_msg_.curvature*WHEELBASE));
 
   // Add timestamps to all messages.
   global_viz_msg_.header.stamp = ros::Time::now();

@@ -137,6 +137,11 @@ class Navigation {
   // If found local goal, it is the second
   std::pair<bool, Eigen::Vector2f> getLocalGoal();
   
+  std::pair<double, double> BasicLocalPlan(Eigen::Vector2f&);
+  
+  std::pair<double, double> RRTLocalPlan(Eigen::Vector2f&, double, Eigen::Vector2f&);
+
+
   // Whether odometry has been initialized.
   bool odom_initialized_;
   // Whether localization has been initialized.
@@ -175,6 +180,9 @@ class Navigation {
   // List of points to follow for optimal global path
   std::vector<Eigen::Vector2f> global_plan_;
 
+  // List of points to follow for RRT based global path
+  std::vector<Eigen::Vector2f> rrt_plan_;
+
   // Points of interest on the car
   Eigen::Vector2f front_left_corner_;
   Eigen::Vector2f front_right_corner_;
@@ -200,6 +208,8 @@ class Navigation {
   vector_map::VectorMap map_;
   // Graph representation of environment
   graph::Graph graph_;
+  bool done;
+
 };
 
 }  // namespace navigation

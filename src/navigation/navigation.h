@@ -139,7 +139,7 @@ class Navigation {
   
   std::pair<double, double> BasicLocalPlan(Eigen::Vector2f&);
   
-  std::pair<double, double> RRTLocalPlan(Eigen::Vector2f&, double);
+  std::pair<double, double> RRTLocalPlan(Eigen::Vector2f&, double, Eigen::Vector2f&);
 
 
   // Whether odometry has been initialized.
@@ -181,7 +181,7 @@ class Navigation {
   std::vector<Eigen::Vector2f> global_plan_;
 
   // List of points to follow for RRT based global path
-  std::vector<std::pair<double, Eigen::Vector2f>> rrt_plan_;
+  std::vector<Eigen::Vector2f> rrt_plan_;
 
   // Points of interest on the car
   Eigen::Vector2f front_left_corner_;
@@ -208,6 +208,7 @@ class Navigation {
   vector_map::VectorMap map_;
   // Graph representation of environment
   graph::Graph graph_;
+  bool done;
 
 };
 

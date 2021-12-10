@@ -53,6 +53,7 @@ DEFINE_double(fpl_weight, 0.001, "Free path length weight");
 DEFINE_double(clearance_weight, 0.05, "Clearance weight");
 DEFINE_bool(verbose, false, "Print some debug info in the control loop");
 DEFINE_double(carrot_radius, 3.0, "Max distance for local goal");
+DEFINE_bool(rrt_planner, false, "Use RRT integrated planner for autonomous navigation");
 
 namespace {
 ros::Publisher drive_pub_;
@@ -451,32 +452,13 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
     return std::make_pair(0.0, 0.0);
   }
   // Visualize plan
-  for (size_t i=rrt_plan_.size(); i > 0; --i) {
-    if (i < rrt_plan_.size()) {
-      auto p = rrt_plan_[i];
-      visualization::DrawCross(p, 0.2, 0x203ee8, global_viz_msg_);
-      //auto chord_distance = (p - rrt_plan_[i-1]).norm();
-      if (true) {
-        visualization::DrawLine(p, rrt_plan_[i-1], 0x203ee8, global_viz_msg_);
-      } else {
-        // auto radius = 1/p.first;
-        // auto angle = 2*std::asin(chord_distance/(2*radius));
-        // Eigen::Vector2f center = p.second + Eigen::Vector2f(0.0f, radius);
-        // visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
-      }
-    } else {
-      // auto p = rrt_plan_[i-1];
-      // auto chord_distance = (p - robot_loc_).norm();
-      // if (p.first < 1e4) {
-      //   visualization::DrawLine(p, robot_loc_, 0x203ee8, global_viz_msg_);
-      // } else {
-      //   auto radius = 1/p.first;
-      //   auto angle = 2*std::asin(chord_distance/(2*radius));
-      //   Eigen::Vector2f center = p + Eigen::Vector2f(0.0f, radius);
-      //   visualization::DrawArc(center, radius, 0.0f, angle, 0x203ee8, global_viz_msg_);
-      // }
-    }
+  for (size_t i=rrt_plan_.size()-1; i > 0; --i) {
+    auto p = rrt_plan_[i];
+    visualization::DrawCross(p, 0.2, 0x203ee8, global_viz_msg_);
+    //auto chord_distance = (p - rrt_plan_[i-1]).norm();
+      visualization::DrawLine(p, rrt_plan_[i-1], 0x203ee8, global_viz_msg_);
   }
+  visualization::DrawCross(rrt_plan_[0], 0.2, 0x203ee8, global_viz_msg_);
   visualization::DrawCross(robot_loc_, 0.2, 0x203ee8, global_viz_msg_);
   auto next_move = rrt_plan_.back();
   auto chord_distance = (robot_loc_ - next_move).norm();
@@ -493,18 +475,6 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   }
   auto new_local_goal = Eigen::Rotation2Df(-robot_angle_) * (next_move - robot_loc_);
   return BasicLocalPlan(new_local_goal);
-  // if (fabs(next_move.first) <= 1e-4)
-  // {
-  //   Eigen::Vector2f h = geometry::Heading(robot_angle_);
-  //   if ((robot_loc_ + h - next_move.second).norm() > ((robot_loc_ - h) - next_move.second).norm())
-  //     chord_distance *= -1;
-  //   return std::make_pair(0.0f, chord_distance);
-  // }
-  // else {
-  //   auto radius = 1/next_move.first;
-  //   float travel_dist = radius * 2*std::asin(chord_distance/(2*radius));
-  //   return std::make_pair(next_move.first, travel_dist);
-  // }
 }
 
 void Navigation::Run() {
@@ -558,7 +528,7 @@ void Navigation::Run() {
   apply_latency_compensated_odometry(dloc, dangle);
 
   std::pair<double, double> local_plan_results;
-  if (false)
+  if (!FLAGS_rrt_planner)
   {
     // If there is no plan or we finished it, don't do anything
     // Note: this assumes the last element of the global plan is the goal

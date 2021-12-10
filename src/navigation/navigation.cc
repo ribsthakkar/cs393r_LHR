@@ -438,7 +438,7 @@ std::pair<double, double> Navigation::RRTLocalPlan(Eigen::Vector2f& initialLoc, 
   // Condition for when to replan
   if (rrt_plan_.size() == 0) {
     // auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(robot_loc_.x()-5.0, robot_loc_.x()+5.0), std::make_pair(robot_loc_.y()-5.0, robot_loc_.y()+5.0), map_);
-    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 25.0), map_);
+    auto rr_tree = rrt::RRT(robot_loc_, robot_angle_, nav_goal_loc_, nav_goal_angle_, std::make_pair(-45.0, 45.0), std::make_pair(0.0, 25.0), map_, visualization::NewVisualizationMessage("map", "navigation_global"));
     // POINT COULD IS IN ROBOT's LOCAL FRAME
     rrt_plan_ = rr_tree.KinodynamicInformedRRT(point_cloud_);
     // Don't move anywhere for this input

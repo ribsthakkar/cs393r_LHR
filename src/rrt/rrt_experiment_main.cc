@@ -157,7 +157,7 @@ std::pair<std::vector<geometry::line2f>, vector_map::VectorMap> setupExperiment2
   return output;
 }
 
-void Experiment2(RRTVariant variant, int numExperiments=100) {
+void Experiment2(int numExperiments=50) {
   Eigen::Vector2f startLocation = Eigen::Vector2f(-40,4.5);
   Eigen::Vector2f endLocation = Eigen::Vector2f(-17, 20.5);
   const std::pair<float, float> x_bounds{-42, 3};
@@ -177,26 +177,19 @@ void Experiment2(RRTVariant variant, int numExperiments=100) {
           visualization::ClearVisualizationMsg(global_viz_msg);
           addMapLines(lines_and_map.first, global_viz_msg, lines_and_map.second);
 
-          auto rr_tree = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, x_bounds, y_bounds, lines_and_map.second, global_viz_msg);
+          auto rr_tree_informed = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, x_bounds, y_bounds, lines_and_map.second, global_viz_msg);
+          auto rr_tree_normal = rrt::RRT(startLocation, M_PI/4, endLocation, M_PI/4, x_bounds, y_bounds, lines_and_map.second, global_viz_msg);
           
-          switch (variant)
-          {
-            case RRTVariant::KIRRT:
-                koutput = rr_tree.KinodynamicInformedRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
-                break;
-            case RRTVariant::LIRRT:
-                loutput = rr_tree.LinearInformedRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
-                break;
-            case RRTVariant::KRRT:
-                koutput = rr_tree.KinodynamicRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
-                break;
-            case RRTVariant::LRRT:
-                loutput = rr_tree.LinearRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
-                break;
-          }
+          loutput = rr_tree_informed.LinearInformedRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
           if (koutput.size() == 0 && loutput.size() == 0)
             printf("Could not find any path within iteration limit\n");
-          printf("Obstacles(%d), Experiment (%d): (%f)\n", num_obs, i, rr_tree.c_best_overall);
+          printf("Obstacles(%d), Experiment (%d): (%f)\n", num_obs, i, rr_tree_informed.c_best_overall);
+
+          loutput = rr_tree_normal.LinearRRT(emptyPointCloud, 100000, 0.01, minDistance, 10000);
+          if (koutput.size() == 0 && loutput.size() == 0)
+            printf("Could not find any path within iteration limit\n");
+          printf("Obstacles(%d), Experiment (%d): (%f)\n", num_obs, i, rr_tree_normal.c_best_overall);
+
           koutput.clear();
           loutput.clear();
       }
@@ -284,10 +277,7 @@ int main(int argc, char** argv) {
   // Initialize ROS.
   ros::init(argc, argv, "rrt_experiment", ros::init_options::NoSigintHandler);
 
-  // Experiment1(RRTVariant::KIRRT, map, global_viz_msg, 1);
-  // Experiment1(RRTVariant::KRRT, map, global_viz_msg, 1);
-  Experiment2(RRTVariant::LIRRT, 50);
-  Experiment2(RRTVariant::LRRT, 50);
+  Experiment2(50);
 
   printf("Finished experiments\n");
   RateLoop loop(20.0);

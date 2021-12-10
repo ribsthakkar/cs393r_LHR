@@ -581,6 +581,7 @@ std::vector<Vector2f> RRT::LinearInformedRRT(std::vector<Eigen::Vector2f>& point
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear Informed RRT\n" << std::endl;
+  c_best_overall = 0;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);
@@ -691,6 +692,7 @@ std::vector<Vector2f> RRT::LinearRRT(std::vector<Eigen::Vector2f>& points, int m
   visualization::ClearVisualizationMsg(global_viz_msg_);
   global_viz_msg_ = map_viz_msg_;
   cout << "Planning with Linear RRT\n" << std::endl;
+  c_best_overall = 0;
   // Convert pointcloud to Map frame
   getMapPointCloud(points);
   visualization::DrawCross(x_start_, 0.3, 0x0000FF, global_viz_msg_);

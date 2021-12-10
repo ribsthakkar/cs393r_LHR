@@ -33,7 +33,8 @@ SET(libs roslib roscpp rosbag glog gflags amrl-shared-lib boost_system lua5.1
 ADD_LIBRARY(shared_library
             src/visualization/visualization.cc
             src/vector_map/vector_map.cc
-            src/graph/graph.cc)
+            src/graph/graph.cc
+            src/rrt/rrt.cc)
 
 ADD_SUBDIRECTORY(src/shared)
 INCLUDE_DIRECTORIES(src/shared)
@@ -54,6 +55,10 @@ ROSBUILD_ADD_EXECUTABLE(navigation
                         src/navigation/navigation_main.cc
                         src/navigation/navigation.cc)
 TARGET_LINK_LIBRARIES(navigation shared_library ${libs})
+
+ROSBUILD_ADD_EXECUTABLE(rrt_experiment
+                        src/rrt/rrt_experiment_main.cc)
+TARGET_LINK_LIBRARIES(rrt_experiment shared_library ${libs})
 
 ADD_EXECUTABLE(eigen_tutorial
                src/eigen_tutorial.cc)

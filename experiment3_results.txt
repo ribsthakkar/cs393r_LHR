@@ -1,0 +1,4335 @@
+Planning with Linear Informed RRT
+
+new c_best (26.379817)
+new c_best (10.407287)
+new c_best (9.908808)
+new c_best (9.901634)
+new c_best (9.876482)
+new c_best (9.864015)
+new c_best (9.833610)
+Gap (1), Experiment (0): (0.076789)
+Planning with Linear Informed RRT
+
+new c_best (26.695124)
+new c_best (26.531421)
+new c_best (10.176671)
+new c_best (10.129150)
+new c_best (10.007318)
+new c_best (9.842132)
+Gap (1), Experiment (1): (0.028887)
+Planning with Linear Informed RRT
+
+new c_best (27.325463)
+new c_best (27.009236)
+new c_best (11.646433)
+new c_best (10.184221)
+new c_best (9.993533)
+new c_best (9.870921)
+new c_best (9.865553)
+new c_best (9.769820)
+Gap (1), Experiment (2): (0.027305)
+Planning with Linear Informed RRT
+
+new c_best (25.092548)
+new c_best (10.094079)
+new c_best (9.903069)
+new c_best (9.881794)
+new c_best (9.767767)
+Gap (1), Experiment (3): (0.222856)
+Planning with Linear Informed RRT
+
+new c_best (30.245038)
+new c_best (27.179330)
+new c_best (27.162717)
+new c_best (9.997712)
+new c_best (9.939055)
+new c_best (9.770259)
+Gap (1), Experiment (4): (0.083582)
+Planning with Linear Informed RRT
+
+new c_best (26.478999)
+new c_best (25.512892)
+new c_best (10.380849)
+new c_best (9.982741)
+new c_best (9.812613)
+Gap (1), Experiment (5): (0.036678)
+Planning with Linear Informed RRT
+
+new c_best (27.463525)
+new c_best (27.199582)
+new c_best (10.006509)
+new c_best (9.828120)
+Gap (1), Experiment (6): (0.119736)
+Planning with Linear Informed RRT
+
+new c_best (25.389667)
+new c_best (24.743816)
+new c_best (24.653082)
+new c_best (9.795273)
+Gap (1), Experiment (7): (0.149142)
+Planning with Linear Informed RRT
+
+new c_best (29.018565)
+new c_best (27.456837)
+new c_best (27.140306)
+new c_best (27.129822)
+new c_best (27.100442)
+new c_best (26.438843)
+new c_best (25.536836)
+new c_best (11.338925)
+new c_best (10.589556)
+new c_best (10.036436)
+new c_best (9.955894)
+new c_best (9.848556)
+new c_best (9.837471)
+Gap (1), Experiment (8): (0.091208)
+Planning with Linear Informed RRT
+
+new c_best (25.668157)
+new c_best (9.895798)
+new c_best (9.848990)
+new c_best (9.796734)
+Gap (1), Experiment (9): (0.088731)
+Planning with Linear Informed RRT
+
+new c_best (25.534713)
+new c_best (25.434272)
+new c_best (9.849127)
+new c_best (9.845725)
+Gap (1), Experiment (10): (0.132015)
+Planning with Linear Informed RRT
+
+new c_best (24.561671)
+new c_best (10.069214)
+new c_best (9.907606)
+new c_best (9.866299)
+new c_best (9.837371)
+Gap (1), Experiment (11): (0.305696)
+Planning with Linear Informed RRT
+
+new c_best (29.093854)
+new c_best (28.993982)
+new c_best (27.517470)
+new c_best (10.172885)
+new c_best (9.834463)
+Gap (1), Experiment (12): (0.038958)
+Planning with Linear Informed RRT
+
+new c_best (28.662740)
+new c_best (10.087970)
+new c_best (9.811761)
+Gap (1), Experiment (13): (0.057029)
+Planning with Linear Informed RRT
+
+new c_best (25.523986)
+new c_best (10.068730)
+new c_best (9.884063)
+new c_best (9.828546)
+Gap (1), Experiment (14): (0.109555)
+Planning with Linear Informed RRT
+
+new c_best (27.765627)
+new c_best (27.282805)
+new c_best (26.991457)
+new c_best (25.823154)
+new c_best (25.146977)
+new c_best (24.605795)
+new c_best (10.165334)
+new c_best (10.031832)
+new c_best (9.850390)
+new c_best (9.801839)
+Gap (1), Experiment (15): (0.371225)
+Planning with Linear Informed RRT
+
+new c_best (28.824570)
+new c_best (10.182947)
+new c_best (9.860512)
+new c_best (9.800727)
+Gap (1), Experiment (16): (0.179935)
+Planning with Linear Informed RRT
+
+new c_best (28.503825)
+new c_best (27.070609)
+new c_best (10.292969)
+new c_best (10.079534)
+new c_best (10.017399)
+new c_best (9.791643)
+Gap (1), Experiment (17): (0.038188)
+Planning with Linear Informed RRT
+
+new c_best (27.763727)
+new c_best (10.072575)
+new c_best (9.851599)
+new c_best (9.767176)
+Gap (1), Experiment (18): (0.080070)
+Planning with Linear Informed RRT
+
+new c_best (27.444695)
+new c_best (10.456461)
+new c_best (9.905024)
+new c_best (9.859344)
+new c_best (9.786710)
+Gap (1), Experiment (19): (0.074502)
+Planning with Linear Informed RRT
+
+new c_best (28.147339)
+new c_best (28.035909)
+new c_best (25.925869)
+new c_best (25.793281)
+new c_best (9.813519)
+Gap (1), Experiment (20): (0.173867)
+Planning with Linear Informed RRT
+
+new c_best (27.356721)
+new c_best (27.198575)
+new c_best (9.815914)
+Gap (1), Experiment (21): (0.093690)
+Planning with Linear Informed RRT
+
+new c_best (12.433319)
+new c_best (9.912230)
+new c_best (9.834273)
+Gap (1), Experiment (22): (0.018906)
+Planning with Linear Informed RRT
+
+new c_best (24.652411)
+new c_best (24.486101)
+new c_best (24.418666)
+new c_best (24.316046)
+new c_best (9.833666)
+Gap (1), Experiment (23): (0.398677)
+Planning with Linear Informed RRT
+
+new c_best (29.949869)
+new c_best (29.607807)
+new c_best (9.999316)
+new c_best (9.961965)
+new c_best (9.864690)
+new c_best (9.780970)
+Gap (1), Experiment (24): (0.097870)
+Planning with Linear Informed RRT
+
+new c_best (28.665172)
+new c_best (10.297801)
+new c_best (9.794495)
+Gap (1), Experiment (25): (0.023213)
+Planning with Linear Informed RRT
+
+new c_best (29.118945)
+new c_best (10.105639)
+new c_best (9.972719)
+new c_best (9.926185)
+new c_best (9.881675)
+new c_best (9.756025)
+Gap (1), Experiment (26): (0.157931)
+Planning with Linear Informed RRT
+
+new c_best (25.762390)
+new c_best (25.696529)
+new c_best (9.887256)
+new c_best (9.776919)
+Gap (1), Experiment (27): (0.126536)
+Planning with Linear Informed RRT
+
+new c_best (25.991614)
+new c_best (10.199528)
+new c_best (9.978494)
+new c_best (9.780909)
+Gap (1), Experiment (28): (0.081494)
+Planning with Linear Informed RRT
+
+new c_best (25.873270)
+new c_best (10.146961)
+new c_best (10.051684)
+new c_best (9.980739)
+new c_best (9.924951)
+new c_best (9.857220)
+new c_best (9.804622)
+Gap (1), Experiment (29): (0.150273)
+Planning with Linear Informed RRT
+
+new c_best (27.099461)
+new c_best (25.728798)
+new c_best (25.641970)
+new c_best (9.916583)
+new c_best (9.834738)
+Gap (1), Experiment (30): (0.056381)
+Planning with Linear Informed RRT
+
+new c_best (24.848793)
+new c_best (9.882714)
+new c_best (9.852631)
+new c_best (9.831982)
+Gap (1), Experiment (31): (0.411283)
+Planning with Linear Informed RRT
+
+new c_best (27.317572)
+new c_best (25.777900)
+new c_best (25.126450)
+new c_best (10.210080)
+new c_best (9.801963)
+Gap (1), Experiment (32): (0.081503)
+Planning with Linear Informed RRT
+
+new c_best (26.304250)
+new c_best (25.986404)
+new c_best (9.980505)
+new c_best (9.873104)
+new c_best (9.768632)
+Gap (1), Experiment (33): (0.086457)
+Planning with Linear Informed RRT
+
+new c_best (26.886335)
+new c_best (9.927363)
+new c_best (9.813986)
+Gap (1), Experiment (34): (0.059305)
+Planning with Linear Informed RRT
+
+new c_best (25.316424)
+new c_best (10.261626)
+new c_best (9.995982)
+new c_best (9.966592)
+new c_best (9.907055)
+new c_best (9.817698)
+Gap (1), Experiment (35): (0.203139)
+Planning with Linear Informed RRT
+
+new c_best (24.114811)
+new c_best (10.038557)
+new c_best (10.010959)
+new c_best (9.960042)
+new c_best (9.817189)
+Gap (1), Experiment (36): (0.591003)
+Planning with Linear Informed RRT
+
+new c_best (26.142500)
+new c_best (25.473083)
+new c_best (9.887346)
+new c_best (9.884881)
+new c_best (9.843372)
+Gap (1), Experiment (37): (0.116571)
+Planning with Linear Informed RRT
+
+new c_best (26.638893)
+new c_best (10.214614)
+new c_best (9.857639)
+new c_best (9.836896)
+Gap (1), Experiment (38): (0.123472)
+Planning with Linear Informed RRT
+
+new c_best (25.813660)
+new c_best (25.165444)
+new c_best (10.028555)
+new c_best (9.930147)
+new c_best (9.919511)
+new c_best (9.778149)
+Gap (1), Experiment (39): (0.175612)
+Planning with Linear Informed RRT
+
+new c_best (28.434377)
+new c_best (25.374494)
+new c_best (10.993338)
+new c_best (9.859171)
+new c_best (9.796518)
+Gap (1), Experiment (40): (0.084102)
+Planning with Linear Informed RRT
+
+new c_best (25.417002)
+new c_best (10.274034)
+new c_best (10.166826)
+new c_best (9.981338)
+new c_best (9.881436)
+new c_best (9.838233)
+Gap (1), Experiment (41): (0.120064)
+Planning with Linear Informed RRT
+
+new c_best (25.404626)
+new c_best (10.447332)
+new c_best (10.169274)
+new c_best (9.989514)
+new c_best (9.858525)
+new c_best (9.843791)
+Gap (1), Experiment (42): (0.279923)
+Planning with Linear Informed RRT
+
+new c_best (24.861582)
+new c_best (9.983701)
+new c_best (9.814893)
+Gap (1), Experiment (43): (0.125077)
+Planning with Linear Informed RRT
+
+new c_best (24.290956)
+new c_best (9.937157)
+new c_best (9.861396)
+new c_best (9.797656)
+Gap (1), Experiment (44): (0.345269)
+Planning with Linear Informed RRT
+
+new c_best (27.767474)
+new c_best (10.117355)
+new c_best (9.927554)
+new c_best (9.827814)
+Gap (1), Experiment (45): (0.341144)
+Planning with Linear Informed RRT
+
+new c_best (30.081357)
+new c_best (28.677687)
+new c_best (10.201776)
+new c_best (9.876013)
+new c_best (9.756460)
+Gap (1), Experiment (46): (0.097211)
+Planning with Linear Informed RRT
+
+new c_best (27.296350)
+new c_best (10.777955)
+new c_best (10.198626)
+new c_best (9.998516)
+new c_best (9.920818)
+new c_best (9.908512)
+new c_best (9.851959)
+new c_best (9.761910)
+Gap (1), Experiment (47): (0.142940)
+Planning with Linear Informed RRT
+
+new c_best (27.046388)
+new c_best (26.007365)
+new c_best (25.836099)
+new c_best (10.062316)
+new c_best (9.929559)
+new c_best (9.828898)
+Gap (1), Experiment (48): (0.187294)
+Planning with Linear Informed RRT
+
+new c_best (28.443549)
+new c_best (28.269882)
+new c_best (27.506172)
+new c_best (27.227192)
+new c_best (26.908702)
+new c_best (9.944588)
+new c_best (9.809648)
+Gap (1), Experiment (49): (0.055866)
+Planning with Linear Informed RRT
+
+new c_best (27.724600)
+new c_best (10.122919)
+new c_best (9.952104)
+new c_best (9.880710)
+new c_best (9.846731)
+Gap (2), Experiment (0): (0.027919)
+Planning with Linear Informed RRT
+
+new c_best (12.305442)
+new c_best (9.952578)
+new c_best (9.899352)
+new c_best (9.818250)
+Gap (2), Experiment (1): (0.102248)
+Planning with Linear Informed RRT
+
+new c_best (27.801780)
+new c_best (10.269035)
+new c_best (10.013369)
+new c_best (9.945516)
+new c_best (9.798635)
+Gap (2), Experiment (2): (0.052758)
+Planning with Linear Informed RRT
+
+new c_best (28.771560)
+new c_best (28.619130)
+new c_best (25.210193)
+new c_best (10.149764)
+new c_best (9.939404)
+new c_best (9.869983)
+new c_best (9.851312)
+new c_best (9.846640)
+Gap (2), Experiment (3): (0.104096)
+Planning with Linear Informed RRT
+
+new c_best (25.552447)
+new c_best (25.485798)
+new c_best (10.236150)
+new c_best (9.895876)
+new c_best (9.829144)
+Gap (2), Experiment (4): (0.030617)
+Planning with Linear Informed RRT
+
+new c_best (25.850945)
+new c_best (10.493790)
+new c_best (9.940087)
+new c_best (9.877954)
+new c_best (9.826310)
+Gap (2), Experiment (5): (0.074033)
+Planning with Linear Informed RRT
+
+new c_best (10.343511)
+new c_best (10.187021)
+new c_best (10.101540)
+new c_best (9.937465)
+new c_best (9.908730)
+new c_best (9.827875)
+Gap (2), Experiment (6): (0.150083)
+Planning with Linear Informed RRT
+
+new c_best (27.030702)
+new c_best (10.030693)
+new c_best (9.981204)
+new c_best (9.895917)
+new c_best (9.858597)
+new c_best (9.818791)
+Gap (2), Experiment (7): (0.149659)
+Planning with Linear Informed RRT
+
+new c_best (11.396697)
+new c_best (10.285158)
+new c_best (9.904312)
+new c_best (9.840653)
+Gap (2), Experiment (8): (0.020888)
+Planning with Linear Informed RRT
+
+new c_best (25.237410)
+new c_best (10.070027)
+new c_best (9.900596)
+new c_best (9.758299)
+Gap (2), Experiment (9): (0.122571)
+Planning with Linear Informed RRT
+
+new c_best (28.507423)
+new c_best (10.416240)
+new c_best (10.412190)
+new c_best (10.368558)
+new c_best (9.941050)
+new c_best (9.852034)
+new c_best (9.800065)
+Gap (2), Experiment (10): (0.037183)
+Planning with Linear Informed RRT
+
+new c_best (31.133713)
+new c_best (30.935476)
+new c_best (10.192592)
+new c_best (9.951877)
+new c_best (9.866056)
+new c_best (9.839209)
+Gap (2), Experiment (11): (0.076499)
+Planning with Linear Informed RRT
+
+new c_best (26.216365)
+new c_best (25.867016)
+new c_best (25.803121)
+new c_best (10.415596)
+new c_best (10.351490)
+new c_best (10.083156)
+new c_best (9.880415)
+new c_best (9.814464)
+Gap (2), Experiment (12): (0.018190)
+Planning with Linear Informed RRT
+
+new c_best (11.413910)
+new c_best (9.951125)
+new c_best (9.928925)
+new c_best (9.815529)
+Gap (2), Experiment (13): (0.057924)
+Planning with Linear Informed RRT
+
+new c_best (29.932701)
+new c_best (10.318578)
+new c_best (9.801448)
+Gap (2), Experiment (14): (0.030546)
+Planning with Linear Informed RRT
+
+new c_best (25.020478)
+new c_best (10.028929)
+new c_best (9.866557)
+new c_best (9.853588)
+new c_best (9.847928)
+new c_best (9.796591)
+Gap (2), Experiment (15): (0.947968)
+Planning with Linear Informed RRT
+
+new c_best (10.241017)
+new c_best (10.035376)
+new c_best (9.843307)
+Gap (2), Experiment (16): (0.934243)
+Planning with Linear Informed RRT
+
+new c_best (28.067513)
+new c_best (10.255902)
+new c_best (9.930770)
+new c_best (9.793092)
+Gap (2), Experiment (17): (0.114985)
+Planning with Linear Informed RRT
+
+new c_best (28.640432)
+new c_best (10.013586)
+new c_best (9.934556)
+new c_best (9.907395)
+new c_best (9.825990)
+Gap (2), Experiment (18): (0.144738)
+Planning with Linear Informed RRT
+
+new c_best (10.396322)
+new c_best (10.106686)
+new c_best (9.924973)
+new c_best (9.805416)
+Gap (2), Experiment (19): (0.080661)
+Planning with Linear Informed RRT
+
+new c_best (26.321208)
+new c_best (10.279194)
+new c_best (10.132480)
+new c_best (9.990042)
+new c_best (9.864611)
+new c_best (9.836374)
+Gap (2), Experiment (20): (0.062175)
+Planning with Linear Informed RRT
+
+new c_best (27.528083)
+new c_best (9.995036)
+new c_best (9.993099)
+new c_best (9.866300)
+new c_best (9.865181)
+new c_best (9.795969)
+Gap (2), Experiment (21): (0.147129)
+Planning with Linear Informed RRT
+
+new c_best (25.323447)
+new c_best (10.158068)
+new c_best (9.880334)
+new c_best (9.855390)
+new c_best (9.779940)
+Gap (2), Experiment (22): (0.150968)
+Planning with Linear Informed RRT
+
+new c_best (25.600362)
+new c_best (9.938349)
+new c_best (9.838130)
+Gap (2), Experiment (23): (0.089391)
+Planning with Linear Informed RRT
+
+new c_best (26.398350)
+new c_best (9.942741)
+new c_best (9.915695)
+new c_best (9.847941)
+new c_best (9.818675)
+Gap (2), Experiment (24): (0.099993)
+Planning with Linear Informed RRT
+
+new c_best (28.043516)
+new c_best (9.895351)
+new c_best (9.770369)
+Gap (2), Experiment (25): (0.212217)
+Planning with Linear Informed RRT
+
+new c_best (25.256260)
+new c_best (10.241618)
+new c_best (9.984160)
+new c_best (9.919191)
+new c_best (9.803800)
+Gap (2), Experiment (26): (0.117194)
+Planning with Linear Informed RRT
+
+new c_best (25.548408)
+new c_best (9.947956)
+new c_best (9.932287)
+new c_best (9.816221)
+Gap (2), Experiment (27): (0.155251)
+Planning with Linear Informed RRT
+
+new c_best (10.962263)
+new c_best (10.148829)
+new c_best (10.012186)
+new c_best (9.766112)
+Gap (2), Experiment (28): (0.079499)
+Planning with Linear Informed RRT
+
+new c_best (27.504714)
+new c_best (10.084401)
+new c_best (9.908221)
+new c_best (9.848621)
+new c_best (9.767611)
+Gap (2), Experiment (29): (0.093902)
+Planning with Linear Informed RRT
+
+new c_best (26.272615)
+new c_best (26.235479)
+new c_best (26.054009)
+new c_best (10.685745)
+new c_best (10.215769)
+new c_best (10.013632)
+new c_best (9.887798)
+new c_best (9.814736)
+Gap (2), Experiment (30): (0.040347)
+Planning with Linear Informed RRT
+
+new c_best (27.908566)
+new c_best (10.010604)
+new c_best (9.857614)
+new c_best (9.835298)
+Gap (2), Experiment (31): (0.140654)
+Planning with Linear Informed RRT
+
+new c_best (10.837130)
+new c_best (10.119081)
+new c_best (9.953454)
+new c_best (9.863204)
+new c_best (9.844757)
+Gap (2), Experiment (32): (0.015661)
+Planning with Linear Informed RRT
+
+new c_best (26.354966)
+new c_best (26.325138)
+new c_best (10.033312)
+new c_best (9.881980)
+new c_best (9.833639)
+Gap (2), Experiment (33): (0.107186)
+Planning with Linear Informed RRT
+
+new c_best (28.621376)
+new c_best (27.280779)
+new c_best (10.156756)
+new c_best (10.019060)
+new c_best (9.870489)
+new c_best (9.810357)
+Gap (2), Experiment (34): (0.067498)
+Planning with Linear Informed RRT
+
+new c_best (29.818165)
+new c_best (10.534478)
+new c_best (9.873671)
+new c_best (9.839663)
+Gap (2), Experiment (35): (0.025941)
+Planning with Linear Informed RRT
+
+new c_best (24.612647)
+new c_best (9.882020)
+new c_best (9.825998)
+Gap (2), Experiment (36): (0.231235)
+Planning with Linear Informed RRT
+
+new c_best (32.838910)
+new c_best (10.692205)
+new c_best (10.337860)
+new c_best (9.944513)
+new c_best (9.794768)
+Gap (2), Experiment (37): (0.048181)
+Planning with Linear Informed RRT
+
+new c_best (10.567726)
+new c_best (9.821092)
+Gap (2), Experiment (38): (0.155124)
+Planning with Linear Informed RRT
+
+new c_best (33.167965)
+new c_best (10.322542)
+new c_best (9.940092)
+new c_best (9.754561)
+Gap (2), Experiment (39): (0.058314)
+Planning with Linear Informed RRT
+
+new c_best (12.787779)
+new c_best (12.193903)
+new c_best (10.197705)
+new c_best (10.028856)
+new c_best (9.886150)
+new c_best (9.867080)
+new c_best (9.824509)
+Gap (2), Experiment (40): (0.089640)
+Planning with Linear Informed RRT
+
+new c_best (29.927115)
+new c_best (9.860861)
+new c_best (9.770006)
+Gap (2), Experiment (41): (0.201834)
+Planning with Linear Informed RRT
+
+new c_best (26.284458)
+new c_best (10.141527)
+new c_best (9.905081)
+new c_best (9.812952)
+Gap (2), Experiment (42): (0.152035)
+Planning with Linear Informed RRT
+
+new c_best (28.740034)
+new c_best (10.100625)
+new c_best (9.837588)
+Gap (2), Experiment (43): (0.046818)
+Planning with Linear Informed RRT
+
+new c_best (25.222565)
+new c_best (10.019122)
+new c_best (9.891756)
+new c_best (9.845800)
+Gap (2), Experiment (44): (0.108959)
+Planning with Linear Informed RRT
+
+new c_best (27.828800)
+new c_best (10.140924)
+new c_best (10.032991)
+new c_best (9.929010)
+new c_best (9.808406)
+Gap (2), Experiment (45): (0.129104)
+Planning with Linear Informed RRT
+
+new c_best (28.460850)
+new c_best (9.920113)
+new c_best (9.890164)
+new c_best (9.820149)
+Gap (2), Experiment (46): (0.042979)
+Planning with Linear Informed RRT
+
+new c_best (12.119520)
+new c_best (11.251497)
+new c_best (10.129445)
+new c_best (9.878686)
+new c_best (9.818556)
+Gap (2), Experiment (47): (0.035865)
+Planning with Linear Informed RRT
+
+new c_best (10.413186)
+new c_best (10.116618)
+new c_best (9.852252)
+new c_best (9.842755)
+Gap (2), Experiment (48): (0.094512)
+Planning with Linear Informed RRT
+
+new c_best (12.922204)
+new c_best (10.105503)
+new c_best (10.010444)
+new c_best (9.926761)
+new c_best (9.782969)
+Gap (2), Experiment (49): (0.071377)
+Planning with Linear Informed RRT
+
+new c_best (27.475402)
+new c_best (9.935831)
+new c_best (9.833567)
+Gap (3), Experiment (0): (0.171217)
+Planning with Linear Informed RRT
+
+new c_best (28.307185)
+new c_best (28.135509)
+new c_best (10.624858)
+new c_best (10.093786)
+new c_best (9.967519)
+new c_best (9.845362)
+Gap (3), Experiment (1): (0.040004)
+Planning with Linear Informed RRT
+
+new c_best (9.977020)
+new c_best (9.864409)
+new c_best (9.829802)
+Gap (3), Experiment (2): (0.375101)
+Planning with Linear Informed RRT
+
+new c_best (27.970097)
+new c_best (10.192892)
+new c_best (10.002286)
+new c_best (9.980973)
+new c_best (9.890222)
+new c_best (9.841667)
+Gap (3), Experiment (3): (0.344204)
+Planning with Linear Informed RRT
+
+new c_best (27.664973)
+new c_best (10.080717)
+new c_best (9.998623)
+new c_best (9.910344)
+new c_best (9.862353)
+new c_best (9.771781)
+Gap (3), Experiment (4): (0.090628)
+Planning with Linear Informed RRT
+
+new c_best (28.570748)
+new c_best (10.503454)
+new c_best (9.947294)
+new c_best (9.901112)
+new c_best (9.814747)
+Gap (3), Experiment (5): (0.089069)
+Planning with Linear Informed RRT
+
+new c_best (26.150620)
+new c_best (9.895032)
+new c_best (9.774310)
+Gap (3), Experiment (6): (0.056731)
+Planning with Linear Informed RRT
+
+new c_best (10.050431)
+new c_best (9.875366)
+new c_best (9.865156)
+new c_best (9.767554)
+Gap (3), Experiment (7): (0.095672)
+Planning with Linear Informed RRT
+
+new c_best (10.757303)
+new c_best (10.011975)
+new c_best (9.789473)
+Gap (3), Experiment (8): (0.100096)
+Planning with Linear Informed RRT
+
+new c_best (26.450052)
+new c_best (10.900596)
+new c_best (9.923776)
+new c_best (9.862294)
+new c_best (9.815791)
+Gap (3), Experiment (9): (0.112771)
+Planning with Linear Informed RRT
+
+new c_best (34.741345)
+new c_best (9.956454)
+new c_best (9.909119)
+new c_best (9.875724)
+new c_best (9.837582)
+Gap (3), Experiment (10): (0.067936)
+Planning with Linear Informed RRT
+
+new c_best (26.462670)
+new c_best (9.975982)
+new c_best (9.875665)
+new c_best (9.823552)
+Gap (3), Experiment (11): (0.134772)
+Planning with Linear Informed RRT
+
+new c_best (26.754702)
+new c_best (10.147058)
+new c_best (9.863524)
+new c_best (9.851094)
+new c_best (9.754076)
+Gap (3), Experiment (12): (0.165495)
+Planning with Linear Informed RRT
+
+new c_best (27.854953)
+new c_best (9.997240)
+new c_best (9.812697)
+Gap (3), Experiment (13): (0.055232)
+Planning with Linear Informed RRT
+
+new c_best (11.904155)
+new c_best (11.786353)
+new c_best (10.060109)
+new c_best (9.861533)
+new c_best (9.811460)
+Gap (3), Experiment (14): (0.017096)
+Planning with Linear Informed RRT
+
+new c_best (28.207759)
+new c_best (10.829794)
+new c_best (10.171373)
+new c_best (9.936212)
+new c_best (9.767166)
+Gap (3), Experiment (15): (0.021103)
+Planning with Linear Informed RRT
+
+new c_best (27.740324)
+new c_best (9.962848)
+new c_best (9.798520)
+Gap (3), Experiment (16): (0.092858)
+Planning with Linear Informed RRT
+
+new c_best (10.378091)
+new c_best (9.832203)
+Gap (3), Experiment (17): (0.086252)
+Planning with Linear Informed RRT
+
+new c_best (10.347943)
+new c_best (10.189577)
+new c_best (9.916087)
+new c_best (9.832331)
+Gap (3), Experiment (18): (0.015709)
+Planning with Linear Informed RRT
+
+new c_best (10.676099)
+new c_best (10.018513)
+new c_best (10.011312)
+new c_best (9.828785)
+Gap (3), Experiment (19): (0.025364)
+Planning with Linear Informed RRT
+
+new c_best (25.535038)
+new c_best (25.214931)
+new c_best (10.280878)
+new c_best (10.170104)
+new c_best (9.967650)
+new c_best (9.807828)
+Gap (3), Experiment (20): (0.038996)
+Planning with Linear Informed RRT
+
+new c_best (10.108203)
+new c_best (10.084541)
+new c_best (9.958449)
+new c_best (9.862898)
+new c_best (9.856789)
+new c_best (9.813790)
+Gap (3), Experiment (21): (0.146474)
+Planning with Linear Informed RRT
+
+new c_best (11.580044)
+new c_best (9.909629)
+new c_best (9.781782)
+Gap (3), Experiment (22): (0.067639)
+Planning with Linear Informed RRT
+
+new c_best (29.993481)
+new c_best (9.832219)
+Gap (3), Experiment (23): (0.071659)
+Planning with Linear Informed RRT
+
+new c_best (11.725083)
+new c_best (10.020159)
+new c_best (9.795778)
+Gap (3), Experiment (24): (0.014271)
+Planning with Linear Informed RRT
+
+new c_best (10.102679)
+new c_best (9.921456)
+new c_best (9.872545)
+new c_best (9.800412)
+Gap (3), Experiment (25): (0.114029)
+Planning with Linear Informed RRT
+
+new c_best (28.219862)
+new c_best (10.836421)
+new c_best (10.476915)
+new c_best (10.203705)
+new c_best (9.923526)
+new c_best (9.889507)
+new c_best (9.885290)
+new c_best (9.870864)
+new c_best (9.806531)
+Gap (3), Experiment (26): (0.233663)
+Planning with Linear Informed RRT
+
+new c_best (28.299515)
+new c_best (10.036972)
+new c_best (9.846429)
+Gap (3), Experiment (27): (0.020342)
+Planning with Linear Informed RRT
+
+new c_best (25.661353)
+new c_best (9.873212)
+new c_best (9.846642)
+Gap (3), Experiment (28): (0.067861)
+Planning with Linear Informed RRT
+
+new c_best (10.833371)
+new c_best (10.129545)
+new c_best (9.931881)
+new c_best (9.817832)
+Gap (3), Experiment (29): (0.034184)
+Planning with Linear Informed RRT
+
+new c_best (9.860813)
+new c_best (9.860616)
+new c_best (9.837399)
+Gap (3), Experiment (30): (0.250333)
+Planning with Linear Informed RRT
+
+new c_best (10.494160)
+new c_best (10.341363)
+new c_best (10.084987)
+new c_best (9.885675)
+new c_best (9.850339)
+new c_best (9.795242)
+Gap (3), Experiment (31): (0.161128)
+Planning with Linear Informed RRT
+
+new c_best (10.861124)
+new c_best (10.530511)
+new c_best (9.982388)
+new c_best (9.827540)
+Gap (3), Experiment (32): (0.013755)
+Planning with Linear Informed RRT
+
+new c_best (12.776686)
+new c_best (10.217970)
+new c_best (9.868017)
+new c_best (9.794547)
+Gap (3), Experiment (33): (0.024063)
+Planning with Linear Informed RRT
+
+new c_best (10.694602)
+new c_best (9.947244)
+new c_best (9.915768)
+new c_best (9.836948)
+Gap (3), Experiment (34): (0.094085)
+Planning with Linear Informed RRT
+
+new c_best (11.526560)
+new c_best (10.275516)
+new c_best (9.942863)
+new c_best (9.782425)
+Gap (3), Experiment (35): (0.145238)
+Planning with Linear Informed RRT
+
+new c_best (26.711048)
+new c_best (10.280702)
+new c_best (10.207261)
+new c_best (10.058234)
+new c_best (9.931174)
+new c_best (9.770144)
+Gap (3), Experiment (36): (0.042456)
+Planning with Linear Informed RRT
+
+new c_best (10.262492)
+new c_best (10.069992)
+new c_best (9.958423)
+new c_best (9.904076)
+new c_best (9.821345)
+Gap (3), Experiment (37): (0.073490)
+Planning with Linear Informed RRT
+
+new c_best (11.578356)
+new c_best (10.147917)
+new c_best (10.026073)
+new c_best (9.932835)
+new c_best (9.922830)
+new c_best (9.878753)
+new c_best (9.847638)
+new c_best (9.813117)
+Gap (3), Experiment (38): (0.081674)
+Planning with Linear Informed RRT
+
+new c_best (10.630338)
+new c_best (10.464737)
+new c_best (10.138294)
+new c_best (9.992942)
+new c_best (9.874423)
+new c_best (9.776996)
+Gap (3), Experiment (39): (0.017921)
+Planning with Linear Informed RRT
+
+new c_best (10.770580)
+new c_best (10.733596)
+new c_best (10.236489)
+new c_best (9.871744)
+new c_best (9.846279)
+Gap (3), Experiment (40): (0.035213)
+Planning with Linear Informed RRT
+
+new c_best (9.934356)
+new c_best (9.922694)
+new c_best (9.836979)
+Gap (3), Experiment (41): (0.117544)
+Planning with Linear Informed RRT
+
+new c_best (10.446042)
+new c_best (10.375247)
+new c_best (10.227811)
+new c_best (10.110348)
+new c_best (9.988101)
+new c_best (9.864226)
+new c_best (9.858688)
+new c_best (9.786106)
+Gap (3), Experiment (42): (0.162703)
+Planning with Linear Informed RRT
+
+new c_best (25.303971)
+new c_best (10.047692)
+new c_best (9.980381)
+new c_best (9.838718)
+Gap (3), Experiment (43): (0.082148)
+Planning with Linear Informed RRT
+
+new c_best (27.064990)
+new c_best (9.812992)
+Gap (3), Experiment (44): (0.084167)
+Planning with Linear Informed RRT
+
+new c_best (26.953030)
+new c_best (10.020195)
+new c_best (9.892393)
+new c_best (9.826828)
+Gap (3), Experiment (45): (0.026265)
+Planning with Linear Informed RRT
+
+new c_best (25.873980)
+new c_best (12.013798)
+new c_best (10.173622)
+new c_best (9.844725)
+Gap (3), Experiment (46): (0.073489)
+Planning with Linear Informed RRT
+
+new c_best (11.601135)
+new c_best (10.608220)
+new c_best (9.841608)
+Gap (3), Experiment (47): (0.027098)
+Planning with Linear Informed RRT
+
+new c_best (11.556132)
+new c_best (11.492602)
+new c_best (10.281369)
+new c_best (9.921842)
+new c_best (9.873707)
+new c_best (9.827622)
+Gap (3), Experiment (48): (0.056749)
+Planning with Linear Informed RRT
+
+new c_best (26.657204)
+new c_best (10.186395)
+new c_best (10.016771)
+new c_best (9.809563)
+Gap (3), Experiment (49): (0.060964)
+Planning with Linear Informed RRT
+
+new c_best (27.717837)
+new c_best (9.873700)
+new c_best (9.777257)
+Gap (4), Experiment (0): (0.105726)
+Planning with Linear Informed RRT
+
+new c_best (26.922384)
+new c_best (10.173709)
+new c_best (9.923926)
+new c_best (9.808281)
+Gap (4), Experiment (1): (0.049462)
+Planning with Linear Informed RRT
+
+new c_best (10.319231)
+new c_best (9.916038)
+new c_best (9.841577)
+Gap (4), Experiment (2): (0.046526)
+Planning with Linear Informed RRT
+
+new c_best (9.914894)
+new c_best (9.804953)
+Gap (4), Experiment (3): (0.226527)
+Planning with Linear Informed RRT
+
+new c_best (28.282118)
+new c_best (10.209706)
+new c_best (10.120579)
+new c_best (9.924531)
+new c_best (9.794065)
+Gap (4), Experiment (4): (0.080615)
+Planning with Linear Informed RRT
+
+new c_best (10.205911)
+new c_best (10.088511)
+new c_best (10.006731)
+new c_best (9.778004)
+Gap (4), Experiment (5): (0.098990)
+Planning with Linear Informed RRT
+
+new c_best (11.483104)
+new c_best (10.186275)
+new c_best (9.981337)
+new c_best (9.796874)
+Gap (4), Experiment (6): (0.029110)
+Planning with Linear Informed RRT
+
+new c_best (29.114256)
+new c_best (9.911983)
+new c_best (9.818723)
+Gap (4), Experiment (7): (0.043500)
+Planning with Linear Informed RRT
+
+new c_best (31.060724)
+new c_best (30.829326)
+new c_best (10.258866)
+new c_best (10.013868)
+new c_best (9.986342)
+new c_best (9.789518)
+Gap (4), Experiment (8): (0.091796)
+Planning with Linear Informed RRT
+
+new c_best (28.634732)
+new c_best (9.942661)
+new c_best (9.798424)
+Gap (4), Experiment (9): (0.063057)
+Planning with Linear Informed RRT
+
+new c_best (10.839458)
+new c_best (10.760137)
+new c_best (9.852215)
+new c_best (9.844169)
+Gap (4), Experiment (10): (0.150580)
+Planning with Linear Informed RRT
+
+new c_best (10.126526)
+new c_best (9.970481)
+new c_best (9.889838)
+new c_best (9.855175)
+new c_best (9.853435)
+new c_best (9.795447)
+Gap (4), Experiment (11): (0.249802)
+Planning with Linear Informed RRT
+
+new c_best (10.131282)
+new c_best (9.907431)
+new c_best (9.842746)
+Gap (4), Experiment (12): (0.127376)
+Planning with Linear Informed RRT
+
+new c_best (11.686495)
+new c_best (10.284432)
+new c_best (9.949412)
+new c_best (9.886110)
+new c_best (9.882297)
+new c_best (9.855922)
+new c_best (9.805733)
+Gap (4), Experiment (13): (0.115492)
+Planning with Linear Informed RRT
+
+new c_best (25.848037)
+new c_best (25.578677)
+new c_best (9.930948)
+new c_best (9.898921)
+new c_best (9.877392)
+new c_best (9.816041)
+Gap (4), Experiment (14): (0.320460)
+Planning with Linear Informed RRT
+
+new c_best (13.282433)
+new c_best (10.011956)
+new c_best (9.893702)
+new c_best (9.765297)
+Gap (4), Experiment (15): (0.026188)
+Planning with Linear Informed RRT
+
+new c_best (10.435070)
+new c_best (10.003334)
+new c_best (9.765350)
+Gap (4), Experiment (16): (0.059633)
+Planning with Linear Informed RRT
+
+new c_best (29.035435)
+new c_best (9.999216)
+new c_best (9.922334)
+new c_best (9.862214)
+new c_best (9.862087)
+new c_best (9.763741)
+Gap (4), Experiment (17): (0.031478)
+Planning with Linear Informed RRT
+
+new c_best (28.711320)
+new c_best (10.095498)
+new c_best (9.820386)
+Gap (4), Experiment (18): (0.046362)
+Planning with Linear Informed RRT
+
+new c_best (27.586788)
+new c_best (9.970365)
+new c_best (9.904171)
+new c_best (9.824073)
+Gap (4), Experiment (19): (0.098873)
+Planning with Linear Informed RRT
+
+new c_best (27.961518)
+new c_best (9.966800)
+new c_best (9.931853)
+new c_best (9.775705)
+Gap (4), Experiment (20): (0.113545)
+Planning with Linear Informed RRT
+
+new c_best (10.162307)
+new c_best (9.909041)
+new c_best (9.870207)
+new c_best (9.777665)
+Gap (4), Experiment (21): (0.048497)
+Planning with Linear Informed RRT
+
+new c_best (11.011904)
+new c_best (10.050631)
+new c_best (9.988221)
+new c_best (9.928391)
+new c_best (9.864569)
+new c_best (9.849658)
+new c_best (9.841401)
+Gap (4), Experiment (22): (0.150468)
+Planning with Linear Informed RRT
+
+new c_best (9.987025)
+new c_best (9.978977)
+new c_best (9.959716)
+new c_best (9.887261)
+new c_best (9.832451)
+Gap (4), Experiment (23): (0.328862)
+Planning with Linear Informed RRT
+
+new c_best (12.627588)
+new c_best (12.524070)
+new c_best (10.072489)
+new c_best (10.012577)
+new c_best (9.981054)
+new c_best (9.936539)
+new c_best (9.871586)
+new c_best (9.833659)
+Gap (4), Experiment (24): (0.193774)
+Planning with Linear Informed RRT
+
+new c_best (12.158978)
+new c_best (9.916462)
+new c_best (9.803078)
+Gap (4), Experiment (25): (0.036092)
+Planning with Linear Informed RRT
+
+new c_best (10.845293)
+new c_best (10.488854)
+new c_best (10.326948)
+new c_best (10.103710)
+new c_best (9.848852)
+new c_best (9.769211)
+Gap (4), Experiment (26): (0.011995)
+Planning with Linear Informed RRT
+
+new c_best (13.071345)
+new c_best (10.046702)
+new c_best (9.949446)
+new c_best (9.838715)
+Gap (4), Experiment (27): (0.082164)
+Planning with Linear Informed RRT
+
+new c_best (26.800680)
+new c_best (12.963584)
+new c_best (10.259041)
+new c_best (9.874029)
+new c_best (9.819697)
+Gap (4), Experiment (28): (0.025455)
+Planning with Linear Informed RRT
+
+new c_best (11.360375)
+new c_best (9.981212)
+new c_best (9.834347)
+Gap (4), Experiment (29): (0.094457)
+Planning with Linear Informed RRT
+
+new c_best (10.277876)
+new c_best (10.163605)
+new c_best (9.850348)
+new c_best (9.844362)
+Gap (4), Experiment (30): (0.110765)
+Planning with Linear Informed RRT
+
+new c_best (29.122289)
+new c_best (10.062228)
+new c_best (10.026761)
+new c_best (9.910204)
+new c_best (9.769903)
+Gap (4), Experiment (31): (0.054614)
+Planning with Linear Informed RRT
+
+new c_best (27.315999)
+new c_best (9.874249)
+new c_best (9.805907)
+Gap (4), Experiment (32): (0.057504)
+Planning with Linear Informed RRT
+
+new c_best (27.293567)
+new c_best (9.878954)
+new c_best (9.802202)
+Gap (4), Experiment (33): (0.137138)
+Planning with Linear Informed RRT
+
+new c_best (10.199594)
+new c_best (9.895564)
+new c_best (9.886714)
+new c_best (9.822650)
+Gap (4), Experiment (34): (0.260398)
+Planning with Linear Informed RRT
+
+new c_best (27.325371)
+new c_best (27.301826)
+new c_best (9.964438)
+new c_best (9.907641)
+new c_best (9.876426)
+new c_best (9.858500)
+new c_best (9.813324)
+Gap (4), Experiment (35): (0.095341)
+Planning with Linear Informed RRT
+
+new c_best (26.771074)
+new c_best (10.228244)
+new c_best (10.132136)
+new c_best (10.002895)
+new c_best (9.807517)
+Gap (4), Experiment (36): (0.041716)
+Planning with Linear Informed RRT
+
+new c_best (12.003691)
+new c_best (10.695933)
+new c_best (10.257765)
+new c_best (9.909948)
+new c_best (9.819218)
+Gap (4), Experiment (37): (0.007431)
+Planning with Linear Informed RRT
+
+new c_best (28.578854)
+new c_best (10.933140)
+new c_best (10.161503)
+new c_best (9.966389)
+new c_best (9.871420)
+new c_best (9.837414)
+Gap (4), Experiment (38): (0.030767)
+Planning with Linear Informed RRT
+
+new c_best (10.157158)
+new c_best (10.081079)
+new c_best (10.002155)
+new c_best (9.966889)
+new c_best (9.862366)
+new c_best (9.811696)
+Gap (4), Experiment (39): (0.089626)
+Planning with Linear Informed RRT
+
+new c_best (28.738316)
+new c_best (12.193787)
+new c_best (11.118688)
+new c_best (9.915281)
+new c_best (9.899185)
+new c_best (9.797155)
+Gap (4), Experiment (40): (0.043899)
+Planning with Linear Informed RRT
+
+new c_best (30.957410)
+new c_best (10.314367)
+new c_best (9.856128)
+new c_best (9.842946)
+Gap (4), Experiment (41): (0.060947)
+Planning with Linear Informed RRT
+
+new c_best (10.415030)
+new c_best (10.341725)
+new c_best (9.966434)
+new c_best (9.873109)
+new c_best (9.800742)
+Gap (4), Experiment (42): (0.073497)
+Planning with Linear Informed RRT
+
+new c_best (12.713344)
+new c_best (10.193621)
+new c_best (10.067634)
+new c_best (9.976821)
+new c_best (9.848464)
+new c_best (9.757652)
+Gap (4), Experiment (43): (0.039316)
+Planning with Linear Informed RRT
+
+new c_best (10.471974)
+new c_best (10.129996)
+new c_best (9.794348)
+Gap (4), Experiment (44): (0.051681)
+Planning with Linear Informed RRT
+
+new c_best (27.626755)
+new c_best (10.093856)
+new c_best (10.019915)
+new c_best (9.819307)
+Gap (4), Experiment (45): (0.053244)
+Planning with Linear Informed RRT
+
+new c_best (9.903091)
+new c_best (9.809253)
+Gap (4), Experiment (46): (0.181776)
+Planning with Linear Informed RRT
+
+new c_best (10.629316)
+new c_best (10.254155)
+new c_best (10.128280)
+new c_best (9.882390)
+new c_best (9.779886)
+Gap (4), Experiment (47): (0.052141)
+Planning with Linear Informed RRT
+
+new c_best (26.251144)
+new c_best (10.444286)
+new c_best (10.230478)
+new c_best (9.948717)
+new c_best (9.911977)
+new c_best (9.794631)
+Gap (4), Experiment (48): (0.057050)
+Planning with Linear Informed RRT
+
+new c_best (29.294329)
+new c_best (10.006922)
+new c_best (9.884007)
+new c_best (9.798281)
+Gap (4), Experiment (49): (0.040439)
+Planning with Linear Informed RRT
+
+new c_best (14.403604)
+new c_best (11.138483)
+new c_best (10.236612)
+new c_best (10.158666)
+new c_best (9.830724)
+Gap (5), Experiment (0): (0.017092)
+Planning with Linear Informed RRT
+
+new c_best (11.038557)
+new c_best (9.827413)
+Gap (5), Experiment (1): (0.023093)
+Planning with Linear Informed RRT
+
+new c_best (11.439560)
+new c_best (11.069743)
+new c_best (10.913866)
+new c_best (10.409205)
+new c_best (10.241738)
+new c_best (10.105241)
+new c_best (9.808021)
+Gap (5), Experiment (2): (0.008607)
+Planning with Linear Informed RRT
+
+new c_best (14.219682)
+new c_best (12.353665)
+new c_best (9.806338)
+Gap (5), Experiment (3): (0.085561)
+Planning with Linear Informed RRT
+
+new c_best (12.278792)
+new c_best (12.090015)
+new c_best (10.116288)
+new c_best (9.872795)
+new c_best (9.785544)
+Gap (5), Experiment (4): (0.024254)
+Planning with Linear Informed RRT
+
+new c_best (9.938695)
+new c_best (9.871277)
+new c_best (9.774977)
+Gap (5), Experiment (5): (0.202519)
+Planning with Linear Informed RRT
+
+new c_best (12.681005)
+new c_best (10.214024)
+new c_best (9.961670)
+new c_best (9.900376)
+new c_best (9.896012)
+new c_best (9.891867)
+new c_best (9.879192)
+new c_best (9.802409)
+Gap (5), Experiment (6): (0.052526)
+Planning with Linear Informed RRT
+
+new c_best (27.134451)
+new c_best (9.997860)
+new c_best (9.859253)
+new c_best (9.804017)
+Gap (5), Experiment (7): (0.099512)
+Planning with Linear Informed RRT
+
+new c_best (10.354575)
+new c_best (10.295694)
+new c_best (9.821689)
+Gap (5), Experiment (8): (0.053687)
+Planning with Linear Informed RRT
+
+new c_best (27.698885)
+new c_best (10.218258)
+new c_best (9.948365)
+new c_best (9.839128)
+Gap (5), Experiment (9): (0.080598)
+Planning with Linear Informed RRT
+
+new c_best (12.370537)
+new c_best (11.035358)
+new c_best (10.092014)
+new c_best (10.038910)
+new c_best (9.993286)
+new c_best (9.967939)
+new c_best (9.845586)
+Gap (5), Experiment (10): (0.056456)
+Planning with Linear Informed RRT
+
+new c_best (11.906183)
+new c_best (10.384012)
+new c_best (9.854580)
+new c_best (9.814734)
+Gap (5), Experiment (11): (0.041570)
+Planning with Linear Informed RRT
+
+new c_best (29.665884)
+new c_best (10.143034)
+new c_best (10.001186)
+new c_best (9.896903)
+new c_best (9.880414)
+new c_best (9.877101)
+new c_best (9.786828)
+Gap (5), Experiment (12): (0.039115)
+Planning with Linear Informed RRT
+
+new c_best (11.412591)
+new c_best (10.155699)
+new c_best (9.785365)
+Gap (5), Experiment (13): (0.033418)
+Planning with Linear Informed RRT
+
+new c_best (26.851277)
+new c_best (10.468920)
+new c_best (10.068749)
+new c_best (9.859078)
+new c_best (9.763655)
+Gap (5), Experiment (14): (0.113528)
+Planning with Linear Informed RRT
+
+new c_best (11.118395)
+new c_best (10.048978)
+new c_best (9.969451)
+new c_best (9.821948)
+Gap (5), Experiment (15): (0.012802)
+Planning with Linear Informed RRT
+
+new c_best (10.566287)
+new c_best (10.025607)
+new c_best (9.836270)
+Gap (5), Experiment (16): (0.006404)
+Planning with Linear Informed RRT
+
+new c_best (10.955687)
+new c_best (10.157450)
+new c_best (9.942115)
+new c_best (9.782706)
+Gap (5), Experiment (17): (0.009536)
+Planning with Linear Informed RRT
+
+new c_best (30.789361)
+new c_best (10.285831)
+new c_best (9.992789)
+new c_best (9.902815)
+new c_best (9.870066)
+new c_best (9.800111)
+Gap (5), Experiment (18): (0.231971)
+Planning with Linear Informed RRT
+
+new c_best (31.888967)
+new c_best (10.154386)
+new c_best (10.146522)
+new c_best (9.968423)
+new c_best (9.811408)
+Gap (5), Experiment (19): (0.027787)
+Planning with Linear Informed RRT
+
+new c_best (10.069507)
+new c_best (9.939885)
+new c_best (9.860448)
+new c_best (9.765399)
+Gap (5), Experiment (20): (0.187916)
+Planning with Linear Informed RRT
+
+new c_best (10.503307)
+new c_best (9.965959)
+new c_best (9.830957)
+Gap (5), Experiment (21): (0.044918)
+Planning with Linear Informed RRT
+
+new c_best (10.971499)
+new c_best (10.069424)
+new c_best (10.005208)
+new c_best (9.842101)
+Gap (5), Experiment (22): (0.073472)
+Planning with Linear Informed RRT
+
+new c_best (30.429825)
+new c_best (28.013808)
+new c_best (10.232087)
+new c_best (9.863714)
+new c_best (9.851079)
+new c_best (9.772648)
+Gap (5), Experiment (23): (0.168396)
+Planning with Linear Informed RRT
+
+new c_best (27.797525)
+new c_best (10.241416)
+new c_best (9.840615)
+Gap (5), Experiment (24): (0.034823)
+Planning with Linear Informed RRT
+
+new c_best (26.919390)
+new c_best (9.981058)
+new c_best (9.793705)
+Gap (5), Experiment (25): (0.050976)
+Planning with Linear Informed RRT
+
+new c_best (12.670274)
+new c_best (10.353161)
+new c_best (10.123638)
+new c_best (10.060704)
+new c_best (9.871074)
+new c_best (9.764090)
+Gap (5), Experiment (26): (0.046016)
+Planning with Linear Informed RRT
+
+new c_best (27.609072)
+new c_best (10.334013)
+new c_best (10.072882)
+new c_best (9.887461)
+new c_best (9.808503)
+Gap (5), Experiment (27): (0.046177)
+Planning with Linear Informed RRT
+
+new c_best (11.517657)
+new c_best (10.504829)
+new c_best (9.836026)
+Gap (5), Experiment (28): (0.010607)
+Planning with Linear Informed RRT
+
+new c_best (12.046559)
+new c_best (10.223875)
+new c_best (9.810312)
+Gap (5), Experiment (29): (0.025657)
+Planning with Linear Informed RRT
+
+new c_best (12.633811)
+new c_best (9.840101)
+Gap (5), Experiment (30): (0.043869)
+Planning with Linear Informed RRT
+
+new c_best (14.572785)
+new c_best (11.475492)
+new c_best (10.912867)
+new c_best (10.812801)
+new c_best (10.361958)
+new c_best (10.158230)
+new c_best (9.926763)
+new c_best (9.860543)
+new c_best (9.857915)
+new c_best (9.794890)
+Gap (5), Experiment (31): (0.069691)
+Planning with Linear Informed RRT
+
+new c_best (26.112493)
+new c_best (10.094432)
+new c_best (9.836387)
+Gap (5), Experiment (32): (0.025044)
+Planning with Linear Informed RRT
+
+new c_best (27.273545)
+new c_best (10.262547)
+new c_best (9.921009)
+new c_best (9.896415)
+new c_best (9.874447)
+new c_best (9.776519)
+Gap (5), Experiment (33): (0.107083)
+Planning with Linear Informed RRT
+
+new c_best (28.165727)
+new c_best (10.117647)
+new c_best (9.965361)
+new c_best (9.811474)
+Gap (5), Experiment (34): (0.057975)
+Planning with Linear Informed RRT
+
+new c_best (10.029097)
+new c_best (9.893407)
+new c_best (9.831889)
+Gap (5), Experiment (35): (0.229816)
+Planning with Linear Informed RRT
+
+new c_best (28.927018)
+new c_best (10.550197)
+new c_best (10.135475)
+new c_best (9.959348)
+new c_best (9.815353)
+Gap (5), Experiment (36): (0.036489)
+Planning with Linear Informed RRT
+
+new c_best (10.621228)
+new c_best (9.982241)
+new c_best (9.849878)
+new c_best (9.831756)
+Gap (5), Experiment (37): (0.034981)
+Planning with Linear Informed RRT
+
+new c_best (32.885210)
+new c_best (10.129244)
+new c_best (9.968531)
+new c_best (9.798633)
+Gap (5), Experiment (38): (0.044231)
+Planning with Linear Informed RRT
+
+new c_best (10.946438)
+new c_best (9.937592)
+new c_best (9.793143)
+Gap (5), Experiment (39): (0.033523)
+Planning with Linear Informed RRT
+
+new c_best (11.047081)
+new c_best (9.911167)
+new c_best (9.862152)
+new c_best (9.859894)
+new c_best (9.799374)
+Gap (5), Experiment (40): (0.224619)
+Planning with Linear Informed RRT
+
+new c_best (11.923892)
+new c_best (10.253820)
+new c_best (9.887461)
+new c_best (9.852241)
+new c_best (9.834065)
+Gap (5), Experiment (41): (0.079463)
+Planning with Linear Informed RRT
+
+new c_best (13.685931)
+new c_best (10.051329)
+new c_best (10.025505)
+new c_best (9.861809)
+new c_best (9.772959)
+Gap (5), Experiment (42): (0.022667)
+Planning with Linear Informed RRT
+
+new c_best (12.752879)
+new c_best (12.687398)
+new c_best (10.273052)
+new c_best (10.066699)
+new c_best (9.841211)
+Gap (5), Experiment (43): (0.020841)
+Planning with Linear Informed RRT
+
+new c_best (28.400779)
+new c_best (10.397462)
+new c_best (9.906937)
+new c_best (9.825490)
+Gap (5), Experiment (44): (0.033555)
+Planning with Linear Informed RRT
+
+new c_best (10.282715)
+new c_best (9.909875)
+new c_best (9.907470)
+new c_best (9.810028)
+Gap (5), Experiment (45): (0.193277)
+Planning with Linear Informed RRT
+
+new c_best (10.215949)
+new c_best (10.162252)
+new c_best (10.016282)
+new c_best (9.979846)
+new c_best (9.867659)
+new c_best (9.865230)
+new c_best (9.794586)
+Gap (5), Experiment (46): (0.129059)
+Planning with Linear Informed RRT
+
+new c_best (12.764592)
+new c_best (10.448961)
+new c_best (10.245161)
+new c_best (9.826042)
+Gap (5), Experiment (47): (0.035813)
+Planning with Linear Informed RRT
+
+new c_best (10.417964)
+new c_best (10.305280)
+new c_best (10.105939)
+new c_best (9.917164)
+new c_best (9.793818)
+Gap (5), Experiment (48): (0.044140)
+Planning with Linear Informed RRT
+
+new c_best (26.861632)
+new c_best (10.068870)
+new c_best (10.000434)
+new c_best (9.957674)
+new c_best (9.769134)
+Gap (5), Experiment (49): (0.301626)
+Planning with Linear RRT
+
+new c_best (24.406102)
+new c_best (24.356645)
+new c_best (10.239471)
+new c_best (10.047244)
+new c_best (9.983800)
+new c_best (9.942686)
+new c_best (9.885317)
+new c_best (9.819927)
+Gap (1), Experiment (0): (1.915245)
+Planning with Linear RRT
+
+new c_best (31.063639)
+new c_best (25.927763)
+new c_best (25.496538)
+new c_best (25.082349)
+new c_best (25.007643)
+new c_best (24.795934)
+new c_best (24.577309)
+new c_best (24.304762)
+new c_best (24.167374)
+new c_best (24.161366)
+new c_best (24.051473)
+new c_best (9.955554)
+new c_best (9.909988)
+new c_best (9.786576)
+Gap (1), Experiment (1): (4.765027)
+Planning with Linear RRT
+
+new c_best (25.091584)
+new c_best (24.876126)
+new c_best (24.576874)
+new c_best (24.130148)
+new c_best (24.026982)
+new c_best (14.392204)
+new c_best (10.132441)
+new c_best (10.068602)
+new c_best (9.835621)
+Gap (1), Experiment (2): (1.003642)
+Planning with Linear RRT
+
+new c_best (29.075407)
+new c_best (26.298768)
+new c_best (26.121327)
+new c_best (24.444977)
+new c_best (10.611050)
+new c_best (10.010983)
+new c_best (9.829168)
+Gap (1), Experiment (3): (1.641955)
+Planning with Linear RRT
+
+new c_best (27.751858)
+new c_best (27.313657)
+new c_best (25.367920)
+new c_best (25.245922)
+new c_best (25.179667)
+new c_best (23.949137)
+new c_best (23.811730)
+new c_best (23.749362)
+new c_best (9.865584)
+new c_best (9.849001)
+new c_best (9.839122)
+Gap (1), Experiment (4): (6.139976)
+Planning with Linear RRT
+
+new c_best (32.507899)
+new c_best (30.676277)
+new c_best (24.903832)
+new c_best (24.631802)
+new c_best (24.415542)
+new c_best (24.325187)
+new c_best (24.151849)
+new c_best (24.146647)
+new c_best (24.118456)
+new c_best (23.997298)
+new c_best (23.894943)
+new c_best (23.811037)
+new c_best (9.970316)
+new c_best (9.784018)
+Gap (1), Experiment (5): (5.000096)
+Planning with Linear RRT
+
+new c_best (10.838707)
+new c_best (10.271751)
+new c_best (9.970565)
+new c_best (9.861900)
+new c_best (9.757584)
+Gap (1), Experiment (6): (0.912002)
+Planning with Linear RRT
+
+new c_best (25.681305)
+new c_best (25.570091)
+new c_best (24.709194)
+new c_best (24.457740)
+new c_best (24.305379)
+new c_best (24.189207)
+new c_best (24.092218)
+new c_best (24.075591)
+new c_best (24.060994)
+new c_best (23.824779)
+new c_best (10.232742)
+new c_best (10.094055)
+new c_best (10.055660)
+new c_best (9.949784)
+new c_best (9.769665)
+Gap (1), Experiment (7): (4.313008)
+Planning with Linear RRT
+
+new c_best (9.881513)
+new c_best (9.836465)
+Gap (1), Experiment (8): (0.953930)
+Planning with Linear RRT
+
+new c_best (26.394984)
+new c_best (26.369302)
+new c_best (26.164411)
+new c_best (24.821997)
+new c_best (24.100046)
+new c_best (23.996840)
+new c_best (23.945534)
+new c_best (9.918834)
+new c_best (9.835877)
+Gap (1), Experiment (9): (2.518604)
+Planning with Linear RRT
+
+new c_best (25.219450)
+new c_best (25.178649)
+new c_best (10.095434)
+new c_best (9.796732)
+Gap (1), Experiment (10): (0.394190)
+Planning with Linear RRT
+
+new c_best (29.257140)
+new c_best (29.216441)
+new c_best (27.202088)
+new c_best (26.300360)
+new c_best (10.167809)
+new c_best (10.082939)
+new c_best (9.976218)
+new c_best (9.942041)
+new c_best (9.908653)
+new c_best (9.861971)
+new c_best (9.844603)
+Gap (1), Experiment (11): (8.552072)
+Planning with Linear RRT
+
+new c_best (27.751167)
+new c_best (26.795023)
+new c_best (24.646477)
+new c_best (24.614107)
+new c_best (24.495754)
+new c_best (24.401056)
+new c_best (24.165534)
+new c_best (24.092140)
+new c_best (23.953416)
+new c_best (23.946965)
+new c_best (23.926539)
+new c_best (9.829662)
+Gap (1), Experiment (12): (3.364796)
+Planning with Linear RRT
+
+new c_best (24.775233)
+new c_best (24.295021)
+new c_best (24.076652)
+new c_best (23.971764)
+new c_best (23.790750)
+new c_best (10.020329)
+new c_best (9.893258)
+new c_best (9.778131)
+Gap (1), Experiment (13): (8.698163)
+Planning with Linear RRT
+
+new c_best (25.226308)
+new c_best (25.201345)
+new c_best (24.590593)
+new c_best (24.589615)
+new c_best (24.566901)
+new c_best (24.437929)
+new c_best (24.201926)
+new c_best (24.048284)
+new c_best (24.040491)
+new c_best (23.978656)
+new c_best (23.954197)
+new c_best (9.970436)
+new c_best (9.816504)
+Gap (1), Experiment (14): (1.623524)
+Planning with Linear RRT
+
+new c_best (29.787457)
+new c_best (28.981902)
+new c_best (26.396530)
+new c_best (25.883952)
+new c_best (24.572629)
+new c_best (24.385319)
+new c_best (24.292498)
+new c_best (24.069799)
+new c_best (10.090245)
+new c_best (9.929342)
+new c_best (9.894800)
+new c_best (9.829797)
+Gap (1), Experiment (15): (4.266835)
+Planning with Linear RRT
+
+new c_best (27.709372)
+new c_best (25.759679)
+new c_best (25.229339)
+new c_best (24.733786)
+new c_best (24.231978)
+new c_best (24.231387)
+new c_best (9.879621)
+new c_best (9.879241)
+new c_best (9.819879)
+Gap (1), Experiment (16): (8.891679)
+Planning with Linear RRT
+
+new c_best (10.995961)
+new c_best (10.597574)
+new c_best (10.045602)
+new c_best (9.967123)
+new c_best (9.866584)
+new c_best (9.805216)
+Gap (1), Experiment (17): (7.133051)
+Planning with Linear RRT
+
+new c_best (27.370184)
+new c_best (26.721628)
+new c_best (26.658251)
+new c_best (25.687053)
+new c_best (24.826408)
+new c_best (9.840560)
+Gap (1), Experiment (18): (0.311744)
+Planning with Linear RRT
+
+new c_best (26.725563)
+new c_best (26.513192)
+new c_best (25.396413)
+new c_best (24.818690)
+new c_best (24.249007)
+new c_best (24.247815)
+new c_best (24.153006)
+new c_best (24.133551)
+new c_best (24.029763)
+new c_best (24.007069)
+new c_best (23.822042)
+new c_best (23.701927)
+new c_best (10.248870)
+new c_best (10.051262)
+new c_best (10.037104)
+new c_best (9.970851)
+new c_best (9.787091)
+Gap (1), Experiment (19): (10.509812)
+Planning with Linear RRT
+
+new c_best (26.817256)
+new c_best (25.189394)
+new c_best (24.974759)
+new c_best (24.507055)
+new c_best (24.279752)
+new c_best (24.272159)
+new c_best (24.171439)
+new c_best (9.836294)
+Gap (1), Experiment (20): (1.562998)
+Planning with Linear RRT
+
+new c_best (26.141834)
+new c_best (25.087783)
+new c_best (24.129105)
+new c_best (24.069282)
+new c_best (23.950440)
+new c_best (23.925216)
+new c_best (23.867628)
+new c_best (23.854862)
+new c_best (10.176773)
+new c_best (9.803393)
+Gap (1), Experiment (21): (4.202935)
+Planning with Linear RRT
+
+new c_best (29.673849)
+new c_best (26.882412)
+new c_best (25.235024)
+new c_best (24.203921)
+new c_best (24.021699)
+new c_best (23.969869)
+new c_best (10.436878)
+new c_best (9.928263)
+new c_best (9.875413)
+new c_best (9.838416)
+Gap (1), Experiment (22): (9.395953)
+Planning with Linear RRT
+
+new c_best (30.774634)
+new c_best (24.862338)
+new c_best (24.325817)
+new c_best (9.988377)
+new c_best (9.792230)
+Gap (1), Experiment (23): (1.885413)
+Planning with Linear RRT
+
+new c_best (24.754696)
+new c_best (24.647204)
+new c_best (24.247115)
+new c_best (24.184321)
+new c_best (24.175643)
+new c_best (23.930061)
+new c_best (23.887669)
+new c_best (10.282406)
+new c_best (9.869517)
+new c_best (9.812300)
+Gap (1), Experiment (24): (3.734073)
+Planning with Linear RRT
+
+new c_best (25.891127)
+new c_best (25.287899)
+new c_best (25.091452)
+new c_best (24.744581)
+new c_best (24.477239)
+new c_best (24.230254)
+new c_best (24.193458)
+new c_best (24.188955)
+new c_best (24.016321)
+new c_best (23.902231)
+new c_best (9.955985)
+new c_best (9.920477)
+new c_best (9.849868)
+new c_best (9.844343)
+Gap (1), Experiment (25): (8.801322)
+Planning with Linear RRT
+
+new c_best (26.654844)
+new c_best (26.551837)
+new c_best (24.744067)
+new c_best (24.105301)
+new c_best (23.950187)
+new c_best (23.901644)
+new c_best (23.796502)
+new c_best (10.131415)
+new c_best (10.125709)
+new c_best (9.803671)
+Gap (1), Experiment (26): (8.620378)
+Planning with Linear RRT
+
+new c_best (27.778784)
+new c_best (25.361683)
+new c_best (25.346387)
+new c_best (25.171015)
+new c_best (24.791561)
+new c_best (24.588622)
+new c_best (24.446368)
+new c_best (24.200427)
+new c_best (24.173142)
+new c_best (23.979010)
+new c_best (23.948756)
+new c_best (23.940637)
+new c_best (23.903650)
+new c_best (9.911303)
+new c_best (9.826204)
+Gap (1), Experiment (27): (6.184306)
+Planning with Linear RRT
+
+new c_best (27.469302)
+new c_best (26.350106)
+new c_best (24.411020)
+new c_best (24.371648)
+new c_best (24.216128)
+new c_best (24.044393)
+new c_best (23.948956)
+new c_best (23.843044)
+new c_best (23.814181)
+new c_best (23.775332)
+new c_best (23.765156)
+new c_best (9.988802)
+new c_best (9.949943)
+new c_best (9.948153)
+new c_best (9.912534)
+new c_best (9.884498)
+new c_best (9.780123)
+Gap (1), Experiment (28): (31.010257)
+Planning with Linear RRT
+
+new c_best (25.770589)
+new c_best (25.505714)
+new c_best (25.178394)
+new c_best (25.027570)
+new c_best (24.266509)
+new c_best (24.095005)
+new c_best (24.034899)
+new c_best (23.919688)
+new c_best (10.145942)
+new c_best (9.936262)
+new c_best (9.790866)
+Gap (1), Experiment (29): (2.683611)
+Planning with Linear RRT
+
+new c_best (11.544274)
+new c_best (10.573122)
+new c_best (10.161684)
+new c_best (10.154457)
+new c_best (10.030395)
+new c_best (9.919430)
+new c_best (9.849433)
+new c_best (9.828517)
+Gap (1), Experiment (30): (2.921552)
+Planning with Linear RRT
+
+new c_best (32.985715)
+new c_best (30.344487)
+new c_best (10.570143)
+new c_best (10.101877)
+new c_best (10.073783)
+new c_best (9.849227)
+new c_best (9.827582)
+Gap (1), Experiment (31): (1.426693)
+Planning with Linear RRT
+
+new c_best (27.805665)
+new c_best (26.322228)
+new c_best (24.726405)
+new c_best (24.553205)
+new c_best (24.210010)
+new c_best (10.246678)
+new c_best (9.963994)
+new c_best (9.891614)
+new c_best (9.878679)
+new c_best (9.821896)
+Gap (1), Experiment (32): (1.730580)
+Planning with Linear RRT
+
+new c_best (27.047882)
+new c_best (26.733603)
+new c_best (26.414697)
+new c_best (25.358482)
+new c_best (24.198138)
+new c_best (24.194359)
+new c_best (24.180161)
+new c_best (24.052334)
+new c_best (23.928965)
+new c_best (23.807612)
+new c_best (10.829098)
+new c_best (10.158516)
+new c_best (9.914421)
+new c_best (9.882092)
+new c_best (9.820887)
+Gap (1), Experiment (33): (8.273700)
+Planning with Linear RRT
+
+new c_best (24.946767)
+new c_best (24.457248)
+new c_best (24.282435)
+new c_best (24.128321)
+new c_best (10.486846)
+new c_best (10.069497)
+new c_best (9.892220)
+new c_best (9.842173)
+Gap (1), Experiment (34): (2.267109)
+Planning with Linear RRT
+
+new c_best (27.816683)
+new c_best (25.262610)
+new c_best (24.173455)
+new c_best (24.110788)
+new c_best (24.061376)
+new c_best (23.890363)
+new c_best (10.204406)
+new c_best (9.885352)
+new c_best (9.795195)
+Gap (1), Experiment (35): (5.232656)
+Planning with Linear RRT
+
+new c_best (28.140798)
+new c_best (25.475343)
+new c_best (25.005948)
+new c_best (24.825514)
+new c_best (24.550828)
+new c_best (24.226539)
+new c_best (24.161230)
+new c_best (24.087726)
+new c_best (24.035072)
+new c_best (23.996770)
+new c_best (23.942135)
+new c_best (23.923180)
+new c_best (23.903838)
+new c_best (9.961291)
+new c_best (9.894664)
+new c_best (9.863780)
+new c_best (9.823469)
+Gap (1), Experiment (36): (6.134578)
+Planning with Linear RRT
+
+new c_best (30.016693)
+new c_best (26.336108)
+new c_best (24.721067)
+new c_best (24.668695)
+new c_best (24.286926)
+new c_best (24.039087)
+new c_best (23.974369)
+new c_best (10.020078)
+new c_best (9.931749)
+new c_best (9.839372)
+Gap (1), Experiment (37): (3.864014)
+Planning with Linear RRT
+
+new c_best (26.161114)
+new c_best (25.660936)
+new c_best (25.127946)
+new c_best (24.328425)
+new c_best (24.311571)
+new c_best (24.161085)
+new c_best (24.158792)
+new c_best (24.059873)
+new c_best (24.030454)
+new c_best (10.105812)
+new c_best (10.047907)
+new c_best (10.043835)
+new c_best (9.990763)
+new c_best (9.884744)
+new c_best (9.787942)
+Gap (1), Experiment (38): (3.064041)
+Planning with Linear RRT
+
+new c_best (26.227433)
+new c_best (25.232999)
+new c_best (24.331351)
+new c_best (24.194526)
+new c_best (24.094664)
+new c_best (23.892383)
+new c_best (23.887691)
+new c_best (10.026614)
+new c_best (9.776049)
+Gap (1), Experiment (39): (1.764855)
+Planning with Linear RRT
+
+new c_best (24.930130)
+new c_best (24.799166)
+new c_best (24.659766)
+new c_best (24.307155)
+new c_best (24.287698)
+new c_best (24.122843)
+new c_best (24.121968)
+new c_best (23.833033)
+new c_best (10.455260)
+new c_best (10.172215)
+new c_best (9.868541)
+new c_best (9.796369)
+Gap (1), Experiment (40): (4.973503)
+Planning with Linear RRT
+
+new c_best (28.817577)
+new c_best (25.574045)
+new c_best (25.301551)
+new c_best (10.148101)
+new c_best (9.954373)
+new c_best (9.913538)
+new c_best (9.810199)
+Gap (1), Experiment (41): (2.110788)
+Planning with Linear RRT
+
+new c_best (25.138098)
+new c_best (25.017142)
+new c_best (24.863950)
+new c_best (24.449389)
+new c_best (24.203186)
+new c_best (24.170506)
+new c_best (24.000516)
+new c_best (9.880042)
+new c_best (9.838840)
+Gap (1), Experiment (42): (4.069489)
+Planning with Linear RRT
+
+new c_best (28.936578)
+new c_best (25.885508)
+new c_best (25.060276)
+new c_best (24.884219)
+new c_best (24.765113)
+new c_best (24.116145)
+new c_best (10.040194)
+new c_best (9.989693)
+new c_best (9.811727)
+Gap (1), Experiment (43): (3.205258)
+Planning with Linear RRT
+
+new c_best (25.770634)
+new c_best (25.093509)
+new c_best (24.314203)
+new c_best (24.025370)
+new c_best (10.252366)
+new c_best (10.018988)
+new c_best (9.864846)
+new c_best (9.808503)
+Gap (1), Experiment (44): (2.006026)
+Planning with Linear RRT
+
+new c_best (24.745363)
+new c_best (24.267647)
+new c_best (24.231040)
+new c_best (24.098956)
+new c_best (23.974475)
+new c_best (23.785198)
+new c_best (9.872135)
+new c_best (9.865290)
+new c_best (9.820876)
+Gap (1), Experiment (45): (17.235828)
+Planning with Linear RRT
+
+new c_best (25.989814)
+new c_best (25.130828)
+new c_best (25.129648)
+new c_best (10.422286)
+new c_best (10.254923)
+new c_best (9.984343)
+new c_best (9.950394)
+new c_best (9.773647)
+Gap (1), Experiment (46): (2.578280)
+Planning with Linear RRT
+
+new c_best (26.918076)
+new c_best (25.740916)
+new c_best (24.836005)
+new c_best (24.572960)
+new c_best (24.473437)
+new c_best (24.460938)
+new c_best (24.401628)
+new c_best (24.068727)
+new c_best (9.880749)
+new c_best (9.843424)
+Gap (1), Experiment (47): (1.443950)
+Planning with Linear RRT
+
+new c_best (26.125259)
+new c_best (24.839603)
+new c_best (10.183453)
+new c_best (10.035861)
+new c_best (9.863399)
+new c_best (9.799032)
+Gap (1), Experiment (48): (10.531544)
+Planning with Linear RRT
+
+new c_best (26.106551)
+new c_best (25.609571)
+new c_best (10.264735)
+new c_best (10.109591)
+new c_best (9.862742)
+new c_best (9.851132)
+new c_best (9.811487)
+Gap (1), Experiment (49): (6.661575)
+Planning with Linear RRT
+
+new c_best (33.858626)
+new c_best (26.143569)
+new c_best (24.711472)
+new c_best (24.397362)
+new c_best (10.150070)
+new c_best (9.945992)
+new c_best (9.911623)
+new c_best (9.880586)
+new c_best (9.859220)
+new c_best (9.801000)
+Gap (2), Experiment (0): (8.000783)
+Planning with Linear RRT
+
+new c_best (30.778593)
+new c_best (25.343336)
+new c_best (10.010339)
+new c_best (9.904359)
+new c_best (9.839610)
+Gap (2), Experiment (1): (3.535131)
+Planning with Linear RRT
+
+new c_best (25.905320)
+new c_best (25.346161)
+new c_best (24.933593)
+new c_best (10.028543)
+new c_best (9.832388)
+Gap (2), Experiment (2): (0.633648)
+Planning with Linear RRT
+
+new c_best (26.852644)
+new c_best (26.238137)
+new c_best (25.855322)
+new c_best (9.967045)
+new c_best (9.959595)
+new c_best (9.937209)
+new c_best (9.808799)
+Gap (2), Experiment (3): (2.949955)
+Planning with Linear RRT
+
+new c_best (26.201126)
+new c_best (10.977821)
+new c_best (10.045708)
+new c_best (9.896166)
+new c_best (9.872568)
+new c_best (9.852506)
+new c_best (9.808733)
+Gap (2), Experiment (4): (1.158108)
+Planning with Linear RRT
+
+new c_best (27.284160)
+new c_best (25.797011)
+new c_best (25.041161)
+new c_best (9.827825)
+Gap (2), Experiment (5): (0.437531)
+Planning with Linear RRT
+
+new c_best (28.582141)
+new c_best (10.774959)
+new c_best (10.096403)
+new c_best (9.995061)
+new c_best (9.916719)
+new c_best (9.856403)
+new c_best (9.826574)
+Gap (2), Experiment (6): (2.877261)
+Planning with Linear RRT
+
+new c_best (28.905657)
+new c_best (25.604944)
+new c_best (10.126051)
+new c_best (9.975955)
+new c_best (9.834609)
+Gap (2), Experiment (7): (1.056293)
+Planning with Linear RRT
+
+new c_best (24.927117)
+new c_best (11.151330)
+new c_best (10.905489)
+new c_best (10.189676)
+new c_best (9.989076)
+new c_best (9.919241)
+new c_best (9.818842)
+Gap (2), Experiment (8): (3.035261)
+Planning with Linear RRT
+
+new c_best (27.810381)
+new c_best (26.488145)
+new c_best (25.929477)
+new c_best (25.015161)
+new c_best (9.807883)
+Gap (2), Experiment (9): (0.423604)
+Planning with Linear RRT
+
+new c_best (24.896000)
+new c_best (24.607436)
+new c_best (24.553188)
+new c_best (24.424307)
+new c_best (24.373355)
+new c_best (10.155631)
+new c_best (9.917725)
+new c_best (9.908049)
+new c_best (9.787028)
+Gap (2), Experiment (10): (3.681222)
+Planning with Linear RRT
+
+new c_best (10.388572)
+new c_best (10.039244)
+new c_best (9.929394)
+new c_best (9.882180)
+new c_best (9.771892)
+Gap (2), Experiment (11): (12.120339)
+Planning with Linear RRT
+
+new c_best (13.343762)
+new c_best (10.263797)
+new c_best (9.949394)
+new c_best (9.832321)
+Gap (2), Experiment (12): (0.837165)
+Planning with Linear RRT
+
+new c_best (26.930578)
+new c_best (26.644926)
+new c_best (10.393950)
+new c_best (10.252949)
+new c_best (9.808634)
+Gap (2), Experiment (13): (0.611603)
+Planning with Linear RRT
+
+new c_best (27.960848)
+new c_best (27.747803)
+new c_best (24.526868)
+new c_best (10.209677)
+new c_best (10.144334)
+new c_best (9.802806)
+Gap (2), Experiment (14): (1.125455)
+Planning with Linear RRT
+
+new c_best (10.992854)
+new c_best (10.804300)
+new c_best (10.788355)
+new c_best (10.291597)
+new c_best (9.948257)
+new c_best (9.858138)
+new c_best (9.803314)
+Gap (2), Experiment (15): (2.592534)
+Planning with Linear RRT
+
+new c_best (27.216053)
+new c_best (10.060411)
+new c_best (9.986814)
+new c_best (9.906188)
+new c_best (9.791106)
+Gap (2), Experiment (16): (1.597586)
+Planning with Linear RRT
+
+new c_best (12.226484)
+new c_best (10.458832)
+new c_best (9.898542)
+new c_best (9.827078)
+Gap (2), Experiment (17): (1.065245)
+Planning with Linear RRT
+
+new c_best (26.041606)
+new c_best (25.835984)
+new c_best (25.209153)
+new c_best (24.987916)
+new c_best (10.859440)
+new c_best (10.271054)
+new c_best (10.089495)
+new c_best (10.019371)
+new c_best (9.946836)
+new c_best (9.777008)
+Gap (2), Experiment (18): (1.479562)
+Planning with Linear RRT
+
+new c_best (31.655062)
+new c_best (26.254850)
+new c_best (10.293689)
+new c_best (9.836244)
+Gap (2), Experiment (19): (0.123739)
+Planning with Linear RRT
+
+new c_best (25.367101)
+new c_best (10.275359)
+new c_best (9.930303)
+new c_best (9.874644)
+new c_best (9.797998)
+Gap (2), Experiment (20): (3.685291)
+Planning with Linear RRT
+
+new c_best (29.166236)
+new c_best (10.000032)
+new c_best (9.866544)
+new c_best (9.787463)
+Gap (2), Experiment (21): (0.450356)
+Planning with Linear RRT
+
+new c_best (29.613278)
+new c_best (29.283158)
+new c_best (11.173248)
+new c_best (10.368629)
+new c_best (10.059553)
+new c_best (9.979187)
+new c_best (9.794694)
+Gap (2), Experiment (22): (0.419811)
+Planning with Linear RRT
+
+new c_best (12.187397)
+new c_best (10.591030)
+new c_best (10.093590)
+new c_best (9.799827)
+Gap (2), Experiment (23): (0.534936)
+Planning with Linear RRT
+
+new c_best (25.711044)
+new c_best (10.737510)
+new c_best (10.181404)
+new c_best (9.971294)
+new c_best (9.904617)
+new c_best (9.894850)
+new c_best (9.887375)
+new c_best (9.804915)
+Gap (2), Experiment (24): (4.675239)
+Planning with Linear RRT
+
+new c_best (26.810861)
+new c_best (10.067459)
+new c_best (10.019992)
+new c_best (9.914585)
+new c_best (9.895181)
+new c_best (9.892397)
+new c_best (9.816184)
+Gap (2), Experiment (25): (4.870170)
+Planning with Linear RRT
+
+new c_best (27.541334)
+new c_best (10.043852)
+new c_best (9.934035)
+new c_best (9.873265)
+new c_best (9.768230)
+Gap (2), Experiment (26): (4.418012)
+Planning with Linear RRT
+
+new c_best (28.596307)
+new c_best (28.524520)
+new c_best (26.259197)
+new c_best (25.812099)
+new c_best (10.007393)
+new c_best (9.930399)
+new c_best (9.889189)
+new c_best (9.826219)
+Gap (2), Experiment (27): (5.952121)
+Planning with Linear RRT
+
+new c_best (11.061881)
+new c_best (10.864309)
+new c_best (10.673750)
+new c_best (10.589322)
+new c_best (9.884928)
+new c_best (9.844857)
+Gap (2), Experiment (28): (0.399172)
+Planning with Linear RRT
+
+new c_best (26.191505)
+new c_best (25.456111)
+new c_best (10.256147)
+new c_best (9.863227)
+new c_best (9.813285)
+Gap (2), Experiment (29): (1.746345)
+Planning with Linear RRT
+
+new c_best (11.179497)
+new c_best (10.385236)
+new c_best (10.220362)
+new c_best (9.910867)
+new c_best (9.896984)
+new c_best (9.836901)
+Gap (2), Experiment (30): (2.088042)
+Planning with Linear RRT
+
+new c_best (10.073456)
+new c_best (10.068684)
+new c_best (9.797707)
+Gap (2), Experiment (31): (0.218635)
+Planning with Linear RRT
+
+new c_best (10.762529)
+new c_best (10.136019)
+new c_best (9.862491)
+new c_best (9.824062)
+Gap (2), Experiment (32): (0.214149)
+Planning with Linear RRT
+
+new c_best (11.806672)
+new c_best (11.202821)
+new c_best (10.232415)
+new c_best (9.865278)
+new c_best (9.863843)
+new c_best (9.846783)
+Gap (2), Experiment (33): (1.216064)
+Planning with Linear RRT
+
+new c_best (26.225758)
+new c_best (25.417435)
+new c_best (10.301293)
+new c_best (10.266222)
+new c_best (10.133348)
+new c_best (10.044704)
+new c_best (9.805023)
+Gap (2), Experiment (34): (0.812708)
+Planning with Linear RRT
+
+new c_best (25.574631)
+new c_best (25.165069)
+new c_best (9.917430)
+new c_best (9.825500)
+Gap (2), Experiment (35): (0.614495)
+Planning with Linear RRT
+
+new c_best (10.984528)
+new c_best (10.293019)
+new c_best (9.913692)
+new c_best (9.905503)
+new c_best (9.885171)
+new c_best (9.819260)
+Gap (2), Experiment (36): (4.926304)
+Planning with Linear RRT
+
+new c_best (29.895159)
+new c_best (29.744037)
+new c_best (27.125804)
+new c_best (27.000954)
+new c_best (10.127391)
+new c_best (9.846487)
+Gap (2), Experiment (37): (0.357382)
+Planning with Linear RRT
+
+new c_best (10.643318)
+new c_best (10.623109)
+new c_best (9.990980)
+new c_best (9.984528)
+new c_best (9.808834)
+Gap (2), Experiment (38): (1.052544)
+Planning with Linear RRT
+
+new c_best (30.846331)
+new c_best (26.601390)
+new c_best (10.116908)
+new c_best (10.086548)
+new c_best (9.985735)
+new c_best (9.914362)
+new c_best (9.893344)
+new c_best (9.859413)
+new c_best (9.855012)
+new c_best (9.806906)
+Gap (2), Experiment (39): (4.206778)
+Planning with Linear RRT
+
+new c_best (10.042238)
+new c_best (9.982739)
+new c_best (9.814951)
+Gap (2), Experiment (40): (0.356572)
+Planning with Linear RRT
+
+new c_best (10.368340)
+new c_best (10.010785)
+new c_best (9.970428)
+new c_best (9.805788)
+Gap (2), Experiment (41): (1.078098)
+Planning with Linear RRT
+
+new c_best (25.189239)
+new c_best (25.184338)
+new c_best (25.175655)
+new c_best (24.796433)
+new c_best (11.165852)
+new c_best (10.009513)
+new c_best (9.893917)
+new c_best (9.820902)
+Gap (2), Experiment (42): (2.365058)
+Planning with Linear RRT
+
+new c_best (30.965149)
+new c_best (30.813605)
+new c_best (29.203648)
+new c_best (25.786393)
+new c_best (25.444984)
+new c_best (24.812535)
+new c_best (10.816443)
+new c_best (10.245243)
+new c_best (9.994439)
+new c_best (9.945105)
+new c_best (9.919636)
+new c_best (9.897728)
+new c_best (9.865306)
+new c_best (9.794464)
+Gap (2), Experiment (43): (5.439001)
+Planning with Linear RRT
+
+new c_best (29.897605)
+new c_best (10.197597)
+new c_best (9.968957)
+new c_best (9.899836)
+new c_best (9.864292)
+new c_best (9.797644)
+Gap (2), Experiment (44): (1.090859)
+Planning with Linear RRT
+
+new c_best (27.986555)
+new c_best (27.465534)
+new c_best (25.212778)
+new c_best (10.296234)
+new c_best (10.287896)
+new c_best (10.163836)
+new c_best (9.989997)
+new c_best (9.770656)
+Gap (2), Experiment (45): (1.351877)
+Planning with Linear RRT
+
+new c_best (29.830336)
+new c_best (10.401728)
+new c_best (9.939186)
+new c_best (9.837311)
+Gap (2), Experiment (46): (0.924047)
+Planning with Linear RRT
+
+new c_best (11.092207)
+new c_best (11.015554)
+new c_best (10.703525)
+new c_best (9.882509)
+new c_best (9.828205)
+Gap (2), Experiment (47): (1.936148)
+Planning with Linear RRT
+
+new c_best (26.286541)
+new c_best (10.306085)
+new c_best (9.951540)
+new c_best (9.914328)
+new c_best (9.906549)
+new c_best (9.803433)
+Gap (2), Experiment (48): (1.097485)
+Planning with Linear RRT
+
+new c_best (12.690502)
+new c_best (10.103808)
+new c_best (10.020808)
+new c_best (9.896824)
+new c_best (9.884685)
+new c_best (9.847101)
+Gap (2), Experiment (49): (4.467631)
+Planning with Linear RRT
+
+new c_best (11.684843)
+new c_best (9.998490)
+new c_best (9.889421)
+new c_best (9.883817)
+new c_best (9.875358)
+new c_best (9.811279)
+Gap (3), Experiment (0): (2.275816)
+Planning with Linear RRT
+
+new c_best (11.485662)
+new c_best (11.271974)
+new c_best (10.017628)
+new c_best (9.862281)
+new c_best (9.852692)
+new c_best (9.801354)
+Gap (3), Experiment (1): (20.971863)
+Planning with Linear RRT
+
+new c_best (28.971495)
+new c_best (9.880945)
+new c_best (9.872703)
+new c_best (9.851998)
+new c_best (9.814552)
+Gap (3), Experiment (2): (3.867062)
+Planning with Linear RRT
+
+new c_best (27.237878)
+new c_best (26.237526)
+new c_best (10.171868)
+new c_best (10.109139)
+new c_best (9.950317)
+new c_best (9.897584)
+new c_best (9.862306)
+new c_best (9.795156)
+Gap (3), Experiment (3): (4.174234)
+Planning with Linear RRT
+
+new c_best (27.102356)
+new c_best (26.546104)
+new c_best (26.004996)
+new c_best (10.430373)
+new c_best (9.877261)
+new c_best (9.876946)
+new c_best (9.810163)
+Gap (3), Experiment (4): (2.213320)
+Planning with Linear RRT
+
+new c_best (10.112909)
+new c_best (10.000230)
+new c_best (9.947717)
+new c_best (9.782438)
+Gap (3), Experiment (5): (0.813296)
+Planning with Linear RRT
+
+new c_best (28.326692)
+new c_best (26.761873)
+new c_best (10.002579)
+new c_best (9.982754)
+new c_best (9.905668)
+new c_best (9.878391)
+new c_best (9.854739)
+new c_best (9.800145)
+Gap (3), Experiment (6): (14.638930)
+Planning with Linear RRT
+
+new c_best (10.241188)
+new c_best (10.115099)
+new c_best (9.977416)
+new c_best (9.887189)
+new c_best (9.798020)
+Gap (3), Experiment (7): (0.704587)
+Planning with Linear RRT
+
+new c_best (10.338106)
+new c_best (10.298460)
+new c_best (10.095478)
+new c_best (9.989189)
+new c_best (9.919913)
+new c_best (9.901118)
+new c_best (9.799012)
+Gap (3), Experiment (8): (3.658433)
+Planning with Linear RRT
+
+new c_best (12.571411)
+new c_best (10.078429)
+new c_best (9.799422)
+Gap (3), Experiment (9): (0.364114)
+Planning with Linear RRT
+
+new c_best (11.188051)
+new c_best (10.281808)
+new c_best (10.143093)
+new c_best (10.020081)
+new c_best (10.006794)
+new c_best (9.973562)
+new c_best (9.793236)
+Gap (3), Experiment (10): (0.849091)
+Planning with Linear RRT
+
+new c_best (10.098484)
+new c_best (10.045684)
+new c_best (9.845711)
+Gap (3), Experiment (11): (0.321359)
+Planning with Linear RRT
+
+new c_best (30.648733)
+new c_best (10.734851)
+new c_best (10.414346)
+new c_best (10.322676)
+new c_best (10.143461)
+new c_best (9.931694)
+new c_best (9.885187)
+new c_best (9.815540)
+Gap (3), Experiment (12): (1.229231)
+Planning with Linear RRT
+
+new c_best (29.086726)
+new c_best (10.440327)
+new c_best (9.964722)
+new c_best (9.800376)
+Gap (3), Experiment (13): (1.459374)
+Planning with Linear RRT
+
+new c_best (10.248195)
+new c_best (10.024001)
+new c_best (9.963058)
+new c_best (9.853307)
+new c_best (9.836748)
+Gap (3), Experiment (14): (1.919544)
+Planning with Linear RRT
+
+new c_best (28.486735)
+new c_best (9.921648)
+new c_best (9.910536)
+new c_best (9.828218)
+Gap (3), Experiment (15): (0.191268)
+Planning with Linear RRT
+
+new c_best (10.230495)
+new c_best (9.870286)
+new c_best (9.844845)
+Gap (3), Experiment (16): (1.541601)
+Planning with Linear RRT
+
+new c_best (27.353175)
+new c_best (10.434443)
+new c_best (9.968694)
+new c_best (9.917207)
+new c_best (9.825202)
+Gap (3), Experiment (17): (0.510943)
+Planning with Linear RRT
+
+new c_best (10.076989)
+new c_best (9.953184)
+new c_best (9.810647)
+Gap (3), Experiment (18): (0.339229)
+Planning with Linear RRT
+
+new c_best (13.518917)
+new c_best (10.086824)
+new c_best (9.998127)
+new c_best (9.815869)
+Gap (3), Experiment (19): (0.298008)
+Planning with Linear RRT
+
+new c_best (29.149487)
+new c_best (9.892678)
+new c_best (9.773875)
+Gap (3), Experiment (20): (1.020160)
+Planning with Linear RRT
+
+new c_best (27.627219)
+new c_best (10.733752)
+new c_best (10.048007)
+new c_best (10.023450)
+new c_best (9.990529)
+new c_best (9.942937)
+new c_best (9.932457)
+new c_best (9.862415)
+new c_best (9.813083)
+Gap (3), Experiment (21): (4.609885)
+Planning with Linear RRT
+
+new c_best (10.076526)
+new c_best (9.942989)
+new c_best (9.915246)
+new c_best (9.870407)
+new c_best (9.789637)
+Gap (3), Experiment (22): (3.337670)
+Planning with Linear RRT
+
+new c_best (26.411793)
+new c_best (10.209281)
+new c_best (10.145071)
+new c_best (9.869592)
+new c_best (9.822002)
+Gap (3), Experiment (23): (1.516346)
+Planning with Linear RRT
+
+new c_best (28.712322)
+new c_best (10.083717)
+new c_best (9.937163)
+new c_best (9.778091)
+Gap (3), Experiment (24): (0.542840)
+Planning with Linear RRT
+
+new c_best (11.437748)
+new c_best (9.985022)
+new c_best (9.827101)
+Gap (3), Experiment (25): (0.217335)
+Planning with Linear RRT
+
+new c_best (27.201574)
+new c_best (10.124192)
+new c_best (9.888000)
+new c_best (9.787359)
+Gap (3), Experiment (26): (1.157238)
+Planning with Linear RRT
+
+new c_best (10.179533)
+new c_best (9.968327)
+new c_best (9.854631)
+new c_best (9.850946)
+new c_best (9.785527)
+Gap (3), Experiment (27): (2.577983)
+Planning with Linear RRT
+
+new c_best (10.368649)
+new c_best (10.336998)
+new c_best (10.032135)
+new c_best (9.931911)
+new c_best (9.852953)
+new c_best (9.809518)
+Gap (3), Experiment (28): (3.129639)
+Planning with Linear RRT
+
+new c_best (27.593784)
+new c_best (10.493642)
+new c_best (10.222825)
+new c_best (10.207624)
+new c_best (9.854748)
+new c_best (9.820842)
+Gap (3), Experiment (29): (5.907115)
+Planning with Linear RRT
+
+new c_best (12.614445)
+new c_best (11.742233)
+new c_best (11.495052)
+new c_best (10.303327)
+new c_best (10.032975)
+new c_best (10.001722)
+new c_best (9.878118)
+new c_best (9.814843)
+Gap (3), Experiment (30): (2.620019)
+Planning with Linear RRT
+
+new c_best (27.748852)
+new c_best (9.924873)
+new c_best (9.822140)
+Gap (3), Experiment (31): (0.622745)
+Planning with Linear RRT
+
+new c_best (27.694048)
+new c_best (10.083799)
+new c_best (10.051009)
+new c_best (9.975032)
+new c_best (9.971711)
+new c_best (9.873751)
+new c_best (9.843644)
+Gap (3), Experiment (32): (3.075447)
+Planning with Linear RRT
+
+new c_best (10.674269)
+new c_best (9.935769)
+new c_best (9.888854)
+new c_best (9.856482)
+new c_best (9.792989)
+Gap (3), Experiment (33): (5.451656)
+Planning with Linear RRT
+
+new c_best (28.523637)
+new c_best (10.881739)
+new c_best (10.254457)
+new c_best (10.067551)
+new c_best (9.992211)
+new c_best (9.850270)
+new c_best (9.835902)
+Gap (3), Experiment (34): (2.100684)
+Planning with Linear RRT
+
+new c_best (10.249237)
+new c_best (9.969811)
+new c_best (9.868238)
+new c_best (9.831141)
+Gap (3), Experiment (35): (1.058476)
+Planning with Linear RRT
+
+new c_best (11.014705)
+new c_best (10.851917)
+new c_best (10.190139)
+new c_best (10.129698)
+new c_best (10.051280)
+new c_best (9.917403)
+new c_best (9.873671)
+new c_best (9.852053)
+new c_best (9.822593)
+Gap (3), Experiment (36): (3.707971)
+Planning with Linear RRT
+
+new c_best (26.798647)
+new c_best (25.547406)
+new c_best (25.426878)
+new c_best (10.081109)
+new c_best (10.051420)
+new c_best (9.968755)
+new c_best (9.816858)
+Gap (3), Experiment (37): (0.713191)
+Planning with Linear RRT
+
+new c_best (10.615497)
+new c_best (10.249109)
+new c_best (10.115599)
+new c_best (10.008107)
+new c_best (9.903094)
+new c_best (9.848837)
+new c_best (9.781558)
+Gap (3), Experiment (38): (5.263519)
+Planning with Linear RRT
+
+new c_best (11.140496)
+new c_best (10.293215)
+new c_best (10.184809)
+new c_best (9.988687)
+new c_best (9.968380)
+new c_best (9.896051)
+new c_best (9.882231)
+new c_best (9.881591)
+new c_best (9.818751)
+Gap (3), Experiment (39): (4.471626)
+Planning with Linear RRT
+
+new c_best (10.546099)
+new c_best (10.400718)
+new c_best (10.377495)
+new c_best (9.906557)
+new c_best (9.868752)
+new c_best (9.825213)
+Gap (3), Experiment (40): (7.672065)
+Planning with Linear RRT
+
+new c_best (10.006062)
+new c_best (9.936401)
+new c_best (9.872202)
+new c_best (9.856135)
+new c_best (9.842902)
+Gap (3), Experiment (41): (4.701724)
+Planning with Linear RRT
+
+new c_best (24.943004)
+new c_best (9.965277)
+new c_best (9.838360)
+Gap (3), Experiment (42): (1.195431)
+Planning with Linear RRT
+
+new c_best (27.990361)
+new c_best (27.342432)
+new c_best (9.991244)
+new c_best (9.930823)
+new c_best (9.889915)
+new c_best (9.831385)
+Gap (3), Experiment (43): (1.524588)
+Planning with Linear RRT
+
+new c_best (29.728043)
+new c_best (28.454285)
+new c_best (28.192094)
+new c_best (25.788650)
+new c_best (24.926949)
+new c_best (10.372502)
+new c_best (9.993880)
+new c_best (9.784926)
+Gap (3), Experiment (44): (0.947998)
+Planning with Linear RRT
+
+new c_best (10.937396)
+new c_best (10.459623)
+new c_best (10.261714)
+new c_best (9.974718)
+new c_best (9.866775)
+new c_best (9.819288)
+Gap (3), Experiment (45): (1.722888)
+Planning with Linear RRT
+
+new c_best (28.055177)
+new c_best (27.033134)
+new c_best (10.199328)
+new c_best (10.038645)
+new c_best (9.987903)
+new c_best (9.871456)
+new c_best (9.863389)
+new c_best (9.804475)
+Gap (3), Experiment (46): (2.467826)
+Planning with Linear RRT
+
+new c_best (28.664531)
+new c_best (26.124425)
+new c_best (25.870860)
+new c_best (25.518302)
+new c_best (24.633263)
+new c_best (10.304502)
+new c_best (9.927955)
+new c_best (9.791460)
+Gap (3), Experiment (47): (0.781259)
+Planning with Linear RRT
+
+new c_best (26.333921)
+new c_best (10.300616)
+new c_best (9.883559)
+new c_best (9.809756)
+Gap (3), Experiment (48): (0.333759)
+Planning with Linear RRT
+
+new c_best (10.811743)
+new c_best (10.388706)
+new c_best (10.080445)
+new c_best (10.047929)
+new c_best (9.972109)
+new c_best (9.967399)
+new c_best (9.783054)
+Gap (3), Experiment (49): (1.519659)
+Planning with Linear RRT
+
+new c_best (10.977316)
+new c_best (10.054315)
+new c_best (10.024591)
+new c_best (9.890229)
+new c_best (9.783736)
+Gap (4), Experiment (0): (0.579124)
+Planning with Linear RRT
+
+new c_best (10.205440)
+new c_best (10.151492)
+new c_best (10.120388)
+new c_best (10.059333)
+new c_best (9.803878)
+Gap (4), Experiment (1): (1.935074)
+Planning with Linear RRT
+
+new c_best (10.357460)
+new c_best (10.188877)
+new c_best (10.074497)
+new c_best (10.012148)
+new c_best (10.007273)
+new c_best (9.972735)
+new c_best (9.936708)
+new c_best (9.934448)
+new c_best (9.882108)
+new c_best (9.857692)
+new c_best (9.856491)
+new c_best (9.822717)
+Gap (4), Experiment (2): (6.387329)
+Planning with Linear RRT
+
+new c_best (10.141588)
+new c_best (10.087665)
+new c_best (9.928242)
+new c_best (9.905209)
+new c_best (9.780990)
+Gap (4), Experiment (3): (0.752597)
+Planning with Linear RRT
+
+new c_best (10.440495)
+new c_best (10.105960)
+new c_best (9.863306)
+new c_best (9.852644)
+new c_best (9.851613)
+new c_best (9.815759)
+Gap (4), Experiment (4): (15.406366)
+Planning with Linear RRT
+
+new c_best (32.786821)
+new c_best (26.246715)
+new c_best (10.149533)
+new c_best (10.037228)
+new c_best (9.998544)
+new c_best (9.852593)
+new c_best (9.792216)
+Gap (4), Experiment (5): (2.280629)
+Planning with Linear RRT
+
+new c_best (10.352856)
+new c_best (10.219397)
+new c_best (9.927657)
+new c_best (9.914475)
+new c_best (9.794876)
+Gap (4), Experiment (6): (0.721999)
+Planning with Linear RRT
+
+new c_best (13.194095)
+new c_best (10.119273)
+new c_best (9.952985)
+new c_best (9.935344)
+new c_best (9.895783)
+new c_best (9.828833)
+Gap (4), Experiment (7): (2.294160)
+Planning with Linear RRT
+
+new c_best (26.252138)
+new c_best (10.183152)
+new c_best (9.839117)
+Gap (4), Experiment (8): (0.198864)
+Planning with Linear RRT
+
+new c_best (28.593172)
+new c_best (9.941554)
+new c_best (9.830935)
+Gap (4), Experiment (9): (1.067761)
+Planning with Linear RRT
+
+new c_best (31.609945)
+new c_best (31.370733)
+new c_best (10.724340)
+new c_best (10.230849)
+new c_best (10.165185)
+new c_best (9.987718)
+new c_best (9.886573)
+new c_best (9.827138)
+Gap (4), Experiment (10): (0.963024)
+Planning with Linear RRT
+
+new c_best (11.079087)
+new c_best (10.497570)
+new c_best (10.486326)
+new c_best (10.343069)
+new c_best (10.301613)
+new c_best (10.033138)
+new c_best (10.028706)
+new c_best (10.002805)
+new c_best (9.924114)
+new c_best (9.862245)
+new c_best (9.814451)
+Gap (4), Experiment (11): (10.068905)
+Planning with Linear RRT
+
+new c_best (27.754108)
+new c_best (25.927002)
+new c_best (10.488101)
+new c_best (10.403776)
+new c_best (10.034446)
+new c_best (9.798337)
+Gap (4), Experiment (12): (0.692414)
+Planning with Linear RRT
+
+new c_best (10.560715)
+new c_best (9.918690)
+new c_best (9.858720)
+new c_best (9.842666)
+Gap (4), Experiment (13): (0.867187)
+Planning with Linear RRT
+
+new c_best (11.160201)
+new c_best (10.453430)
+new c_best (10.412930)
+new c_best (10.254721)
+new c_best (10.142448)
+new c_best (9.966166)
+new c_best (9.859515)
+new c_best (9.780960)
+Gap (4), Experiment (14): (3.501451)
+Planning with Linear RRT
+
+new c_best (10.070979)
+new c_best (9.916301)
+new c_best (9.840895)
+Gap (4), Experiment (15): (0.375158)
+Planning with Linear RRT
+
+new c_best (10.186243)
+new c_best (10.079782)
+new c_best (9.844408)
+Gap (4), Experiment (16): (0.686306)
+Planning with Linear RRT
+
+new c_best (12.057544)
+new c_best (11.648212)
+new c_best (10.424698)
+new c_best (10.158315)
+new c_best (9.941422)
+new c_best (9.922157)
+new c_best (9.900017)
+new c_best (9.838875)
+Gap (4), Experiment (17): (4.270944)
+Planning with Linear RRT
+
+new c_best (27.395237)
+new c_best (9.953645)
+new c_best (9.920559)
+new c_best (9.801872)
+Gap (4), Experiment (18): (0.686786)
+Planning with Linear RRT
+
+new c_best (10.892658)
+new c_best (10.837409)
+new c_best (10.378336)
+new c_best (9.912456)
+new c_best (9.911933)
+new c_best (9.812953)
+Gap (4), Experiment (19): (0.493918)
+Planning with Linear RRT
+
+new c_best (11.356574)
+new c_best (9.969289)
+new c_best (9.817531)
+Gap (4), Experiment (20): (0.435229)
+Planning with Linear RRT
+
+new c_best (29.012601)
+new c_best (28.917292)
+new c_best (27.558063)
+new c_best (10.276819)
+new c_best (10.049370)
+new c_best (9.812601)
+Gap (4), Experiment (21): (0.388091)
+Planning with Linear RRT
+
+new c_best (10.965103)
+new c_best (10.549969)
+new c_best (10.175994)
+new c_best (10.052295)
+new c_best (10.045272)
+new c_best (9.838167)
+Gap (4), Experiment (22): (0.366612)
+Planning with Linear RRT
+
+new c_best (10.464845)
+new c_best (10.268259)
+new c_best (10.213966)
+new c_best (9.910425)
+new c_best (9.905663)
+new c_best (9.903192)
+new c_best (9.873332)
+new c_best (9.830447)
+Gap (4), Experiment (23): (2.305139)
+Planning with Linear RRT
+
+new c_best (10.246141)
+new c_best (9.940016)
+new c_best (9.896194)
+new c_best (9.829231)
+Gap (4), Experiment (24): (0.512186)
+Planning with Linear RRT
+
+new c_best (10.781228)
+new c_best (10.498563)
+new c_best (10.272082)
+new c_best (10.260368)
+new c_best (9.957836)
+new c_best (9.897163)
+new c_best (9.794064)
+Gap (4), Experiment (25): (0.422960)
+Planning with Linear RRT
+
+new c_best (30.936041)
+new c_best (27.479636)
+new c_best (10.350969)
+new c_best (10.334874)
+new c_best (9.940003)
+new c_best (9.897303)
+new c_best (9.886119)
+new c_best (9.848713)
+new c_best (9.772293)
+Gap (4), Experiment (26): (6.389311)
+Planning with Linear RRT
+
+new c_best (11.725373)
+new c_best (10.281806)
+new c_best (10.014249)
+new c_best (9.983060)
+new c_best (9.780144)
+Gap (4), Experiment (27): (2.676606)
+Planning with Linear RRT
+
+new c_best (32.598743)
+new c_best (10.068869)
+new c_best (9.859098)
+new c_best (9.858309)
+new c_best (9.781559)
+Gap (4), Experiment (28): (4.957947)
+Planning with Linear RRT
+
+new c_best (31.286173)
+new c_best (10.263220)
+new c_best (10.165015)
+new c_best (10.106962)
+new c_best (9.867131)
+new c_best (9.796370)
+Gap (4), Experiment (29): (2.183226)
+Planning with Linear RRT
+
+new c_best (11.116713)
+new c_best (10.704602)
+new c_best (9.839792)
+Gap (4), Experiment (30): (0.102953)
+Planning with Linear RRT
+
+new c_best (29.392916)
+new c_best (10.907394)
+new c_best (10.234375)
+new c_best (10.045639)
+new c_best (9.879108)
+new c_best (9.825827)
+Gap (4), Experiment (31): (2.110968)
+Planning with Linear RRT
+
+new c_best (27.731804)
+new c_best (27.567542)
+new c_best (10.210543)
+new c_best (9.887737)
+new c_best (9.870983)
+new c_best (9.861877)
+new c_best (9.856563)
+new c_best (9.828611)
+Gap (4), Experiment (32): (3.534111)
+Planning with Linear RRT
+
+new c_best (29.733506)
+new c_best (28.124873)
+new c_best (10.190114)
+new c_best (10.173411)
+new c_best (10.101368)
+new c_best (10.059248)
+new c_best (9.949229)
+new c_best (9.875878)
+new c_best (9.862669)
+new c_best (9.857954)
+new c_best (9.811089)
+Gap (4), Experiment (33): (6.560482)
+Planning with Linear RRT
+
+new c_best (13.339709)
+new c_best (10.404586)
+new c_best (10.130595)
+new c_best (9.948822)
+new c_best (9.852751)
+new c_best (9.838456)
+Gap (4), Experiment (34): (1.517014)
+Planning with Linear RRT
+
+new c_best (12.109165)
+new c_best (10.425180)
+new c_best (9.954371)
+new c_best (9.813269)
+Gap (4), Experiment (35): (0.628513)
+Planning with Linear RRT
+
+new c_best (10.009968)
+new c_best (9.869956)
+new c_best (9.848611)
+new c_best (9.785886)
+Gap (4), Experiment (36): (2.554045)
+Planning with Linear RRT
+
+new c_best (11.586120)
+new c_best (10.114722)
+new c_best (10.056600)
+new c_best (9.883240)
+new c_best (9.816308)
+Gap (4), Experiment (37): (0.692494)
+Planning with Linear RRT
+
+new c_best (28.767899)
+new c_best (28.630210)
+new c_best (10.857053)
+new c_best (10.762879)
+new c_best (10.033520)
+new c_best (9.954014)
+new c_best (9.903855)
+new c_best (9.884170)
+new c_best (9.863928)
+new c_best (9.796172)
+Gap (4), Experiment (38): (13.777147)
+Planning with Linear RRT
+
+new c_best (11.437038)
+new c_best (10.377231)
+new c_best (10.066992)
+new c_best (10.009467)
+new c_best (9.910628)
+new c_best (9.853699)
+new c_best (9.842281)
+Gap (4), Experiment (39): (0.921865)
+Planning with Linear RRT
+
+new c_best (29.082937)
+new c_best (28.748356)
+new c_best (10.124862)
+new c_best (9.820111)
+Gap (4), Experiment (40): (0.730361)
+Planning with Linear RRT
+
+new c_best (10.919317)
+new c_best (10.261101)
+new c_best (10.201549)
+new c_best (10.013260)
+new c_best (9.974100)
+new c_best (9.834396)
+Gap (4), Experiment (41): (2.292029)
+Planning with Linear RRT
+
+new c_best (32.684996)
+new c_best (26.919130)
+new c_best (25.716054)
+new c_best (24.968759)
+new c_best (10.219139)
+new c_best (9.854205)
+new c_best (9.763008)
+Gap (4), Experiment (42): (2.275537)
+Planning with Linear RRT
+
+new c_best (10.226633)
+new c_best (10.210431)
+new c_best (10.083783)
+new c_best (10.033214)
+new c_best (9.918255)
+new c_best (9.904211)
+new c_best (9.860506)
+new c_best (9.852752)
+new c_best (9.774373)
+Gap (4), Experiment (43): (9.779882)
+Planning with Linear RRT
+
+new c_best (14.965021)
+new c_best (12.231878)
+new c_best (10.424023)
+new c_best (10.243371)
+new c_best (9.924496)
+new c_best (9.794108)
+Gap (4), Experiment (44): (0.441975)
+Planning with Linear RRT
+
+new c_best (10.354364)
+new c_best (10.232985)
+new c_best (9.966461)
+new c_best (9.943250)
+new c_best (9.894000)
+new c_best (9.880252)
+new c_best (9.777640)
+Gap (4), Experiment (45): (3.205297)
+Planning with Linear RRT
+
+new c_best (10.192279)
+new c_best (9.944034)
+new c_best (9.782579)
+Gap (4), Experiment (46): (0.823301)
+Planning with Linear RRT
+
+new c_best (28.170951)
+new c_best (26.060313)
+new c_best (10.182279)
+new c_best (10.148208)
+new c_best (9.870770)
+new c_best (9.826282)
+Gap (4), Experiment (47): (0.926205)
+Planning with Linear RRT
+
+new c_best (11.001254)
+new c_best (9.884666)
+new c_best (9.784247)
+Gap (4), Experiment (48): (0.464778)
+Planning with Linear RRT
+
+new c_best (10.630327)
+new c_best (10.196356)
+new c_best (9.938146)
+new c_best (9.803835)
+Gap (4), Experiment (49): (0.593669)
+Planning with Linear RRT
+
+new c_best (10.161662)
+new c_best (9.995553)
+new c_best (9.892248)
+new c_best (9.806913)
+Gap (5), Experiment (0): (3.588759)
+Planning with Linear RRT
+
+new c_best (27.769537)
+new c_best (27.647921)
+new c_best (11.384096)
+new c_best (10.162773)
+new c_best (9.909905)
+new c_best (9.872549)
+new c_best (9.763245)
+Gap (5), Experiment (1): (2.092772)
+Planning with Linear RRT
+
+new c_best (11.420162)
+new c_best (10.371168)
+new c_best (10.064078)
+new c_best (10.061601)
+new c_best (9.938393)
+new c_best (9.902348)
+new c_best (9.858103)
+new c_best (9.805830)
+Gap (5), Experiment (2): (2.060400)
+Planning with Linear RRT
+
+new c_best (11.301495)
+new c_best (11.295521)
+new c_best (11.043429)
+new c_best (10.290826)
+new c_best (10.265331)
+new c_best (10.116786)
+new c_best (9.934212)
+new c_best (9.851167)
+new c_best (9.826330)
+Gap (5), Experiment (3): (5.188846)
+Planning with Linear RRT
+
+new c_best (10.227731)
+new c_best (9.926234)
+new c_best (9.868782)
+new c_best (9.807169)
+Gap (5), Experiment (4): (1.625617)
+Planning with Linear RRT
+
+new c_best (13.569577)
+new c_best (10.788585)
+new c_best (10.495272)
+new c_best (10.357787)
+new c_best (9.935703)
+new c_best (9.886004)
+new c_best (9.859584)
+new c_best (9.790906)
+Gap (5), Experiment (5): (1.312784)
+Planning with Linear RRT
+
+new c_best (10.937201)
+new c_best (10.801804)
+new c_best (10.681314)
+new c_best (10.097082)
+new c_best (10.093521)
+new c_best (9.892552)
+new c_best (9.836492)
+Gap (5), Experiment (6): (1.257336)
+Planning with Linear RRT
+
+new c_best (10.850405)
+new c_best (10.055025)
+new c_best (10.037952)
+new c_best (9.951465)
+new c_best (9.939042)
+new c_best (9.774645)
+Gap (5), Experiment (7): (4.074148)
+Planning with Linear RRT
+
+new c_best (10.525206)
+new c_best (10.465080)
+new c_best (10.198694)
+new c_best (10.192911)
+new c_best (9.829026)
+Gap (5), Experiment (8): (0.292647)
+Planning with Linear RRT
+
+new c_best (12.723131)
+new c_best (11.479348)
+new c_best (10.133002)
+new c_best (9.886341)
+new c_best (9.870622)
+new c_best (9.832566)
+Gap (5), Experiment (9): (3.842797)
+Planning with Linear RRT
+
+new c_best (11.321929)
+new c_best (10.927367)
+new c_best (10.223971)
+new c_best (10.216031)
+new c_best (10.177688)
+new c_best (10.097349)
+new c_best (10.033829)
+new c_best (9.935777)
+new c_best (9.858922)
+new c_best (9.785478)
+Gap (5), Experiment (10): (2.092880)
+Planning with Linear RRT
+
+new c_best (30.285310)
+new c_best (29.169815)
+new c_best (10.682227)
+new c_best (10.249436)
+new c_best (10.072774)
+new c_best (9.842230)
+Gap (5), Experiment (11): (0.219857)
+Planning with Linear RRT
+
+new c_best (27.849277)
+new c_best (11.928771)
+new c_best (10.397086)
+new c_best (10.226126)
+new c_best (10.009818)
+new c_best (9.926527)
+new c_best (9.923622)
+new c_best (9.766730)
+Gap (5), Experiment (12): (11.062924)
+Planning with Linear RRT
+
+new c_best (10.134795)
+new c_best (10.015527)
+new c_best (9.808201)
+Gap (5), Experiment (13): (0.299421)
+Planning with Linear RRT
+
+new c_best (28.192768)
+new c_best (27.935384)
+new c_best (10.699239)
+new c_best (9.949586)
+new c_best (9.804428)
+Gap (5), Experiment (14): (0.484472)
+Planning with Linear RRT
+
+new c_best (10.293944)
+new c_best (10.228839)
+new c_best (9.896430)
+new c_best (9.866959)
+new c_best (9.815737)
+Gap (5), Experiment (15): (5.948470)
+Planning with Linear RRT
+
+new c_best (10.814580)
+new c_best (10.567776)
+new c_best (9.989346)
+new c_best (9.983941)
+new c_best (9.945688)
+new c_best (9.886033)
+new c_best (9.831987)
+Gap (5), Experiment (16): (1.212528)
+Planning with Linear RRT
+
+new c_best (10.368775)
+new c_best (10.352890)
+new c_best (10.170785)
+new c_best (10.015112)
+new c_best (9.880989)
+new c_best (9.848784)
+new c_best (9.815763)
+Gap (5), Experiment (17): (3.669480)
+Planning with Linear RRT
+
+new c_best (27.756794)
+new c_best (27.688962)
+new c_best (26.324621)
+new c_best (10.285654)
+new c_best (10.268434)
+new c_best (10.100430)
+new c_best (10.096019)
+new c_best (9.933015)
+new c_best (9.930089)
+new c_best (9.900165)
+new c_best (9.891573)
+new c_best (9.785562)
+Gap (5), Experiment (18): (4.387805)
+Planning with Linear RRT
+
+new c_best (11.168563)
+new c_best (10.230879)
+new c_best (9.981744)
+new c_best (9.920672)
+new c_best (9.795705)
+Gap (5), Experiment (19): (0.531061)
+Planning with Linear RRT
+
+new c_best (28.002537)
+new c_best (10.250196)
+new c_best (10.051839)
+new c_best (9.835633)
+Gap (5), Experiment (20): (0.182199)
+Planning with Linear RRT
+
+new c_best (10.629390)
+new c_best (10.228829)
+new c_best (10.034043)
+new c_best (9.845470)
+Gap (5), Experiment (21): (0.599851)
+Planning with Linear RRT
+
+new c_best (10.106015)
+new c_best (10.027599)
+new c_best (10.023520)
+new c_best (9.811704)
+Gap (5), Experiment (22): (0.718346)
+Planning with Linear RRT
+
+new c_best (9.934107)
+new c_best (9.818907)
+Gap (5), Experiment (23): (0.427201)
+Planning with Linear RRT
+
+new c_best (28.623266)
+new c_best (28.562047)
+new c_best (28.066628)
+new c_best (27.458601)
+new c_best (10.670394)
+new c_best (9.893506)
+new c_best (9.883874)
+new c_best (9.820309)
+Gap (5), Experiment (24): (4.481411)
+Planning with Linear RRT
+
+new c_best (29.166283)
+new c_best (28.915036)
+new c_best (11.851804)
+new c_best (10.115139)
+new c_best (9.902618)
+new c_best (9.787973)
+Gap (5), Experiment (25): (0.309926)
+Planning with Linear RRT
+
+new c_best (11.186801)
+new c_best (10.860204)
+new c_best (10.121411)
+new c_best (10.025324)
+new c_best (10.001039)
+new c_best (9.859997)
+new c_best (9.846699)
+Gap (5), Experiment (26): (0.821093)
+Planning with Linear RRT
+
+new c_best (9.927158)
+new c_best (9.892658)
+new c_best (9.887998)
+new c_best (9.876266)
+new c_best (9.853293)
+new c_best (9.798934)
+Gap (5), Experiment (27): (10.330718)
+Planning with Linear RRT
+
+new c_best (11.039747)
+new c_best (10.702560)
+new c_best (10.280056)
+new c_best (9.928411)
+new c_best (9.841716)
+Gap (5), Experiment (28): (1.478587)
+Planning with Linear RRT
+
+new c_best (28.958774)
+new c_best (28.897520)
+new c_best (11.392767)
+new c_best (10.101998)
+new c_best (10.063603)
+new c_best (10.007129)
+new c_best (9.909653)
+new c_best (9.805001)
+Gap (5), Experiment (29): (1.692494)
+Planning with Linear RRT
+
+new c_best (28.936375)
+new c_best (26.475398)
+new c_best (10.418030)
+new c_best (9.945524)
+new c_best (9.922536)
+new c_best (9.832561)
+Gap (5), Experiment (30): (5.321358)
+Planning with Linear RRT
+
+new c_best (10.075056)
+new c_best (9.920831)
+new c_best (9.876260)
+new c_best (9.825623)
+Gap (5), Experiment (31): (0.400084)
+Planning with Linear RRT
+
+new c_best (28.508401)
+new c_best (10.824660)
+new c_best (10.735603)
+new c_best (10.667058)
+new c_best (9.986120)
+new c_best (9.932645)
+new c_best (9.922988)
+new c_best (9.900535)
+new c_best (9.876909)
+new c_best (9.847349)
+Gap (5), Experiment (32): (8.583070)
+Planning with Linear RRT
+
+new c_best (27.070927)
+new c_best (10.554350)
+new c_best (10.311856)
+new c_best (10.008385)
+new c_best (9.996865)
+new c_best (9.806298)
+Gap (5), Experiment (33): (0.679814)
+Planning with Linear RRT
+
+new c_best (14.602277)
+new c_best (11.081440)
+new c_best (10.349321)
+new c_best (10.065349)
+new c_best (9.983848)
+new c_best (9.948812)
+new c_best (9.886481)
+new c_best (9.832790)
+Gap (5), Experiment (34): (1.268943)
+Planning with Linear RRT
+
+new c_best (12.425658)
+new c_best (9.966308)
+new c_best (9.935328)
+new c_best (9.866864)
+new c_best (9.765245)
+Gap (5), Experiment (35): (7.034801)
+Planning with Linear RRT
+
+new c_best (11.183344)
+new c_best (10.325893)
+new c_best (9.985574)
+new c_best (9.855981)
+new c_best (9.825691)
+Gap (5), Experiment (36): (2.065412)
+Planning with Linear RRT
+
+new c_best (25.974871)
+new c_best (10.119860)
+new c_best (9.999363)
+new c_best (9.934799)
+new c_best (9.868431)
+new c_best (9.825463)
+Gap (5), Experiment (37): (1.056378)
+Planning with Linear RRT
+
+new c_best (26.513764)
+new c_best (10.496273)
+new c_best (9.886879)
+new c_best (9.798908)
+Gap (5), Experiment (38): (1.078041)
+Planning with Linear RRT
+
+new c_best (10.224586)
+new c_best (9.966154)
+new c_best (9.824471)
+Gap (5), Experiment (39): (0.506360)
+Planning with Linear RRT
+
+new c_best (11.639856)
+new c_best (10.269266)
+new c_best (9.900845)
+new c_best (9.892076)
+new c_best (9.864060)
+new c_best (9.821115)
+Gap (5), Experiment (40): (1.506128)
+Planning with Linear RRT
+
+new c_best (30.506540)
+new c_best (30.288799)
+new c_best (12.399101)
+new c_best (10.163189)
+new c_best (10.039018)
+new c_best (9.911469)
+new c_best (9.796317)
+Gap (5), Experiment (41): (0.532154)
+Planning with Linear RRT
+
+new c_best (11.871065)
+new c_best (10.483822)
+new c_best (9.887515)
+new c_best (9.856769)
+new c_best (9.822558)
+Gap (5), Experiment (42): (0.244071)
+Planning with Linear RRT
+
+new c_best (10.739602)
+new c_best (10.195594)
+new c_best (9.971094)
+new c_best (9.803615)
+Gap (5), Experiment (43): (1.345303)
+Planning with Linear RRT
+
+new c_best (11.398928)
+new c_best (10.086146)
+new c_best (9.968201)
+new c_best (9.855682)
+new c_best (9.778447)
+Gap (5), Experiment (44): (5.458071)
+Planning with Linear RRT
+
+new c_best (9.942221)
+new c_best (9.857020)
+new c_best (9.794810)
+Gap (5), Experiment (45): (1.823441)
+Planning with Linear RRT
+
+new c_best (12.130679)
+new c_best (9.878920)
+new c_best (9.861318)
+new c_best (9.788022)
+Gap (5), Experiment (46): (0.532459)
+Planning with Linear RRT
+
+new c_best (29.711489)
+new c_best (28.130981)
+new c_best (10.868957)
+new c_best (10.439148)
+new c_best (10.412991)
+new c_best (10.209211)
+new c_best (10.038100)
+new c_best (9.996906)
+new c_best (9.988208)
+new c_best (9.876861)
+new c_best (9.805971)
+Gap (5), Experiment (47): (3.572864)
+Planning with Linear RRT
+
+new c_best (10.629920)
+new c_best (10.268397)
+new c_best (10.176498)
+new c_best (10.011203)
+new c_best (9.858851)
+new c_best (9.831041)
+Gap (5), Experiment (48): (1.681245)
+Planning with Linear RRT
+
